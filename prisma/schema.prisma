@@ -13,32 +13,96 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-generator client {
-  provider = "prisma-client-js"
+
+// Roles: Bar owners have different permissions than regular users
+enum Role {
+  USER       // Thomas, Sophie (Group Hosts)
+  BAR_OWNER  // Venue/Bar owner
 }
 
-// Thomas (Host), Sophie (Guest)
 model User {
   id            String    @id @default(cuid())
-  name          String?
+  username      String?   // Changed from 'name' to 'username'
   email         String    @unique
-  isGuest       Boolean   @default(false) // Gast-Modus
+  role          Role      @default(USER) // Bar Owner vs Regular User
+  isGuest       Boolean   @default(false)
   image         String?   
-  groupId       String?
-  group         Group?    @relation(fields: [groupId], references: [id])
+  
+  // Relation: A Host (User) creates ONE group for going out
+  group         Group?    @relation("HostGroup")
+  
+  // Relation: A Bar Owner can create multiple events/parties
+  events        Event[]
+
+  // CHATS: Only allowed between Hosts
+  chatsInitiated Chat[]   @relation("HostA")
+  chatsReceived  Chat[]   @relation("HostB")
+  messages       Message[]
+
   createdAt     DateTime  @default(now())
 }
 
-// Gruppen
 model Group {
   id            String    @id @default(cuid())
   hostName      String    
-  description   String?
+  description   String?   // e.g., "Pre-drinking (Vorglühen) at Thomas's place"
   instaLink     String?   
-  membersCount  Int       @default(1)
+  
+  // Represents group members who are NOT registered in the app
+  membersCount  Int       @default(1) 
+  
   isPartyMode   Boolean   @default(true) 
   latitude      Float?    
   longitude     Float?    
-  users         User[]
+  
+  // Relation to the Host (User)
+  hostId        String    @unique
+  host          User      @relation("HostGroup", fields: [hostId], references: [id])
+
   createdAt     DateTime  @default(now())
+}
+
+model Event {
+  id            String    @id @default(cuid())
+  title         String    // e.g., "Techno Night" or "Happy Hour"
+  description   String?
+  locationName  String    // Name of the Bar/Venue
+  latitude      Float
+  longitude     Float
+  startTime     DateTime
+  endTime       DateTime?
+  
+  // Relation to the Bar Owner (User)
+  ownerId       String
+  owner         User      @relation(fields: [ownerId], references: [id])
+
+  createdAt     DateTime  @default(now())
+}
+
+model Chat {
+  id          String    @id @default(cuid())
+  
+  // Connects two Hosts (Users)
+  hostAId     String
+  hostA       User      @relation("HostA", fields: [hostAId], references: [id])
+  
+  hostBId     String
+  hostB       User      @relation("HostB", fields: [hostBId], references: [id])
+  
+  messages    Message[]
+  createdAt   DateTime  @default(now())
+
+  @@unique([hostAId, hostBId])
+}
+
+model Message {
+  id          String   @id @default(cuid())
+  text        String
+  chatId      String
+  chat        Chat     @relation(fields: [chatId], references: [id])
+  
+  senderId    String
+  sender      User     @relation(fields: [senderId], references: [id])
+  
+  createdAt   DateTime @default(now())
 }
