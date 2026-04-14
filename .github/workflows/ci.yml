@@ -9,7 +9,7 @@ jobs:
       - name: Install Node
         uses: actions/setup-node@v3
         with:
-          node-version: 20
+          node-version: 24
       - run: npm install
       - run: npx prisma validate
       - run: npm run build
