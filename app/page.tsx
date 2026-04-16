@@ -4,13 +4,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState, useRef, useEffect } from 'react';
 
+
 const languages = [
   { code: 'en', label: 'English', flag: '🇬🇧' },
   { code: 'de', label: 'Deutsch', flag: '🇩🇪' },
   { code: 'es', label: 'Español', flag: '🇪🇸' },
   { code: 'fr', label: 'Français', flag: '🇫🇷' },
   { code: 'it', label: 'Italiano', flag: '🇮🇹' },
-  { code: 'zh', label: '中文 (Chinese)', flag: '🇨🇳' },
 ];
 
 export default function Home() {
@@ -32,44 +32,64 @@ export default function Home() {
 
 
   return (
-    <main className="flex flex-col items-center justify-between min-h-screen bg-[#1A1A1A] text-[#FDFEFE] p-8 font-sans">
+    <main className="relative flex flex-col items-center justify-between min-h-screen text-[#FDFEFE] p-8 font-sans overflow-hidden">
       
-      <div className="flex-1"></div>
+      {/* playsInline es OBLIGATORIO para que en iPhone no se abra en pantalla completa */}
+      {/* LAYER 1: BACKGROUND VIDEO */}
+      <video
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="absolute inset-0 w-full h-full object-cover -z-20"
+        poster="/images/bg-fallback.jpg" // An image to show while the video is loading or if it fails to load
+      >
+        <source src="/videos/video1.mp4" type="video/mp4" />
+      </video>
 
-      {/* Central Section */}
-      <div className="flex flex-col items-center justify-center flex-2 space-y-6">
-        <div className="w-32 h-32 rounded-full bg-[#000000] border-4 border-[#FF5733] flex items-center justify-center shadow-[0_0_40px_rgba(255,87,51,0.25)]">
-          <span className="text-4xl font-bold tracking-widest lowercase">gloo</span>
+      {/* LAYER 2: THE DARKENED AND BLURRED OVERLAY */}
+      {/* bg-black/60 darkens by 60%, backdrop-blur-md gives the Apple-style blur */}
+      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm -z-10"></div>
+
+      {/* LAYER 3: YOUR INTERFACE (The code we already had) */}
+      <div className="flex-1 w-full relative z-10"></div>
+
+      <div className="flex flex-col items-center justify-center flex-2 space-y-6 relative z-10">
+        <div className="relative w-32 h-32 rounded-full border-4 border-[#FF5733] flex items-center justify-center shadow-[0_0_40px_rgba(255,87,51,0.4)] overflow-hidden">
+          <Image 
+            src="/images/logo.png" 
+            alt="GLOO Logo" 
+            fill 
+            sizes="(max-width: 128px) 100vw, 128px"
+            className="object-cover scale-110" // scale-110 hace un ligero zoom para recortar bordes negros extra si los hay
+            priority // priority le dice a Next.js que cargue esta imagen inmediatamente
+          />
         </div>
         
         <div className="text-center space-y-3">
-          <h1 className="text-4xl font-extrabold tracking-tight">Welcome to GLOO</h1>
-          <p className="text-gray-400 text-base max-w-[280px] mx-auto leading-relaxed">
-            Connect, match, and find the best <span className="text-[#FF5733] font-medium">group parties</span> in town.
+          <h1 className="text-3xl font-extrabold tracking-tight drop-shadow-lg">The best<span className="text-[#FF5733] font-medium"> nights </span> of your life.</h1>
+          <p className="text-gray-200 text-base max-w-[280px] mx-auto leading-relaxed drop-shadow-md">
+            
           </p>
         </div>
       </div>
 
-      {/* Inferior Section */}
-      <div className="flex flex-col w-full max-w-sm space-y-4 flex-1 justify-end pb-12">
+      <div className="flex flex-col w-full max-w-sm space-y-4 flex-1 justify-end pb-12 relative z-10">
         
-        {/* Custom Dropdown */}
+        
         <div className="relative w-full" ref={dropdownRef}>
-          {/* Button for opening the dropdown */}
           <button 
             onClick={() => setIsOpen(!isOpen)}
-            className="w-full bg-[#2A2A2A] border-2 border-[#8E44AD] text-white font-sans font-semibold py-4 px-4 rounded-2xl flex items-center justify-center space-x-2 focus:outline-none focus:ring-2 focus:ring-[#8E44AD] transition-all"
+            className="w-full bg-[#1A1A1A]/80 backdrop-blur-md border-2 border-[#8E44AD] text-white font-sans font-semibold py-4 px-4 rounded-2xl flex items-center justify-center space-x-2 focus:outline-none focus:ring-2 focus:ring-[#8E44AD] transition-all shadow-lg"
           >
-            {/* Truco: Usamos un emoji o la imagen en un span normal */}
             <span>{selectedLang.flag} {selectedLang.label}</span>
             <svg className={`fill-current h-5 w-5 absolute right-6 transition-transform ${isOpen ? 'rotate-180' : ''}`} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
               <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/>
             </svg>
           </button>
 
-          {/* Lista desplegable personalizada */}
           {isOpen && (
-            <ul className="absolute z-10 w-full mt-2 bg-[#2A2A2A] border-2 border-[#8E44AD] rounded-2xl shadow-xl overflow-hidden bottom-full mb-2">
+            <ul className="absolute z-10 w-full mt-2 bg-[#1A1A1A]/90 backdrop-blur-lg border-2 border-[#8E44AD] rounded-2xl shadow-2xl overflow-hidden bottom-full mb-2">
               {languages.map((lang) => (
                 <li key={lang.code}>
                   <button
@@ -87,20 +107,17 @@ export default function Home() {
           )}
         </div>
 
-        {/* Botones */}
         <Link 
           href="/login"
-          className="w-full bg-[#FF5733] hover:bg-[#e64d2e] text-white font-bold py-4 rounded-2xl text-center transition-all transform active:scale-95 shadow-lg shadow-orange-900/20"
+          className="w-full bg-[#FF5733] hover:bg-[#e64d2e] text-white font-bold py-4 rounded-2xl text-center transition-all transform active:scale-95 shadow-[0_0_20px_rgba(255,87,51,0.3)]"
         >
-          Get Started
+          Start the party
         </Link>
-        
-        <Link 
-          href="/map"
-          className="w-full text-[#FFC300] hover:text-yellow-500 font-semibold py-2 mt-2 text-center transition-colors text-sm"
-        >
-          Enter as Guest
-        </Link>
+        <div className="text-center space-y-3">
+          <p className="text-gray-300 text-base max-w-[280px] mx-auto leading-relaxed drop-shadow-md">
+            🔥<span className="font-extrabold bg-[linear-gradient(110deg,#FF5733_35%,#FFFFFF_50%,#FF5733_65%)] bg-[length:200%_auto] bg-clip-text text-transparent animate-shine">124</span> groups matching right now
+          </p>
+        </div>
       </div>
     </main>
   );
