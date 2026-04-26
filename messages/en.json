@@ -5,5 +5,19 @@
     "titleEnd": "of your life.",
     "buttonStart": "Start the party",
     "matchingNow": "groups matching right now"
+  },
+  "Dashboard": {
+    "welcome": "Welcome to gloo,",
+    "userNamePlaceholder": "[User's Name]!",
+    "enterGames": "Enter Games",
+    "partyTitle": "Party",
+    "partyDesc": "Discover bars, clubs and unforgettable parties.",
+    "prePartyTitle": "Pre-party",
+    "prePartyDesc": "Find friends for your ideal pre-party.",
+    "navHome": "Home",
+    "navGroups": "Groups",
+    "navMap": "Map",
+    "navMessages": "Messages",
+    "navProfile": "My Profile"
   }
 }
