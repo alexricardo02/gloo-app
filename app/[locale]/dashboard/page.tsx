@@ -8,7 +8,7 @@ export default function MainDashboard() {
 
   return (
     <div className="min-h-screen bg-white text-gray-900 font-sans pb-24">
-      {/* 1. HEADER */}
+      {/* HEADER */}
       <header className="flex justify-between items-center p-6">
         {/* Logo */}
         <div className="flex items-center gap-2">
@@ -33,7 +33,7 @@ export default function MainDashboard() {
       </header>
 
       <main className="px-6 max-w-md mx-auto">
-        {/* 2. GREETING */}
+        {/* GREETING TEXT*/}
         <div className="text-center mt-4 mb-8">
           <h1 className="text-3xl font-medium text-gray-800">
             Welcome to gloo,<br/>
@@ -41,7 +41,7 @@ export default function MainDashboard() {
           </h1>
         </div>
 
-        {/* 3. ENTER GAMES BUTTON */}
+        {/* ENTER GAMES BUTTON */}
         <button className="w-full bg-[#FF5733] text-white rounded-2xl py-4 flex items-center justify-center gap-3 shadow-[0_8px_20px_rgba(255,87,51,0.3)] hover:scale-[1.02] transition-transform active:scale-95 mb-8">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-8 h-8">
             <path strokeLinecap="round" strokeLinejoin="round" d="M14.25 6.087c0-.355.186-.676.401-.959.221-.29.349-.634.349-1.003 0-1.036-1.007-1.875-2.25-1.875s-2.25.84-2.25 1.875c0 .369.128.713.349 1.003.215.283.401.604.401.959v0a.64.64 0 0 1-.657.643 48.39 48.39 0 0 1-4.163-.3c.186 1.613.293 3.25.315 4.907a.656.656 0 0 1-.658.663v0c-.355 0-.676-.186-.959-.401a1.647 1.647 0 0 0-1.003-.349c-1.036 0-1.875 1.007-1.875 2.25s.84 2.25 1.875 2.25c.369 0 .713-.128 1.003-.349.283-.215.604-.401.959-.401v0c.31 0 .555.26.536.57a48.053 48.053 0 0 1-.22 3.197c-.015.176.108.33.284.333 1.942.04 3.896.04 5.836 0a.286.286 0 0 0 .284-.333 48.053 48.053 0 0 1-.22-3.197c-.019-.31.226-.57.536-.57v0c.355 0 .676.186.959.401.29.221.634.349 1.003.349 1.036 0 1.875-1.007 1.875-2.25s-.84-2.25-1.875-2.25c-.369 0-.713.128-1.003.349-.283.215-.604.401-.959.401v0a.656.656 0 0 1-.658-.663 48.422 48.422 0 0 1 .315-4.907 48.39 48.39 0 0 1-4.163.3.64.64 0 0 1-.657-.643v0Z" />
@@ -49,7 +49,7 @@ export default function MainDashboard() {
           <span className="text-xl font-bold">Enter Games</span>
         </button>
 
-        {/* 4. MODE CARDS (Party / Pre-party) */}
+        {/* MODE CARDS (Party / Pre-party) */}
         <div className="grid grid-cols-2 gap-4">
           
           {/* Party Card */}
@@ -89,7 +89,7 @@ export default function MainDashboard() {
         </div>
       </main>
 
-      {/* 5. FOOTER NAVIGATION BAR */}
+      {/* FOOTER NAVIGATION BAR */}
       <footer className="fixed bottom-0 w-full bg-white border-t border-gray-100 flex justify-around py-3 px-2 z-50 rounded-t-3xl shadow-[0_-4px_20px_rgba(0,0,0,0.05)] pb-6">
         {[
           { id: 'Groups', label: 'Groups', icon: 'M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z' },
