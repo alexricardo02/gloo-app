@@ -5,5 +5,19 @@
     "titleEnd": "de tu vida.",
     "buttonStart": "Empezar la fiesta",
     "matchingNow": "grupos haciendo match ahora"
+  },
+  "Dashboard": {
+    "welcome": "Bienvenido a gloo,",
+    "userNamePlaceholder": "¡[Nombre de Usuario]!",
+    "enterGames": "Entrar a Juegos",
+    "partyTitle": "Fiesta",
+    "partyDesc": "Descubre bares, discotecas y fiestas inolvidables.",
+    "prePartyTitle": "Previa",
+    "prePartyDesc": "Encuentra amigos para tu previa ideal.",
+    "navHome": "Inicio",
+    "navGroups": "Grupos",
+    "navMap": "Mapa",
+    "navMessages": "Mensajes",
+    "navProfile": "Mi Perfil"
   }
 }

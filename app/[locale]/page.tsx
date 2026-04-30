@@ -115,7 +115,7 @@ export default function Home() {
         </div>
 
         <Link 
-          href={`/${currentLocale}/login`}
+          href={`/${currentLocale}/dashboard`}
           className="w-full bg-[#FF5733] hover:bg-[#e64d2e] text-white font-bold py-4 rounded-2xl text-center transition-all transform active:scale-95 shadow-[0_0_20px_rgba(255,87,51,0.3)]"
         >
           {t("buttonStart")}
