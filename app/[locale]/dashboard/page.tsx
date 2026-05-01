@@ -5,6 +5,9 @@ import { useState } from "react";
 import Image from "next/image";
 // 2. IMPORTANT: Import the useTranslations hook
 import { useTranslations } from "next-intl";
+// 3. IMPORTANT: Import Link for the login button routing
+import Link from "next/link";
+
 
 export default function MainDashboard() {
   const [activeTab, setActiveTab] = useState("Home");
@@ -104,6 +107,22 @@ export default function MainDashboard() {
 
         </div>
       </main>
+
+      {/* LOGIN PROMPT BANNER (GUEST MODE) */}
+      <div className="fixed bottom-[88px] left-0 w-full px-4 z-40">
+        <div className="max-w-md mx-auto bg-gray-900 rounded-2xl p-4 shadow-2xl flex items-center justify-between border border-gray-800">
+          <div className="flex-1 pr-2">
+            <h3 className="text-white font-bold text-sm">{t('loginPromptTitle')}</h3>
+            <p className="text-gray-400 text-xs mt-0.5 leading-tight">{t('loginPromptDesc')}</p>
+          </div>
+          <Link 
+            href="/login" 
+            className="shrink-0 bg-[#FF5733] hover:bg-[#e64d2e] text-white font-bold py-2.5 px-5 rounded-xl text-sm transition-all shadow-[0_4px_14px_rgba(255,87,51,0.39)] active:scale-95"
+          >
+            {t('loginButton')}
+          </Link>
+        </div>
+      </div>
 
       {/* FOOTER NAVIGATION BAR */}
       <footer className="fixed bottom-0 w-full bg-white border-t border-gray-100 flex justify-around py-3 px-2 z-50 rounded-t-3xl shadow-[0_-4px_20px_rgba(0,0,0,0.05)] pb-6">

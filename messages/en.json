@@ -18,6 +18,9 @@
     "navGroups": "Groups",
     "navMap": "Map",
     "navMessages": "Messages",
-    "navProfile": "My Profile"
+    "navProfile": "My Profile",
+    "loginPromptTitle": "Unlock all features",
+    "loginPromptDesc": "Create an account to chat and match with groups.",
+    "loginButton": "Sign in"
   }
 }
