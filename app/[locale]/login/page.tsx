@@ -1,14 +1,31 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useLocale } from "next-intl";
 
 export default function LoginPage() {
+  const router = useRouter();
+  const locale = useLocale();
+
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4 font-sans">
-      {/* Tarjeta principal */}
+      {/* Main Card */}
       <div className="w-full max-w-md bg-white rounded-[2.5rem] p-8 shadow-xl flex flex-col">
+
+        <div className="flex items-center mb-6">
+          <button 
+            onClick={() => router.push(`/${locale}/dashboard`)}
+            className="p-2 -ml-2 rounded-full hover:bg-gray-100 transition-colors text-gray-600"
+            aria-label="Go to Dashboard"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-6 h-6">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+            </svg>
+          </button>
+        </div>
         
-        {/* Encabezado */}
+        {/* header */}
         <div className="mt-4 mb-8">
           <h1 className="text-3xl font-extrabold text-black mb-2">Sign in</h1>
           <p className="text-sm text-gray-600">
@@ -16,7 +33,7 @@ export default function LoginPage() {
           </p>
         </div>
 
-        {/* Formulario */}
+        {/* form */}
         <form className="flex flex-col gap-4">
           
           {/* Input Email */}
@@ -61,7 +78,6 @@ export default function LoginPage() {
           </button>
         </form>
 
-        {/* Separador */}
         <div className="flex items-center my-8">
           <hr className="flex-grow border-gray-200" />
           <span className="px-4 text-gray-400 text-sm">or</span>
