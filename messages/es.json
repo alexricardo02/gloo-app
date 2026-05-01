@@ -18,6 +18,9 @@
     "navGroups": "Grupos",
     "navMap": "Mapa",
     "navMessages": "Mensajes",
-    "navProfile": "Mi Perfil"
+    "navProfile": "Mi Perfil",
+    "loginPromptTitle": "Desbloquea todo",
+    "loginPromptDesc": "Crea una cuenta para chatear y conectar con grupos.",
+    "loginButton": "Ingresar"
   }
 }
