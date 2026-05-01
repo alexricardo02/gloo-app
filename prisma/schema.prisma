@@ -38,6 +38,7 @@ model User {
   messages       Message[]
 
   createdAt     DateTime  @default(now())
+  gameScores     GameScore[]
 }
 
 model Group {
@@ -103,4 +104,25 @@ model Message {
   sender      User     @relation(fields: [senderId], references: [id])
   
   createdAt   DateTime @default(now())
+}
+
+// FOR THE USERS
+
+model GameScore {
+  id          String   @id @default(cuid())
+  gameName    String   // "BeerPong", "Quiz", "ReactionTest"
+  score       Int      
+  
+  // Registered User
+  // user loged in, we save the id
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id])
+  
+  // Guest User
+  // if not logged in, cookie stored the guestId
+  guestId     String?  
+
+  createdAt   DateTime @default(now())
+
+  @@index([gameName, score(sort: Desc)])
 }
