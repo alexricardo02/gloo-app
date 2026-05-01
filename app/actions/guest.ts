@@ -36,3 +36,8 @@ export async function clearGuestSession() {
   cookieStore.delete("gloo_is_guest");
   cookieStore.delete("gloo_guest_id");
 }
+
+export async function checkIsGuest() {
+  const cookieStore = await cookies();
+  return cookieStore.get("gloo_is_guest")?.value === "true";
+}

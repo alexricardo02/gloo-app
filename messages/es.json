@@ -22,5 +22,11 @@
     "loginPromptTitle": "Desbloquea todo",
     "loginPromptDesc": "Crea una cuenta para chatear y conectar con grupos.",
     "loginButton": "Ingresar"
+  },
+  "Games": {
+    "title": "Juegos",
+    "subtitle": "¡Juega con tu grupo y establece el récord!",
+    "neverhaveiever": "Yo nunca nunca",
+    "truthordare": "Verdad o reto"
   }
 }

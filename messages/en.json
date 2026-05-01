@@ -22,5 +22,11 @@
     "loginPromptTitle": "Unlock all features",
     "loginPromptDesc": "Create an account to chat and match with groups.",
     "loginButton": "Sign in"
+  },
+  "Games": {
+    "title": "Games",
+    "subtitle": "Play with your group and set the highscore!",
+    "neverhaveiever": "Never have I ever",
+    "truthordare": "Truth or Dare"
   }
 }
