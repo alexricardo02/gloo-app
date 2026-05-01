@@ -69,7 +69,7 @@ export default function MainDashboard() {
         </div>
 
         {/* ENTER GAMES BUTTON */}
-        <button className="w-full bg-[#FF5733] text-white rounded-2xl py-4 flex items-center justify-center gap-3 shadow-[0_8px_20px_rgba(255,87,51,0.3)] hover:scale-[1.02] transition-transform active:scale-95 mb-8">
+        <button onClick={() => router.push(`/${locale}/games`)} className="w-full bg-[#FF5733] text-white rounded-2xl py-4 flex items-center justify-center gap-3 shadow-[0_8px_20px_rgba(255,87,51,0.3)] hover:scale-[1.02] transition-transform active:scale-95 mb-8">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-8 h-8">
             <path strokeLinecap="round" strokeLinejoin="round" d="M14.25 6.087c0-.355.186-.676.401-.959.221-.29.349-.634.349-1.003 0-1.036-1.007-1.875-2.25-1.875s-2.25.84-2.25 1.875c0 .369.128.713.349 1.003.215.283.401.604.401.959v0a.64.64 0 0 1-.657.643 48.39 48.39 0 0 1-4.163-.3c.186 1.613.293 3.25.315 4.907a.656.656 0 0 1-.658.663v0c-.355 0-.676-.186-.959-.401a1.647 1.647 0 0 0-1.003-.349c-1.036 0-1.875 1.007-1.875 2.25s.84 2.25 1.875 2.25c.369 0 .713-.128 1.003-.349.283-.215.604-.401.959-.401v0c.31 0 .555.26.536.57a48.053 48.053 0 0 1-.22 3.197c-.015.176.108.33.284.333 1.942.04 3.896.04 5.836 0a.286.286 0 0 0 .284-.333 48.053 48.053 0 0 1-.22-3.197c-.019-.31.226-.57.536-.57v0c.355 0 .676.186.959.401.29.221.634.349 1.003.349 1.036 0 1.875-1.007 1.875-2.25s-.84-2.25-1.875-2.25c-.369 0-.713.128-1.003.349-.283.215-.604.401-.959.401v0a.656.656 0 0 1-.658-.663 48.422 48.422 0 0 1 .315-4.907 48.39 48.39 0 0 1-4.163.3.64.64 0 0 1-.657-.643v0Z" />
           </svg>
