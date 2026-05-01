@@ -12,7 +12,7 @@ export default function LoginPage() {
         <div className="mt-4 mb-8">
           <h1 className="text-3xl font-extrabold text-black mb-2">Sign in</h1>
           <p className="text-sm text-gray-600">
-            New user? <Link href="#" className="text-black font-bold hover:underline">Create an account</Link>
+            New user? <Link href="/register" className="text-black font-bold hover:underline">Create an account</Link>
           </p>
         </div>
 
