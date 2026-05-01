@@ -2,9 +2,10 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useTransition } from 'react';
 import { useTranslations, useLocale } from "next-intl";
 import { useRouter, usePathname } from "next/navigation";
+import { loginAsGuest } from "@/app/actions/guest";
 
 const languages = [
   { code: 'en', label: 'English', flag: '🇬🇧' },
@@ -19,11 +20,19 @@ export default function Home() {
   const currentLocale = useLocale(); 
   const router = useRouter();
   const pathname = usePathname();
+  const [isPending, startTransition] = useTransition();
 
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const activeLanguage = languages.find(lang => lang.code === currentLocale) || languages[0];
+
+  // handle click 
+  const handleGuestEntry = () => {
+    startTransition(async () => {
+      await loginAsGuest(currentLocale);
+    });
+  };
   
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -114,12 +123,13 @@ export default function Home() {
           )}
         </div>
 
-        <Link 
-          href={`/${currentLocale}/dashboard`}
-          className="w-full bg-[#FF5733] hover:bg-[#e64d2e] text-white font-bold py-4 rounded-2xl text-center transition-all transform active:scale-95 shadow-[0_0_20px_rgba(255,87,51,0.3)]"
+        <button
+          onClick={handleGuestEntry}
+          disabled={isPending}
+          className="w-full bg-[#FF5733] hover:bg-[#e64d2e] text-white font-bold py-4 rounded-2xl text-center transition-all transform active:scale-95 shadow-[0_0_20px_rgba(255,87,51,0.3)] disabled:opacity-70"
         >
-          {t("buttonStart")}
-        </Link>
+          {isPending ? "..." : t("buttonStart")}
+        </button>
         <div className="text-center space-y-3">
           <p className="text-gray-300 text-base max-w-[280px] mx-auto leading-relaxed drop-shadow-md">
             🔥<span className="font-extrabold bg-[linear-gradient(110deg,#FF5733_35%,#FFFFFF_50%,#FF5733_65%)] bg-[length:200%_auto] bg-clip-text text-transparent animate-shine">124</span> {t("matchingNow")}
