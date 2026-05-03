@@ -1,8 +1,6 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,50 +9,59 @@ datasource db {
   provider = "postgresql"
 }
 
-
-// Roles: Bar owners have different permissions than regular users
+// ROLES: Barbesitzer haben andere Berechtigungen als reguläre Nutzer
 enum Role {
-  USER       // Thomas, Sophie (Group Hosts)
-  BAR_OWNER  // Venue/Bar owner
+  USER       // Thomas, Sophie (Gruppen-Hosts)
+  BAR_OWNER  // Venue/Bar-Besitzer
 }
 
 model User {
-  id            String    @id @default(cuid())
-  username      String?   // Changed from 'name' to 'username'
-  email         String    @unique
-  role          Role      @default(USER) // Bar Owner vs Regular User
-  isGuest       Boolean   @default(false)
-  image         String?   
+  id              String      @id @default(cuid())
+  // Daten aus dem Register-Formular (page_4)
+  firstName       String?
+  lastName        String?
+  email           String      @unique
+  password        String      // Für den Login-Flow benötigt
+  dateOfBirth     DateTime?   // 'dob' aus dem Formular
+  phone           String?     // 'phone' aus dem Formular
   
-  // Relation: A Host (User) creates ONE group for going out
-  group         Group?    @relation("HostGroup")
+  username        String?     // Optionaler Anzeigename
+  role            Role        @default(USER)
+  isGuest         Boolean     @default(false) // Steuert den Teaser-Modus im Dashboard
+  image           String?     // Profilbild (scharf oder verpixelt je nach Gast-Status)
   
-  // Relation: A Bar Owner can create multiple events/parties
-  events        Event[]
+  // RELATIONEN
+  // Ein Host (User) erstellt EINE Gruppe zum Ausgehen
+  group           Group?      @relation("HostGroup")
+  
+  // Ein Bar-Besitzer kann mehrere Events/Partys erstellen
+  events          Event[]
 
-  // CHATS: Only allowed between Hosts
-  chatsInitiated Chat[]   @relation("HostA")
-  chatsReceived  Chat[]   @relation("HostB")
-  messages       Message[]
+  // CHATS: Austausch zwischen Gruppen-Hosts
+  chatsInitiated  Chat[]      @relation("HostA")
+  chatsReceived   Chat[]      @relation("HostB")
+  messages        Message[]
 
-  createdAt     DateTime  @default(now())
-  gameScores     GameScore[]
+  gameScores      GameScore[]
+  
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
 }
 
 model Group {
   id            String    @id @default(cuid())
   hostName      String    
-  description   String?   // e.g., "Pre-drinking (Vorglühen) at Thomas's place"
+  description   String?   // z.B. "Vorglühen bei Thomas"
   instaLink     String?   
   
-  // Represents group members who are NOT registered in the app
+  // Mitglieder, die nicht in der App registriert sind (Anzahl der Freunde)
   membersCount  Int       @default(1) 
   
   isPartyMode   Boolean   @default(true) 
   latitude      Float?    
   longitude     Float?    
   
-  // Relation to the Host (User)
+  // Relation zum Host (User)
   hostId        String    @unique
   host          User      @relation("HostGroup", fields: [hostId], references: [id])
 
@@ -63,15 +70,15 @@ model Group {
 
 model Event {
   id            String    @id @default(cuid())
-  title         String    // e.g., "Techno Night" or "Happy Hour"
+  title         String    // z.B. "Techno Night"
   description   String?
-  locationName  String    // Name of the Bar/Venue
+  locationName  String    // Name der Bar
   latitude      Float
   longitude     Float
   startTime     DateTime
   endTime       DateTime?
   
-  // Relation to the Bar Owner (User)
+  // Relation zum Bar-Besitzer (User)
   ownerId       String
   owner         User      @relation(fields: [ownerId], references: [id])
 
@@ -81,7 +88,7 @@ model Event {
 model Chat {
   id          String    @id @default(cuid())
   
-  // Connects two Hosts (Users)
+  // Verbindet zwei Hosts (User)
   hostAId     String
   hostA       User      @relation("HostA", fields: [hostAId], references: [id])
   
@@ -106,20 +113,16 @@ model Message {
   createdAt   DateTime @default(now())
 }
 
-// FOR THE USERS
-
 model GameScore {
   id          String   @id @default(cuid())
-  gameName    String   // "BeerPong", "Quiz", "ReactionTest"
+  gameName    String   // "BeerPong", "Quiz"
   score       Int      
   
-  // Registered User
-  // user loged in, we save the id
+  // Registrierter User (ID wird gespeichert)
   userId      String?
   user        User?    @relation(fields: [userId], references: [id])
   
-  // Guest User
-  // if not logged in, cookie stored the guestId
+  // Gast-User (ID wird über Cookie/localStorage getrackt)
   guestId     String?  
 
   createdAt   DateTime @default(now())

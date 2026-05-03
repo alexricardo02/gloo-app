@@ -1,9 +1,45 @@
 {
   "WelcomePage": {
-    "titleStart": "The best",
-    "titleHighlight": " nights ",
-    "titleEnd": "of your life.",
-    "buttonStart": "Start the party",
-    "matchingNow": "groups matching right now"
+    "titleStart": "Die besten",
+    "titleHighlight": " Nächte ",
+    "titleEnd": "deines Lebens.",
+    "buttonStart": "Party starten",
+    "matchingNow": "Gruppen passen gerade zusammen"
+  },
+  "Dashboard": {
+    "welcome": "Willkommen bei gloo,",
+    "userNamePlaceholder": "[Nutzername]!",
+    "enterGames": "Spiele öffnen",
+    "partyTitle": "Party",
+    "partyDesc": "Entdecke Bars, Clubs und unvergessliche Partys.",
+    "prePartyTitle": "Vorglühen",
+    "prePartyDesc": "Finde Freunde für dein ideales Vorglühen.",
+    "navHome": "Home",
+    "navGroups": "Gruppen",
+    "navMap": "Karte",
+    "navMessages": "Nachrichten",
+    "navProfile": "Profil",
+    "loginPromptTitle": "Alle Features freischalten",
+    "loginPromptDesc": "Erstelle ein Konto, um zu chatten und Gruppen zu treffen.",
+    "loginButton": "Anmelden"
+  },
+  "Games": {
+    "title": "Spiele",
+    "subtitle": "Spiele mit deiner Gruppe und knackt den Highscore!",
+    "neverhaveiever": "Ich hab noch nie",
+    "truthordare": "Wahrheit oder Pflicht"
+  },
+  "RegisterPage": {
+    "title": "Registrieren",
+    "signInLink": "Bereits ein Konto? Anmelden",
+    "firstName": "Vorname",
+    "lastName": "Nachname",
+    "email": "E-Mail Adresse",
+    "password": "Passwort",
+    "confirmPassword": "Passwort bestätigen",
+    "terms": "Ich stimme den Bedingungen und Datenschutzrichtlinien von gloo zu.",
+    "submit": "Konto erstellen",
+    "loading": "Erstelle Konto...",
+    "or": "oder registrieren mit"
   }
 }

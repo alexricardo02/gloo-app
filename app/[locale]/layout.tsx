@@ -3,6 +3,9 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "../globals.css"; 
 import { NextIntlClientProvider } from "next-intl"; 
 import { getMessages } from "next-intl/server"; 
+import { AuthProvider } from "../components/Providers"; 
+// 1. Den neuen Header importieren
+import Header from "../components/Header"; 
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -18,7 +21,6 @@ export const metadata: Metadata = {
   title: "GLOO", 
   description: "The best nights of your life",
 };
-
 
 export default async function RootLayout({
   children,
@@ -36,10 +38,17 @@ export default async function RootLayout({
       lang={locale}
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
-        <NextIntlClientProvider messages={messages} locale={locale}>
-          {children}
-        </NextIntlClientProvider>
+      <body className="min-h-full flex flex-col bg-black text-white">
+        <AuthProvider>
+          <NextIntlClientProvider messages={messages} locale={locale}>
+            {/* 2. Den Header hier einfügen, damit er auf JEDER Seite oben ist */}
+            <Header /> 
+            
+            <main className="flex-grow">
+              {children}
+            </main>
+          </NextIntlClientProvider>
+        </AuthProvider>
       </body>
     </html>
   );

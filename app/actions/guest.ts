@@ -3,23 +3,21 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
+// 1. Login als Gast
 export async function loginAsGuest(locale: string) {
-  // 1. Unique id
   const guestId = crypto.randomUUID();
-  
-  // 2. Cookies from the browser
   const cookieStore = await cookies();
 
-  // 3. Save the guest session cookie
+  // Flag für Gast-Status
   cookieStore.set("gloo_is_guest", "true", {
     path: "/",
-    maxAge: 60 * 60 * 24, // 24hs
-    httpOnly: true,       // avoid xss
+    maxAge: 60 * 60 * 24, // 24h
+    httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
   });
 
-  // 4. save the temporary guest ID cookie
+  // Eindeutige Gast-ID (nützlich für temporäre DB-Einträge)
   cookieStore.set("gloo_guest_id", guestId, {
     path: "/",
     maxAge: 60 * 60 * 24,
@@ -31,13 +29,35 @@ export async function loginAsGuest(locale: string) {
   redirect(`/${locale}/dashboard`);
 }
 
+// 2. Abfrage: Ist es ein Gast?
+export async function checkIsGuest() {
+  const cookieStore = await cookies();
+  return cookieStore.get("gloo_is_guest")?.value === "true";
+}
+
+// 3. NEU: Gast-Profil abrufen (Einzelnes Objekt statt Liste)
+export async function getGuestProfile() {
+  const isGuest = await checkIsGuest();
+  
+  if (!isGuest) return null;
+
+  // Hier würdest du normalerweise einen "Demo-User" aus deiner DB ziehen.
+  // Da du gerade testest, geben wir ein sauberes Mock-Objekt zurück:
+  return {
+    id: "guest-temp-id",
+    name: "GLOO Guest",
+    image: "https://i.pravatar.cc/150?u=guest", // Dank deiner Config jetzt erlaubt
+    role: "GUEST",
+    isPublic: true
+  };
+}
+
+// 4. Logout
 export async function clearGuestSession() {
   const cookieStore = await cookies();
   cookieStore.delete("gloo_is_guest");
   cookieStore.delete("gloo_guest_id");
-}
-
-export async function checkIsGuest() {
-  const cookieStore = await cookies();
-  return cookieStore.get("gloo_is_guest")?.value === "true";
+  
+  // Optional: Redirect zur Startseite nach dem Logout
+  redirect("/");
 }
