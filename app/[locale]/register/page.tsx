@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useLocale } from "use-intl";
+import SocialLinks from "@/app/components/SocialLinks";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -207,6 +208,9 @@ export default function RegisterPage() {
           </button>
         </div>
         
+        <div className="mt-6">
+          <SocialLinks variant="light" />
+        </div>
       </div>
     </div>
   );

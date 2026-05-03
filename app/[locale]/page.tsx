@@ -6,6 +6,7 @@ import { useState, useRef, useEffect, useTransition } from 'react';
 import { useTranslations, useLocale } from "next-intl";
 import { useRouter, usePathname } from "next/navigation";
 import { loginAsGuest } from "@/app/actions/guest";
+import SocialLinks from "@/app/components/SocialLinks";
 
 const languages = [
   { code: 'en', label: 'English', flag: '🇬🇧' },
@@ -130,6 +131,9 @@ export default function Home() {
         >
           {isPending ? "..." : t("buttonStart")}
         </button>
+        <div className="pt-4">
+          <SocialLinks variant="dark" />
+        </div>
         <div className="text-center space-y-3">
           <p className="text-gray-300 text-base max-w-[280px] mx-auto leading-relaxed drop-shadow-md">
             🔥<span className="font-extrabold bg-[linear-gradient(110deg,#FF5733_35%,#FFFFFF_50%,#FF5733_65%)] bg-[length:200%_auto] bg-clip-text text-transparent animate-shine">124</span> {t("matchingNow")}
