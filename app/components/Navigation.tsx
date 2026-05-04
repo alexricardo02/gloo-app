@@ -2,7 +2,7 @@
 
 import { useRouter, usePathname } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
-import { Home, Users, Map, MessageSquare, User } from "lucide-react";
+import { Home, Users, Map, MessageSquare, User, LogIn } from "lucide-react";
 
 interface NavigationProps {
   isGuest?: boolean;
@@ -20,11 +20,13 @@ export default function Navigation({ isGuest, onSecureClick }: NavigationProps) 
     { id: 'Groups', label: t('navGroups'), icon: <Users className="w-6 h-6" />, path: '/dashboard' },
     { id: 'Map', label: t('navMap'), icon: <Map className="w-6 h-6" />, path: '/dashboard' },
     { id: 'Messages', label: t('navMessages'), icon: <MessageSquare className="w-6 h-6" />, path: '/dashboard' },
-    { id: 'Profile', label: t('navProfile'), icon: <User className="w-6 h-6" />, path: '/profile' },
+    isGuest 
+      ? { id: 'Login', label: 'Sign in', icon: <LogIn className="w-6 h-6" />, path: '/login' }
+      : { id: 'Profile', label: t('navProfile'), icon: <User className="w-6 h-6" />, path: '/profile' }
   ];
 
-  const handleNavigation = (e: React.MouseEvent, item: typeof navItems[0]) => {
-    if (item.id !== 'Home' && isGuest && onSecureClick) {
+  const handleNavigation = (e: React.MouseEvent, item: any) => {
+    if (isGuest && item.id !== 'Home' && item.id !== 'Login' && onSecureClick) {
       onSecureClick(e);
       return;
     }

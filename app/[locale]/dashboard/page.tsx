@@ -15,7 +15,6 @@ interface PreviewGroup {
 }
 
 export default function MainDashboard() {
-  const [activeTab, setActiveTab] = useState("Home");
   const [isGuest, setIsGuest] = useState(false);
   const [previewGroup, setPreviewGroup] = useState<PreviewGroup | null>(null);
   const [showPaywall, setShowPaywall] = useState(false);
@@ -30,8 +29,9 @@ export default function MainDashboard() {
       setIsGuest(status);
 
       if (status) {
+        setShowPaywall(true); 
         setPreviewGroup({
-          imageUrl: "/images/bg-fallback.jpg",
+          imageUrl: "", 
           memberCount: 4,
           distance: "0.8 km"
         });
@@ -63,20 +63,6 @@ export default function MainDashboard() {
       router.push(targetUrl);
     }
   };
-
-  const navItems = [
-    { id: 'Home', label: t('navHome'), icon: 'M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25' },
-    { id: 'Groups', label: t('navGroups'), icon: 'M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z' },
-    { id: 'Map', label: t('navMap'), icon: 'M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z' },
-    { id: 'Messages', label: t('navMessages'), icon: 'M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 0 1-2.555-.337A5.972 5.972 0 0 1 5.41 20.97a5.969 5.969 0 0 1-.474-.065 4.48 4.48 0 0 0 .978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25Z' },
-    { 
-      id: 'Profile', 
-      label: isGuest ? t('loginButton') : t('navProfile'), 
-      icon: isGuest 
-        ? 'M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75' 
-        : 'M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z' 
-    },
-  ];
 
   return (
     <div className={`min-h-screen bg-white text-gray-900 font-sans pb-32 ${showPaywall ? 'overflow-hidden' : ''}`}>
@@ -113,25 +99,30 @@ export default function MainDashboard() {
         <div className="grid grid-cols-2 gap-4">
           {/* Party Card mit Interaktions-Schutz */}
           <button 
-            onClick={(e) => handleSecureInteraction(e, `/${locale}/groups/party-detail`)} 
+            onClick={(e) => handleSecureInteraction(e, `/${locale}/party`)} 
             className="relative w-full aspect-[1/1.7] rounded-[2.5rem] overflow-hidden shadow-lg group"
           >
             <Image 
-              src={(isGuest && previewGroup) ? previewGroup.imageUrl : "/images/bg-fallback.jpg"}
+              src= "/images/bg-fallback.jpg"
               alt="Party"
               fill
               className={`object-cover z-0 transition-all duration-1000 ${isGuest ? 'blur-2xl scale-110' : ''}`}
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/30 to-transparent z-10"></div>
+            <div className={`absolute inset-0 z-10 ${isGuest ? 'bg-gradient-to-t from-black/90 via-black/50 to-black/20' : 'bg-gradient-to-t from-black/95 via-black/30 to-transparent'}`}></div>
             <div className="relative z-20 h-full flex flex-col justify-end p-5 items-center text-center">
               <div className="text-4xl mb-4">🪩</div>
               {isGuest && previewGroup ? (
-                <div className="animate-in fade-in zoom-in duration-700">
-                  <div className="bg-white/20 backdrop-blur-md border border-white/30 rounded-full px-3 py-1 mb-2">
-                    <span className="text-white text-[11px] font-bold">Gruppe ({previewGroup.memberCount})</span>
-                  </div>
-                  <p className="text-gray-300 text-[10px]">{previewGroup.distance} entfernt</p>
-                </div>
+                <>
+                  <h2 className="text-lg font-bold text-white mb-4">Parties</h2>
+                  {previewGroup && (
+                    <div className="animate-in fade-in zoom-in duration-700 w-full flex flex-col items-center">
+                      <div className="w-full bg-white/10 backdrop-blur-md border border-white/20 rounded-full py-2 px-1 mb-2">
+                        <span className="text-white text-xs font-bold">Gruppe finden ({previewGroup.memberCount})</span>
+                      </div>
+                      <p className="text-[#FF5733] font-medium text-[10px]">{previewGroup.distance}</p>
+                    </div>
+                  )}
+                </>
               ) : (
                 <>
                   <h2 className="text-xl font-bold text-white">{t('partyTitle')}</h2>
@@ -147,21 +138,27 @@ export default function MainDashboard() {
             className="relative w-full aspect-[1/1.7] rounded-[2.5rem] overflow-hidden shadow-lg group"
           >
             <Image 
-              src={(isGuest && previewGroup) ? previewGroup.imageUrl : "/images/vorgluehen.jpg"}
+              src="/images/vorgluehen.jpg"
               alt="Pre-party"
               fill
               className={`object-cover z-0 transition-all duration-1000 ${isGuest ? 'blur-2xl scale-110' : ''}`}
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/30 to-transparent z-10"></div>
+            <div className={`absolute inset-0 z-10 ${isGuest ? 'bg-gradient-to-t from-black/90 via-black/50 to-black/20' : 'bg-gradient-to-t from-black/95 via-black/30 to-transparent'}`}></div>
             <div className="relative z-20 h-full flex flex-col justify-end p-5 items-center text-center">
               <div className="text-4xl mb-4">🍻</div>
+              
               {isGuest && previewGroup ? (
-                <div className="animate-in fade-in zoom-in duration-700">
-                  <div className="bg-white/20 backdrop-blur-md border border-white/30 rounded-full px-3 py-1 mb-2">
-                    <span className="text-white text-[11px] font-bold">Gruppe ({previewGroup.memberCount})</span>
-                  </div>
-                  <p className="text-gray-300 text-[10px]">{previewGroup.distance} entfernt</p>
-                </div>
+                <>
+                  <h2 className="text-lg font-bold text-white mb-4">Pre-party</h2>
+                  {previewGroup && (
+                    <div className="animate-in fade-in zoom-in duration-700 w-full flex flex-col items-center">
+                      <div className="w-full bg-white/10 backdrop-blur-md border border-white/20 rounded-full py-2 px-1 mb-2">
+                        <span className="text-white text-xs font-bold">Gruppe finden ({previewGroup.memberCount})</span>
+                      </div>
+                      <p className="text-[#FF5733] font-medium text-[10px]">{previewGroup.distance}</p>
+                    </div>
+                  )}
+                </>
               ) : (
                 <>
                   <h2 className="text-xl font-bold text-white">{t('prePartyTitle')}</h2>
@@ -172,27 +169,32 @@ export default function MainDashboard() {
           </button>
         </div>
 
-        {isGuest && <div className="h-24 flex items-center justify-center text-gray-400 italic text-sm mt-8">Scrolle für mehr Gruppen...</div>}
       </main>
 
       {/* PAYWALL MODAL */}
-      {showPaywall && (
-        <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300" onClick={() => setShowPaywall(false)} />
-          <div className="relative w-full max-w-sm bg-white rounded-[3rem] p-8 shadow-2xl animate-in slide-in-from-bottom-10 duration-500 text-center">
-            <div className="w-20 h-20 bg-gradient-to-tr from-[#FF5733] to-[#F1C40F] rounded-3xl mx-auto mb-6 flex items-center justify-center shadow-lg rotate-12">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="white" className="w-10 h-10 -rotate-12">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
-              </svg>
+      {showPaywall && isGuest && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center px-6">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+          <div className="relative bg-white w-full max-w-sm rounded-[3rem] p-8 text-center shadow-2xl animate-in fade-in zoom-in duration-300">
+            {/* Lock icon */}
+            <div className="w-20 h-20 bg-[#FF5733] rounded-3xl mx-auto mb-6 flex items-center justify-center shadow-lg rotate-12">
             </div>
-            <h2 className="text-2xl font-black text-gray-900 mb-4">Bereit für Gloo?</h2>
+            <h2 className="text-2xl font-black text-gray-900 mb-4">¿Ready for Gloo?</h2>
             <p className="text-gray-600 mb-8 text-sm leading-relaxed">
-              Registriere dich jetzt, um alle Gruppen in deiner Nähe <span className="font-bold text-black">scharf zu sehen</span> und sie zu kontaktieren!
+              Sign in now to unlock the full experience and connect with other people!<br/>
             </p>
-            <button onClick={() => router.push(`/${locale}/login`)} className="w-full bg-[#FF5733] text-white font-bold py-4 rounded-2xl shadow-xl active:scale-95 transition-transform mb-3">
-              Jetzt registrieren
+            
+            {/* Button to login */}
+            <button 
+              onClick={() => router.push(`/${locale}/login`)} 
+              className="w-full bg-[#FF5733] text-white font-bold py-4 rounded-2xl mb-4 shadow-lg shadow-[#FF5733]/30 active:scale-95 transition-transform"
+            >
+              Sign in to Continue
             </button>
-            <button onClick={() => setShowPaywall(false)} className="text-gray-400 text-xs font-medium uppercase tracking-widest">Vorerst weiter umschauen</button>
+            
+            <button onClick={() => setShowPaywall(false)} className="text-gray-400 text-xs font-medium uppercase tracking-widest">
+              Browse Content
+            </button>
           </div>
         </div>
       )}
