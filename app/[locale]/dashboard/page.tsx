@@ -6,6 +6,7 @@ import { useTranslations, useLocale } from "next-intl";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { checkIsGuest } from "@/app/actions/guest";
+import Navigation from "@/app/components/Navigation";
 
 interface PreviewGroup {
   imageUrl: string;
@@ -78,7 +79,7 @@ export default function MainDashboard() {
   ];
 
   return (
-    <div className={`min-h-screen bg-white text-gray-900 font-sans pb-24 ${showPaywall ? 'overflow-hidden' : ''}`}>
+    <div className={`min-h-screen bg-white text-gray-900 font-sans pb-32 ${showPaywall ? 'overflow-hidden' : ''}`}>
       {/* HEADER */}
       <header className="flex justify-between items-center p-6">
         <div className="flex items-center gap-2">
@@ -197,30 +198,10 @@ export default function MainDashboard() {
       )}
 
       {/* FOOTER MIT INTERAKTIONS-SCHUTZ */}
-      <footer className="fixed bottom-0 w-full bg-white border-t py-4 flex justify-around z-50 pb-8 shadow-[0_-10px_30px_rgba(0,0,0,0.05)] rounded-t-[2.5rem]">
-        {navItems.map((item) => {
-          const isActive = activeTab === item.id;
-          return (
-            <button 
-              key={item.id} 
-              onClick={(e) => {
-                if (item.id === 'Home') {
-                  setActiveTab(item.id);
-                } else {
-                  // Schützt alle anderen Tabs außer Home
-                  handleSecureInteraction(e);
-                  if (!isGuest) setActiveTab(item.id);
-                }
-              }}
-              className={`flex flex-col items-center gap-1 transition-all ${isActive ? 'text-[#FF5733] scale-110' : 'text-gray-400'}`}>
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={isActive ? 2.5 : 1.5} stroke="currentColor" className="w-6 h-6">
-                <path strokeLinecap="round" strokeLinejoin="round" d={item.icon} />
-              </svg>
-              <span className="text-[10px] font-bold">{item.label}</span>
-            </button>
-          );
-        })}
-      </footer>
+      <Navigation 
+        isGuest={isGuest} 
+        onSecureClick={(e) => handleSecureInteraction(e)} 
+      />
     </div>
   );
 }
