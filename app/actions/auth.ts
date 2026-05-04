@@ -61,18 +61,18 @@ export async function loginUser(formData: FormData, locale: string) {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
 
-  // Search user
+  // Search the user in the database
   const user = await prisma.user.findUnique({ where: { email } });
-  if (!user) return { error: "Invalid credentials" };
+  if (!user) return { error: "Invalid credentials" }; 
 
-  // Verify password
+  // Validate password
   const isPasswordValid = await bcrypt.compare(password, user.password);
   if (!isPasswordValid) return { error: "Invalid credentials" };
 
   // Create session with cookies
   const cookieStore = await cookies();
   cookieStore.set("gloo_user_id", user.id, { httpOnly: true, path: "/" });
-  cookieStore.delete("gloo_is_guest");
+  cookieStore.delete("gloo_is_guest"); 
 
   redirect(`/${locale}/dashboard`);
 }
