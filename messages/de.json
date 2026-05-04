@@ -1,9 +1,32 @@
 {
   "WelcomePage": {
-    "titleStart": "The best",
-    "titleHighlight": " nights ",
-    "titleEnd": "of your life.",
-    "buttonStart": "Start the party",
-    "matchingNow": "groups matching right now"
+    "titleStart": "Die besten",
+    "titleHighlight": " Nächte ",
+    "titleEnd": "deines Lebens.",
+    "buttonStart": "Party starten",
+    "matchingNow": "Gruppen matchen gerade"
+  },
+  "Dashboard": {
+    "welcome": "Willkommen bei gloo,",
+    "userNamePlaceholder": "[Nutzername]!",
+    "enterGames": "Zu den Spielen",
+    "partyTitle": "Party",
+    "partyDesc": "Entdecke Bars, Clubs und unvergessliche Partys.",
+    "prePartyTitle": "Vorglühen",
+    "prePartyDesc": "Finde Freunde für dein ideales Vorglühen.",
+    "navHome": "Startseite",
+    "navGroups": "Gruppen",
+    "navMap": "Karte",
+    "navMessages": "Nachrichten",
+    "navProfile": "Mein Profil",
+    "loginPromptTitle": "Alle Funktionen freischalten",
+    "loginPromptDesc": "Erstelle ein Konto, um zu chatten und mit Gruppen zu matchen.",
+    "loginButton": "Anmelden"
+  },
+  "Games": {
+    "title": "Spiele",
+    "subtitle": "Spiel mit deiner Gruppe und setze den Highscore!",
+    "neverhaveiever": "Ich hab noch nie",
+    "truthordare": "Wahrheit oder Pflicht"
   }
 }
