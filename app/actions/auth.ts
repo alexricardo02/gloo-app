@@ -58,11 +58,19 @@ export async function registerUser(formData: FormData, locale: string) {
 }
 
 export async function loginUser(formData: FormData, locale: string) {
-  const email = formData.get("email") as string;
+  const identifier = formData.get("identifier") as string;
   const password = formData.get("password") as string;
 
   // Search user
-  const user = await prisma.user.findUnique({ where: { email } });
+  const user = await prisma.user.findFirst({
+    where: {
+      OR: [
+        { email: identifier },
+        { username: identifier }
+      ]
+    }
+  });
+  
   if (!user) return { error: "Invalid credentials" };
 
   // Verify password
