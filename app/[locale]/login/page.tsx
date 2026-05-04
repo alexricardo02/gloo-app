@@ -46,6 +46,13 @@ export default function LoginPage() {
           </p>
         </div>
 
+
+        {error && (
+          <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-xl text-sm font-medium text-center">
+            {error}
+          </div>
+        )}
+
         {/* form */}
         <form action={handleSubmit} className="flex flex-col gap-4">
           
