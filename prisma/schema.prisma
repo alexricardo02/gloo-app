@@ -16,12 +16,15 @@ enum Role {
 }
 
 model User {
-  id             String      @id @default(cuid())
-  username       String?     
-  email          String      @unique
-  role           Role        @default(USER)
-  isGuest        Boolean     @default(false)
-  image          String?     
+  id            String    @id @default(cuid())
+  name          String
+  username      String?   @unique// Changed from 'name' to 'username'
+  email         String    @unique
+  password      String
+  birthDate     DateTime
+  role          Role      @default(USER) // Bar Owner vs Regular User
+  isGuest       Boolean   @default(false)
+  image         String?   
   
   group          Group?      @relation("HostGroup")
   events         Event[]
