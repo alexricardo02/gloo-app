@@ -36,7 +36,7 @@ export default function Navigation({ isGuest, onSecureClick }: NavigationProps) 
   };
 
   return (
-    <footer className="fixed bottom-0 w-full bg-white border-t py-4 flex justify-around z-50 pb-8 shadow-[0_-10px_30px_rgba(0,0,0,0.05)] rounded-t-[2.5rem]">
+    <footer className="fixed bottom-0 w-full bg-[#111111] border-t border-white/5 py-4 flex justify-around z-50 pb-8 shadow-[0_-20px_40px_rgba(0,0,0,0.8)] rounded-t-[2.5rem]">
       {navItems.map((item) => {
         const isActive = pathname.includes(item.path);
         
@@ -44,9 +44,9 @@ export default function Navigation({ isGuest, onSecureClick }: NavigationProps) 
           <button 
             key={item.id} 
             onClick={(e) => handleNavigation(e, item)}
-            className={`flex flex-col items-center gap-1 transition-all ${isActive ? 'text-[#FF5733] scale-110' : 'text-gray-400'}`}
+            className={`flex flex-col items-center gap-1 transition-all ${isActive ? 'text-[#FF5733] scale-110' : 'text-gray-500 hover:text-gray-300'}`}
           >
-            <div className={isActive ? "text-[#FF5733]" : "text-gray-400"}>
+            <div className={isActive ? "text-[#FF5733]" : "text-gray-500"}>
               {item.icon}
             </div>
             <span className="text-[10px] font-bold uppercase tracking-wider">
