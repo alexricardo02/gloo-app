@@ -47,18 +47,18 @@
     "termsPrefix": "Mit der Anmeldung stimmst du den",
     "termsOfService": "Nutzungsbedingungen",
     "and": "und der",
-    "privacyPolicy": "Datenschutzrichtlinie zu."
+    "privacyPolicy": "Datenschutzrichtlinie zu"
   },
   "Register": {
     "title": "Registrieren",
-    "alreadyHaveAccount": "Hast du bereits ein Konto?",
+    "alreadyHaveAccount": "Hast du bereits ein Konto? ",
     "signIn": "Anmelden",
     "namePlaceholder": "Name",
     "dobPlaceholder": "Geburtsdatum",
     "emailPlaceholder": "E-Mail-Adresse",
     "usernamePlaceholder": "Benutzername",
     "passwordPlaceholder": "Passwort",
-    "agreePrefix": "Ich stimme den",
+    "agreePrefix": "Ich stimme den ",
     "termsOfService": "Nutzungsbedingungen",
     "and": "und der",
     "privacyPolicy": "Datenschutzrichtlinie zu.",
