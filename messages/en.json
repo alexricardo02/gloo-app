@@ -1,4 +1,7 @@
 {
+  "Common": {
+    "followInstagram": "Follow us on Instagram"
+  },
   "WelcomePage": {
     "titleStart": "The best",
     "titleHighlight": " nights ",
@@ -10,23 +13,66 @@
     "welcome": "Welcome to gloo,",
     "userNamePlaceholder": "[User's Name]!",
     "enterGames": "Enter Games",
-    "partyTitle": "Party",
+    "partyTitle": "Parties",
     "partyDesc": "Discover bars, clubs and unforgettable parties.",
-    "prePartyTitle": "Pre-party",
+    "prePartyTitle": "Pre-parties",
     "prePartyDesc": "Find friends for your ideal pre-party.",
     "navHome": "Home",
     "navGroups": "Groups",
     "navMap": "Map",
     "navMessages": "Messages",
     "navProfile": "My Profile",
-    "loginPromptTitle": "Unlock all features",
-    "loginPromptDesc": "Create an account to chat and match with groups.",
-    "loginButton": "Sign in"
+    "paywallTitle": "Ready for Gloo?",
+    "paywallDesc": "Sign in now to unlock the full experience and connect with other people!",
+    "paywallButton": "Sign in to Continue",
+    "browseContent": "Browse Content",
+    "findGroup": "Find group ({count})"
   },
   "Games": {
     "title": "Games",
     "subtitle": "Play with your group and set the highscore!",
     "neverhaveiever": "Never have I ever",
     "truthordare": "Truth or Dare"
+  },
+  "Login": {
+    "title": "Sign in",
+    "newUser": "New user?",
+    "createAccount": "Create an account",
+    "emailOrUsernamePlaceholder": "Email or Username",
+    "passwordPlaceholder": "Password",
+    "forgotPassword": "Forgot password?",
+    "loginButton": "Login",
+    "or": "or",
+    "socialJoin": "Join With Your Favourite Social Media Account",
+    "termsPrefix": "By signing in with an account, you agree to gloo's",
+    "termsOfService": "Terms of Service",
+    "and": "and",
+    "privacyPolicy": "Privacy Policy"
+  },
+  "Register": {
+    "title": "Sign up",
+    "alreadyHaveAccount": "Already have an account?",
+    "signIn": "Sign in",
+    "namePlaceholder": "Name",
+    "dobPlaceholder": "Date of Birth",
+    "emailPlaceholder": "Email Address",
+    "usernamePlaceholder": "Username",
+    "passwordPlaceholder": "Password",
+    "agreePrefix": "I agree to gloo's",
+    "termsOfService": "Terms of Service",
+    "and": "and",
+    "privacyPolicy": "Privacy Policy.",
+    "createAccountButton": "Create Account",
+    "orSignUpWith": "or sign up with"
+  },
+  "Profile": {
+    "title": "Profile",
+    "groupHost": "Group Host",
+    "groupsSection": "Groups",
+    "noGroupTitle": "You haven't created a group profile yet.",
+    "noGroupDesc": "Create one to go out and match with others!",
+    "createGroupButton": "Create Group Profile",
+    "accountSection": "Account",
+    "logoutButton": "Logout"
   }
 }

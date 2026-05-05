@@ -2,12 +2,13 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useLocale } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import SocialLinks from "@/app/components/SocialLinks";
 import { useState } from "react";
 import { loginUser } from "@/app/actions/auth";
 
 export default function LoginPage() {
+  const t = useTranslations("Login");
   const router = useRouter();
   const locale = useLocale();
 
@@ -40,16 +41,16 @@ export default function LoginPage() {
         
         {/* header */}
         <div className="mt-4 mb-8">
-          <h1 className="text-3xl font-extrabold text-black mb-2">Sign in</h1>
+          <h1 className="text-3xl font-extrabold text-black mb-2">{t('title')}</h1>
           <p className="text-sm text-gray-600">
-            New user? <Link href="/register" className="text-black font-bold hover:underline">Create an account</Link>
+            {t('newUser')} <Link href="/register" className="text-black font-bold hover:underline">{t('createAccount')}</Link>
           </p>
         </div>
 
 
         {error && (
           <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-xl text-sm font-medium text-center">
-            {error}
+            {t('error')}
           </div>
         )}
 
@@ -64,7 +65,7 @@ export default function LoginPage() {
             <input 
               name="identifier"
               type="text" 
-              placeholder="Email or Username" 
+              placeholder={t('emailOrUsernamePlaceholder')}
               required
               className="bg-transparent outline-none w-full ml-3 text-gray-800 placeholder-gray-400 font-medium"
             />
@@ -78,7 +79,7 @@ export default function LoginPage() {
             <input 
               name="password"
               type={showPassword ? "text" : "password"}
-              placeholder="Password" 
+              placeholder={t('passwordPlaceholder')}
               required
               className="bg-transparent outline-none w-full ml-3 text-gray-800 placeholder-gray-400 font-medium"
             />
@@ -92,26 +93,26 @@ export default function LoginPage() {
 
           <div className="flex justify-start">
             <Link href="#" className="text-sm font-bold text-gray-800 hover:underline">
-              Forgot password?
+              {t('forgotPassword')}
             </Link>
           </div>
 
           {/* Main Action Button */}
           <button type="submit" className="w-full bg-black text-white font-bold py-4 rounded-full mt-4 hover:bg-gray-800 transition-colors active:scale-95 transform">
-            Login
+            {t('loginButton')}
           </button>
         </form>
 
         <div className="flex items-center my-8">
           <hr className="flex-grow border-gray-200" />
-          <span className="px-4 text-gray-400 text-sm">or</span>
+          <span className="px-4 text-gray-400 text-sm">{t('or')}</span>
           <hr className="flex-grow border-gray-200" />
         </div>
 
         {/* Social Login */}
         <div className="text-center">
           <p className="text-xs font-bold text-gray-800 mb-6">
-            Join With Your Favourite Social Media Account
+            {t('socialJoin')}
           </p>
           <div className="flex justify-center gap-4">
             {/* Google */}
@@ -145,8 +146,8 @@ export default function LoginPage() {
         {/* Footer Legal */}
         <div className="mt-16 text-center">
           <p className="text-xs text-gray-500 font-medium">
-            By signing in with an account, you agree to gloo&apos;s <br />
-            <Link href="#" className="text-gray-800 font-bold hover:underline">Terms of Service</Link> and <Link href="#" className="text-gray-800 font-bold hover:underline">Privacy Policy</Link>.
+            {t('termsPrefix')} <br />
+            <Link href="#" className="text-gray-800 font-bold hover:underline">{t('termsOfService')}</Link> {t('and')} <Link href="#" className="text-gray-800 font-bold hover:underline">{t('privacyPolicy')}</Link>.
           </p>
         </div>
         

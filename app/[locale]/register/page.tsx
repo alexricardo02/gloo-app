@@ -3,12 +3,14 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import SocialLinks from "@/app/components/SocialLinks";
 import { registerUser } from "@/app/actions/auth";
 
 export default function RegisterPage() {
   const router = useRouter();
+  const t = useTranslations("Register");
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const locale = useLocale();
@@ -45,9 +47,9 @@ export default function RegisterPage() {
         
         {/* Header */}
         <div className="mb-8 relative z-0">
-          <h1 className="text-3xl font-extrabold text-black mb-2">Sign up</h1>
+          <h1 className="text-3xl font-extrabold text-black mb-2">{t('title')}</h1>
           <p className="text-sm text-gray-600">
-            Already have an account? <Link href="/login" className="text-black font-bold hover:underline">Sign in</Link>
+            {t('alreadyHaveAccount')}<Link href="/login" className="text-black font-bold hover:underline">{t('signIn')}</Link>
           </p>
         </div>
 
@@ -65,7 +67,7 @@ export default function RegisterPage() {
               <input 
                 name="name"
                 type="text" 
-                placeholder="Name" 
+                placeholder={t('namePlaceholder')}
                 required
                 className="bg-transparent outline-none w-full ml-3 text-gray-800 placeholder-gray-400 font-medium"
               />
@@ -83,7 +85,7 @@ export default function RegisterPage() {
               required
               max={maxDate}
               className="bg-transparent outline-none w-full ml-3 text-gray-800 invalid:text-gray-400 font-medium"
-              placeholder="Date of Birth"
+              placeholder={t('dobPlaceholder')}
             />
           </div>
 
@@ -95,7 +97,7 @@ export default function RegisterPage() {
             <input
               name="email" 
               type="email" 
-              placeholder="Email Address" 
+              placeholder={t('emailPlaceholder')}
               required
               className="bg-transparent outline-none w-full ml-3 text-gray-800 placeholder-gray-400 font-medium"
             />
@@ -109,7 +111,7 @@ export default function RegisterPage() {
               <input 
                 name="username"
                 type="text" 
-                placeholder="Username" 
+                placeholder={t('usernamePlaceholder')}
                 required
                 className="bg-transparent outline-none w-full ml-2 text-gray-800 placeholder-gray-400 font-medium"
               />
@@ -123,7 +125,7 @@ export default function RegisterPage() {
             <input 
               name="password"
               type={showPassword ? "text" : "password"} 
-              placeholder="Password" 
+              placeholder={t('passwordPlaceholder')}
               required
               className="bg-transparent outline-none w-full ml-3 text-gray-800 placeholder-gray-400 font-medium"
             />
@@ -153,20 +155,20 @@ export default function RegisterPage() {
               className="mt-1 w-5 h-5 rounded border-gray-300 text-black accent-black focus:ring-black"
             />
             <label htmlFor="terms" className="text-sm text-gray-600 font-medium leading-tight cursor-pointer">
-              I agree to gloo&apos;s <Link href="#" className="text-black font-bold hover:underline">Terms of Service</Link> and <Link href="#" className="text-black font-bold hover:underline">Privacy Policy</Link>.
+              {t('agreePrefix')}<Link href="#" className="text-black font-bold hover:underline">{t('termsOfService')}</Link> {t('and')} <Link href="#" className="text-black font-bold hover:underline">{t('privacyPolicy')}</Link>.
             </label>
           </div>
 
           {/* Action Button */}
           <button type="submit" className="w-full bg-[#FF5733] text-white font-bold py-4 rounded-full mt-4 shadow-[0_4px_14px_rgba(255,87,51,0.39)] hover:bg-[#e64d2e] transition-all active:scale-95 transform">
-            Create Account
+            {t('createAccountButton')}
           </button>
         </form>
 
         {/* Social Register */}
         <div className="flex items-center my-6">
           <hr className="flex-grow border-gray-200" />
-          <span className="px-4 text-gray-400 text-sm">or sign up with</span>
+          <span className="px-4 text-gray-400 text-sm">{t('orSignUpWith')}</span>
           <hr className="flex-grow border-gray-200" />
         </div>
 
