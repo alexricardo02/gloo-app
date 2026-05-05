@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { checkIsGuest } from "@/app/actions/guest";
 import { useRouter } from "next/navigation";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import Navigation from "@/app/components/Navigation";
 import { Users } from "lucide-react";
 
@@ -12,6 +12,7 @@ export default function ProfilePage() {
     const [isGuest, setIsGuest] = useState(false);
   const router = useRouter();
   const locale = useLocale();
+  const t = useTranslations("Profile");
 
   useEffect(() => {
     const init = async () => {
@@ -29,7 +30,7 @@ export default function ProfilePage() {
         
         {/* Header */}
         <div className="px-6 pt-12 pb-4 flex justify-between items-center">
-          <h1 className="text-3xl font-extrabold text-gray-900">Profile</h1>
+          <h1 className="text-3xl font-extrabold text-gray-900">{t('title')}</h1>
           <button className="p-3 bg-gray-50 rounded-full text-gray-500 hover:bg-gray-100 transition-colors">
             {/* Gear Icon */}
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
@@ -66,7 +67,7 @@ export default function ProfilePage() {
       {/* Group Profile Section (Empty State) */}
       <div className="mt-8 px-6">
         <h3 className="text-gray-400 font-bold text-xs uppercase tracking-widest mb-4 ml-1">
-          Groups
+          {t('groupsSection')}
         </h3>
         
         <div className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100 flex flex-col items-center text-center">
@@ -79,13 +80,13 @@ export default function ProfilePage() {
           
           {/* Text */}
           <p className="text-gray-500 font-medium text-[15px] leading-relaxed mb-8">
-            You haven't created a group profile yet.<br/>
-            Create one to go out and match with others!
+            {t('noGroupTitle')}<br/>
+            {t('noGroupDesc')}
           </p>
           
           {/* Button */}
           <button className="w-full bg-[#FF5733] text-white font-extrabold py-4 rounded-2xl shadow-[0_4px_14px_rgba(255,87,51,0.39)] hover:bg-[#e64d2e] active:scale-95 transition-all">
-            Create Group Profile
+            {t('createGroupButton')}
           </button>
         </div>
       </div>
@@ -93,7 +94,7 @@ export default function ProfilePage() {
       {/* Account Section */}
       <div className="mt-8 px-6">
         <h3 className="text-gray-400 font-bold text-xs uppercase tracking-widest mb-4 ml-1">
-          Account
+          {t('accountSection')}
         </h3>
         
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
@@ -104,7 +105,7 @@ export default function ProfilePage() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
               </svg>
             </div>
-            <span className="font-bold text-gray-800 text-lg">Logout</span>
+            <span className="font-bold text-gray-800 text-lg">{t('logoutButton')}</span>
           </button>
         </div>
       </div>

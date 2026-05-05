@@ -1,4 +1,7 @@
 {
+  "Common": {
+    "followInstagram": "Síguenos en Instagram"
+  },
   "WelcomePage": {
     "titleStart": "Las mejores",
     "titleHighlight": " noches ",
@@ -10,23 +13,66 @@
     "welcome": "Bienvenido a gloo,",
     "userNamePlaceholder": "¡[Nombre de Usuario]!",
     "enterGames": "Entrar a Juegos",
-    "partyTitle": "Fiesta",
+    "partyTitle": "Fiestas",
     "partyDesc": "Descubre bares, discotecas y fiestas inolvidables.",
-    "prePartyTitle": "Previa",
+    "prePartyTitle": "Previas",
     "prePartyDesc": "Encuentra amigos para tu previa ideal.",
     "navHome": "Inicio",
     "navGroups": "Grupos",
     "navMap": "Mapa",
     "navMessages": "Mensajes",
     "navProfile": "Mi Perfil",
-    "loginPromptTitle": "Desbloquea todo",
-    "loginPromptDesc": "Crea una cuenta para chatear y conectar con grupos.",
-    "loginButton": "Ingresar"
+    "paywallTitle": "¿Listo para Gloo?",
+    "paywallDesc": "Inicia sesión ahora para desbloquear la experiencia completa y conectar con otras personas.",
+    "paywallButton": "Iniciar sesión para continuar",
+    "browseContent": "Seguir explorando",
+    "findGroup": "Encontrar grupo ({count})"
   },
   "Games": {
     "title": "Juegos",
     "subtitle": "¡Juega con tu grupo y establece el récord!",
     "neverhaveiever": "Yo nunca nunca",
     "truthordare": "Verdad o reto"
+  },
+  "Login": {
+    "title": "Iniciar sesión",
+    "newUser": "¿Usuario nuevo?",
+    "createAccount": "Crear una cuenta",
+    "emailOrUsernamePlaceholder": "Correo electrónico o usuario",
+    "passwordPlaceholder": "Contraseña",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "loginButton": "Entrar",
+    "or": "o",
+    "socialJoin": "Ingresa con tu red social favorita",
+    "termsPrefix": "Al iniciar sesión, aceptas los",
+    "termsOfService": "Términos de servicio",
+    "and": "y la",
+    "privacyPolicy": "Política de privacidad de gloo."
+  },
+  "Register": {
+    "title": "Registrarse",
+    "alreadyHaveAccount": "¿Ya tienes una cuenta?",
+    "signIn": "Iniciar sesión",
+    "namePlaceholder": "Nombre",
+    "dobPlaceholder": "Fecha de nacimiento",
+    "emailPlaceholder": "Correo electrónico",
+    "usernamePlaceholder": "Nombre de usuario",
+    "passwordPlaceholder": "Contraseña",
+    "agreePrefix": "Acepto los",
+    "termsOfService": "Términos de servicio",
+    "and": "y la",
+    "privacyPolicy": "Política de privacidad de gloo.",
+    "createAccountButton": "Crear cuenta",
+    "orSignUpWith": "o regístrate con"
+  },
+  "Profile": {
+    "title": "Perfil",
+    "groupHost": "Host del grupo",
+    "groupsSection": "Grupos",
+    "noGroupTitle": "Aún no has creado un perfil de grupo.",
+    "noGroupDesc": "¡Crea uno para salir y conectar con otros!",
+    "createGroupButton": "Crear Perfil de Grupo",
+    "accountSection": "Cuenta",
+    "logoutButton": "Cerrar sesión"
   }
 }

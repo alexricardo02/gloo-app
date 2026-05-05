@@ -1,32 +1,78 @@
 {
+  "Common": {
+    "followInstagram": "Folge uns auf Instagram"
+  },
   "WelcomePage": {
     "titleStart": "Die besten",
     "titleHighlight": " Nächte ",
     "titleEnd": "deines Lebens.",
-    "buttonStart": "Party starten",
+    "buttonStart": "Starte die Party",
     "matchingNow": "Gruppen matchen gerade"
   },
   "Dashboard": {
     "welcome": "Willkommen bei gloo,",
-    "userNamePlaceholder": "[Nutzername]!",
-    "enterGames": "Zu den Spielen",
-    "partyTitle": "Party",
+    "userNamePlaceholder": "[Benutzername]!",
+    "enterGames": "Spiele starten",
+    "partyTitle": "Partys",
     "partyDesc": "Entdecke Bars, Clubs und unvergessliche Partys.",
-    "prePartyTitle": "Vorglühen",
-    "prePartyDesc": "Finde Freunde für dein ideales Vorglühen.",
-    "navHome": "Startseite",
+    "prePartyTitle": "Pre-partys",
+    "prePartyDesc": "Finde Freunde für deine ideale Pre-party.",
+    "navHome": "Home",
     "navGroups": "Gruppen",
     "navMap": "Karte",
     "navMessages": "Nachrichten",
     "navProfile": "Mein Profil",
-    "loginPromptTitle": "Alle Funktionen freischalten",
-    "loginPromptDesc": "Erstelle ein Konto, um zu chatten und mit Gruppen zu matchen.",
-    "loginButton": "Anmelden"
+    "paywallTitle": "Bereit für Gloo?",
+    "paywallDesc": "Registriere dich jetzt, um die volle Erfahrung zu genießen und dich mit anderen zu vernetzen!",
+    "paywallButton": "Anmelden um fortzufahren",
+    "browseContent": "Weiter umschauen",
+    "findGroup": "Gruppe finden ({count})"
   },
   "Games": {
     "title": "Spiele",
-    "subtitle": "Spiel mit deiner Gruppe und setze den Highscore!",
+    "subtitle": "Spiele mit deiner Gruppe und knacke den Highscore!",
     "neverhaveiever": "Ich hab noch nie",
     "truthordare": "Wahrheit oder Pflicht"
+  },
+  "Login": {
+    "title": "Anmelden",
+    "newUser": "Neuer Benutzer?",
+    "createAccount": "Konto erstellen",
+    "emailOrUsernamePlaceholder": "E-Mail oder Benutzername",
+    "passwordPlaceholder": "Passwort",
+    "forgotPassword": "Passwort vergessen?",
+    "loginButton": "Login",
+    "or": "oder",
+    "socialJoin": "Melde dich mit deinem bevorzugten Social-Media-Konto an",
+    "termsPrefix": "Mit der Anmeldung stimmst du den",
+    "termsOfService": "Nutzungsbedingungen",
+    "and": "und der",
+    "privacyPolicy": "Datenschutzrichtlinie zu."
+  },
+  "Register": {
+    "title": "Registrieren",
+    "alreadyHaveAccount": "Hast du bereits ein Konto?",
+    "signIn": "Anmelden",
+    "namePlaceholder": "Name",
+    "dobPlaceholder": "Geburtsdatum",
+    "emailPlaceholder": "E-Mail-Adresse",
+    "usernamePlaceholder": "Benutzername",
+    "passwordPlaceholder": "Passwort",
+    "agreePrefix": "Ich stimme den",
+    "termsOfService": "Nutzungsbedingungen",
+    "and": "und der",
+    "privacyPolicy": "Datenschutzrichtlinie zu.",
+    "createAccountButton": "Konto erstellen",
+    "orSignUpWith": "oder registrieren mit"
+  },
+  "Profile": {
+    "title": "Profil",
+    "groupHost": "Group Host",
+    "groupsSection": "Gruppen",
+    "noGroupTitle": "Du hast noch kein Gruppenprofil erstellt.",
+    "noGroupDesc": "Erstelle eines, um auszugehen und dich mit anderen zu vernetzen!",
+    "createGroupButton": "Gruppenprofil erstellen",
+    "accountSection": "Konto",
+    "logoutButton": "Abmelden"
   }
 }

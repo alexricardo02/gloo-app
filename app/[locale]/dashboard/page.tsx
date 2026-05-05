@@ -113,11 +113,11 @@ export default function MainDashboard() {
               <div className="text-4xl mb-4">🪩</div>
               {isGuest && previewGroup ? (
                 <>
-                  <h2 className="text-lg font-bold text-white mb-4">Parties</h2>
+                  <h2 className="text-lg font-bold text-white mb-4">{t('partyTitle')}</h2>
                   {previewGroup && (
                     <div className="animate-in fade-in zoom-in duration-700 w-full flex flex-col items-center">
                       <div className="w-full bg-white/10 backdrop-blur-md border border-white/20 rounded-full py-2 px-1 mb-2">
-                        <span className="text-white text-xs font-bold">Gruppe finden ({previewGroup.memberCount})</span>
+                        <span className="text-white text-xs font-bold">{t('findGroup', { count: previewGroup.memberCount })}</span>
                       </div>
                       <p className="text-[#FF5733] font-medium text-[10px]">{previewGroup.distance}</p>
                     </div>
@@ -149,11 +149,11 @@ export default function MainDashboard() {
               
               {isGuest && previewGroup ? (
                 <>
-                  <h2 className="text-lg font-bold text-white mb-4">Pre-party</h2>
+                  <h2 className="text-lg font-bold text-white mb-4">{t('prePartyTitle')}</h2>
                   {previewGroup && (
                     <div className="animate-in fade-in zoom-in duration-700 w-full flex flex-col items-center">
                       <div className="w-full bg-white/10 backdrop-blur-md border border-white/20 rounded-full py-2 px-1 mb-2">
-                        <span className="text-white text-xs font-bold">Gruppe finden ({previewGroup.memberCount})</span>
+                        <span className="text-white text-xs font-bold">{t('findGroup', { count: previewGroup.memberCount })}</span>
                       </div>
                       <p className="text-[#FF5733] font-medium text-[10px]">{previewGroup.distance}</p>
                     </div>
@@ -179,9 +179,9 @@ export default function MainDashboard() {
             {/* Lock icon */}
             <div className="w-20 h-20 bg-[#FF5733] rounded-3xl mx-auto mb-6 flex items-center justify-center shadow-lg rotate-12">
             </div>
-            <h2 className="text-2xl font-black text-gray-900 mb-4">¿Ready for Gloo?</h2>
+            <h2 className="text-2xl font-black text-gray-900 mb-4">{t('paywallTitle')}</h2>
             <p className="text-gray-600 mb-8 text-sm leading-relaxed">
-              Sign in now to unlock the full experience and connect with other people!<br/>
+              {t('paywallDesc')}
             </p>
             
             {/* Button to login */}
@@ -189,11 +189,11 @@ export default function MainDashboard() {
               onClick={() => router.push(`/${locale}/login`)} 
               className="w-full bg-[#FF5733] text-white font-bold py-4 rounded-2xl mb-4 shadow-lg shadow-[#FF5733]/30 active:scale-95 transition-transform"
             >
-              Sign in to Continue
+              {t('paywallButton')}
             </button>
             
             <button onClick={() => setShowPaywall(false)} className="text-gray-400 text-xs font-medium uppercase tracking-widest">
-              Browse Content
+              {t('browseContent')}
             </button>
           </div>
         </div>

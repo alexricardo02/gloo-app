@@ -1,10 +1,13 @@
 "use client";
 
+import { useTranslations } from "next-intl";
+
 interface SocialLinksProps {
   variant?: "dark" | "light";
 }
 
 export default function SocialLinks({ variant = "dark" }: SocialLinksProps) {
+  const t = useTranslations("Common");
   const isDark = variant === "dark";
   const baseClasses = "inline-flex items-center gap-3 rounded-2xl px-4 py-3 transition-all duration-200 font-semibold";
   const themeClasses = isDark
@@ -28,7 +31,7 @@ export default function SocialLinks({ variant = "dark" }: SocialLinksProps) {
           <path d="M7.75 2A5.75 5.75 0 0 0 2 7.75v8.5A5.75 5.75 0 0 0 7.75 22h8.5A5.75 5.75 0 0 0 22 16.25v-8.5A5.75 5.75 0 0 0 16.25 2h-8.5ZM12 7.5a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9Zm5.75-.75a1 1 0 1 1 0 2 1 1 0 0 1 0-2Z" />
           <path d="M12 9.25a2.75 2.75 0 1 0 0 5.5 2.75 2.75 0 0 0 0-5.5Z" fill="currentColor" />
         </svg>
-        <span>Follow us on Instagram</span>
+        <span>{t("followInstagram")}</span>
       </a>
     </div>
   );

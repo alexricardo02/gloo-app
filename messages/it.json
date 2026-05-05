@@ -1,9 +1,78 @@
 {
+  "Common": {
+    "followInstagram": "Seguici su Instagram"
+  },
   "WelcomePage": {
-    "titleStart": "The best",
-    "titleHighlight": " nights ",
-    "titleEnd": "of your life.",
-    "buttonStart": "Start the party",
-    "matchingNow": "groups matching right now"
+    "titleStart": "Le migliori",
+    "titleHighlight": " notti ",
+    "titleEnd": "della tua vita.",
+    "buttonStart": "Inizia la festa",
+    "matchingNow": "gruppi che stanno facendo match ora"
+  },
+  "Dashboard": {
+    "welcome": "Benvenuti su gloo,",
+    "userNamePlaceholder": "[Nome Utente]!",
+    "enterGames": "Entra nei Giochi",
+    "partyTitle": "Feste",
+    "partyDesc": "Scopri bar, club e feste indimenticabili.",
+    "prePartyTitle": "Pre-serate",
+    "prePartyDesc": "Trova amici per la tua pre-serata ideale.",
+    "navHome": "Home",
+    "navGroups": "Gruppi",
+    "navMap": "Mappa",
+    "navMessages": "Messaggi",
+    "navProfile": "Il mio Profilo",
+    "paywallTitle": "Pronto per Gloo?",
+    "paywallDesc": "Accedi ora per sbloccare l'esperienza completa e connetterti con altre persone!",
+    "paywallButton": "Accedi per continuare",
+    "browseContent": "Esplora i contenuti",
+    "findGroup": "Trova gruppo ({count})"
+  },
+  "Games": {
+    "title": "Giochi",
+    "subtitle": "Gioca con il tuo gruppo e stabilisci il record!",
+    "neverhaveiever": "Non ho mai",
+    "truthordare": "Obbligo o Verità"
+  },
+  "Login": {
+    "title": "Accedi",
+    "newUser": "Nuovo utente?",
+    "createAccount": "Crea un account",
+    "emailOrUsernamePlaceholder": "Email o Nome utente",
+    "passwordPlaceholder": "Password",
+    "forgotPassword": "Password dimenticata?",
+    "loginButton": "Login",
+    "or": "o",
+    "socialJoin": "Accedi con il tuo account social preferito",
+    "termsPrefix": "Accedendo, accetti i",
+    "termsOfService": "Termini di servizio",
+    "and": "e la",
+    "privacyPolicy": "Informativa sulla privacy."
+  },
+  "Register": {
+    "title": "Registrati",
+    "alreadyHaveAccount": "Hai già un account?",
+    "signIn": "Accedi",
+    "namePlaceholder": "Nome",
+    "dobPlaceholder": "Data di nascita",
+    "emailPlaceholder": "Indirizzo email",
+    "usernamePlaceholder": "Nome utente",
+    "passwordPlaceholder": "Password",
+    "agreePrefix": "Accetto i",
+    "termsOfService": "Termini di servizio",
+    "and": "e la",
+    "privacyPolicy": "Informativa sulla privacy.",
+    "createAccountButton": "Crea account",
+    "orSignUpWith": "o registrati con"
+  },
+  "Profile": {
+    "title": "Profilo",
+    "groupHost": "Host del gruppo",
+    "groupsSection": "Gruppi",
+    "noGroupTitle": "Non hai ancora creato un profilo di gruppo.",
+    "noGroupDesc": "Creane uno per uscire e connetterti con altri!",
+    "createGroupButton": "Crea Profilo di Gruppo",
+    "accountSection": "Account",
+    "logoutButton": "Disconnetti"
   }
 }
