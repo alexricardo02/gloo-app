@@ -65,7 +65,24 @@ model Group {
   hostId        String   @unique
   host          User     @relation("HostGroup", fields: [hostId], references: [id])
 
+  likesSent     GroupLike[] @relation("LikesSent")
+  likesReceived GroupLike[] @relation("LikesReceived")
+
   createdAt     DateTime @default(now())
+}
+
+model GroupLike {
+  id          String   @id @default(cuid())
+  
+  fromGroupId String
+  fromGroup   Group    @relation("LikesSent", fields: [fromGroupId], references: [id], onDelete: Cascade)
+  
+  toGroupId   String
+  toGroup     Group    @relation("LikesReceived", fields: [toGroupId], references: [id], onDelete: Cascade)
+  
+  createdAt   DateTime @default(now())
+
+  @@unique([fromGroupId, toGroupId])
 }
 
 model Event {
