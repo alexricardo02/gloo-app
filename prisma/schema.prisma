@@ -42,22 +42,18 @@ model Group {
   description   String?  
   instaLink     String?  
   
-  // --- Group Info (image_649842.jpg) ---
-  membersCount  Int      @default(1)  // "Number of people"
-  ageMin        Int      @default(18) // Slider Start
-  ageMax        Int      @default(30) // Slider Ende
-  groupGender   String   @default("Mixed") // "Group Gender": Men, Women, Mixed
+  membersCount  Int      @default(1)  
+  ageMin        Int      @default(18) 
+  ageMax        Int      @default(30) 
+  groupGender   String   @default("Mixed") 
   
-  // Bilder-URLs (für die Upload-Sektion im UI)
   images        String[] 
 
-  // --- Search Preferences ---
-  searchAgeMin  Int      @default(18) // "Age of groups to search for"
+  searchAgeMin  Int      @default(18) 
   searchAgeMax  Int      @default(35)
-  seekingGender String   @default("Any")   // "Genders we seek": Only Men, Only Women, Any
-  groupType     String   @default("Friends") // "Group types": Friends, Dates, Networking
+  seekingGender String   @default("Any")   
+  groupType     String   @default("Friends") 
 
-  // --- Location & System ---
   isPartyMode   Boolean  @default(true) 
   latitude      Float?   
   longitude     Float?   
@@ -65,7 +61,24 @@ model Group {
   hostId        String   @unique
   host          User     @relation("HostGroup", fields: [hostId], references: [id])
 
+  likesSent     GroupLike[] @relation("LikesSent")
+  likesReceived GroupLike[] @relation("LikesReceived")
+
   createdAt     DateTime @default(now())
+}
+
+model GroupLike {
+  id          String   @id @default(cuid())
+  
+  fromGroupId String
+  fromGroup   Group    @relation("LikesSent", fields: [fromGroupId], references: [id], onDelete: Cascade)
+  
+  toGroupId   String
+  toGroup     Group    @relation("LikesReceived", fields: [toGroupId], references: [id], onDelete: Cascade)
+  
+  createdAt   DateTime @default(now())
+
+  @@unique([fromGroupId, toGroupId])
 }
 
 model Event {
