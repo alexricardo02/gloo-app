@@ -9,77 +9,80 @@ datasource db {
   provider = "postgresql"
 }
 
-// Roles: Bar owners have different permissions than regular users
+// --- Enums ---
 enum Role {
   USER       // Thomas, Sophie (Group Hosts)
   BAR_OWNER  // Venue/Bar owner
 }
 
-model User {
-  id            String    @id @default(cuid())
-  name          String
-  username      String?   @unique// Changed from 'name' to 'username'
-  email         String    @unique
-  password      String
-  birthDate     DateTime
-  role          Role      @default(USER) // Bar Owner vs Regular User
-  isGuest       Boolean   @default(false)
-  image         String?   
-  
-  group          Group?      @relation("HostGroup")
-  events         Event[]
-  chatsInitiated Chat[]      @relation("HostA")
-  chatsReceived  Chat[]      @relation("HostB")
-  messages       Message[]
-  gameScores     GameScore[]
+enum Gender {
+  MALE
+  FEMALE
+  MIXED
+  OTHER      // Entspricht "Other" im UI
+  ANY        // Entspricht "Any" im UI
+}
 
-  createdAt      DateTime    @default(now())
+enum GroupType {
+  FRIENDS
+  DATES
+  NETWORKING
+}
+
+model User {
+  id              String      @id @default(cuid())
+  name            String
+  username        String?     @unique
+  email           String      @unique
+  password        String
+  birthDate       DateTime
+  role            Role        @default(USER)
+  isGuest         Boolean     @default(false)
+  image           String?     
+  
+  group           Group?      @relation("HostGroup")
+  events          Event[]
+  chatsInitiated  Chat[]      @relation("HostA")
+  chatsReceived   Chat[]      @relation("HostB")
+  messages        Message[]
+  gameScores      GameScore[]
+
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
 }
 
 model Group {
-  id            String   @id @default(cuid())
-  hostName      String   
-  description   String?  
-  instaLink     String?  
-  
-  membersCount  Int      @default(1)  
-  ageMin        Int      @default(18) 
-  ageMax        Int      @default(30) 
-  groupGender   String   @default("Mixed") 
-  
-  images        String[] 
+  id             String    @id @default(cuid())
+  userId         String    @unique
+  user           User      @relation("HostGroup", fields: [userId], references: [id], onDelete: Cascade)
 
-  searchAgeMin  Int      @default(18) 
-  searchAgeMax  Int      @default(35)
-  seekingGender String   @default("Any")   
-  groupType     String   @default("Friends") 
+  // Group Details
+  membersCount   Int       @default(1)
+  gender         String    @default("ANY")
+  ageMin         Int       @default(18)
+  ageMax         Int       @default(30)
 
-  isPartyMode   Boolean  @default(true) 
-  latitude      Float?   
-  longitude     Float?   
-  
-  hostId        String   @unique
-  host          User     @relation("HostGroup", fields: [hostId], references: [id])
+  // Photos
+  photos         String[]  // max 6
 
-  likesSent     GroupLike[] @relation("LikesSent")
-  likesReceived GroupLike[] @relation("LikesReceived")
+  // Search Preferences
+  searchGender   String    @default("ANY")
+  searchAgeMax   Int       @default(35)
+  maxDistance    Int       @default(10)
 
-  createdAt     DateTime @default(now())
+  // Public Profile
+  publicProfile  Boolean   @default(true)
+
+  // Description
+  description    String?   @db.VarChar(200)
+
+  // Instagram
+  instagram      String[]
+
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 }
 
-model GroupLike {
-  id          String   @id @default(cuid())
-  
-  fromGroupId String
-  fromGroup   Group    @relation("LikesSent", fields: [fromGroupId], references: [id], onDelete: Cascade)
-  
-  toGroupId   String
-  toGroup     Group    @relation("LikesReceived", fields: [toGroupId], references: [id], onDelete: Cascade)
-  
-  createdAt   DateTime @default(now())
-
-  @@unique([fromGroupId, toGroupId])
-}
 
 model Event {
   id            String    @id @default(cuid())
@@ -92,7 +95,7 @@ model Event {
   endTime       DateTime?
   
   ownerId       String
-  owner         User      @relation(fields: [ownerId], references: [id])
+  owner         User      @relation(fields: [ownerId], references: [id], onDelete: Cascade)
 
   createdAt     DateTime  @default(now())
 }
@@ -100,9 +103,9 @@ model Event {
 model Chat {
   id        String    @id @default(cuid())
   hostAId   String
-  hostA     User      @relation("HostA", fields: [hostAId], references: [id])
+  hostA     User      @relation("HostA", fields: [hostAId], references: [id], onDelete: Cascade)
   hostBId   String
-  hostB     User      @relation("HostB", fields: [hostBId], references: [id])
+  hostB     User      @relation("HostB", fields: [hostBId], references: [id], onDelete: Cascade)
   messages  Message[]
   createdAt DateTime  @default(now())
 
@@ -113,7 +116,7 @@ model Message {
   id        String   @id @default(cuid())
   text      String
   chatId    String
-  chat      Chat     @relation(fields: [chatId], references: [id])
+  chat      Chat     @relation(fields: [chatId], references: [id], onDelete: Cascade)
   senderId  String
   sender    User     @relation(fields: [senderId], references: [id])
   createdAt DateTime @default(now())
@@ -124,7 +127,7 @@ model GameScore {
   gameName  String   
   score     Int      
   userId    String?
-  user      User?    @relation(fields: [userId], references: [id])
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
   guestId   String?  
   createdAt DateTime @default(now())
 
