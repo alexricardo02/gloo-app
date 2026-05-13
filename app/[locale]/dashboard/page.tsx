@@ -121,7 +121,7 @@ export default function MainDashboard() {
           </div>
 
           <div 
-            onClick={(e) => handleSecureInteraction(e, `/${locale}/groups/preparty-detail`)} 
+            onClick={(e) => handleSecureInteraction(e, `/${locale}/pre-party`)} 
             className="relative w-full aspect-[1/1.7] rounded-[2.5rem] overflow-hidden group bg-[#111111] border-[3px] border-[#8E44AD] shadow-[0_0_20px_rgba(142,68,173,0.2)] hover:shadow-[0_0_35px_rgba(142,68,173,0.4)] transition-all duration-300 cursor-pointer"
           >
             <Image 

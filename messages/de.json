@@ -47,8 +47,7 @@
     "termsPrefix": "Mit der Anmeldung stimmst du den",
     "termsOfService": "Nutzungsbedingungen",
     "and": "und der",
-    "privacyPolicy": "Datenschutzrichtlinie zu",
-    "error": "Anmeldung fehlgeschlagen. Bitte überprüfe deine Daten."
+    "privacyPolicy": "Datenschutzrichtlinie zu"
   },
   "Register": {
     "title": "Registrieren",
@@ -74,57 +73,6 @@
     "noGroupDesc": "Erstelle eines, um auszugehen und dich mit anderen zu vernetzen!",
     "createGroupButton": "Gruppenprofil erstellen",
     "accountSection": "Konto",
-    "logoutButton": "Abmelden",
-    "errorCount": "Die Mitgliederanzahl muss eine positive Zahl sein.",
-    "errorGeneric": "Etwas ist schiefgelaufen. Bitte versuche es erneut.",
-
-    "members": "Mitglieder",
-    "gender": "Geschlecht",
-    "ageRange": "Altersbereich",
-    "publicProfile": "Öffentliches Profil",
-    "description": "Beschreibung",
-
-    "searchGender": "Gesuchtes Geschlecht",
-    "preferredAgeRange": "Bevorzugter Altersbereich",
-    "maxDistance": "Maximale Entfernung",
-
-    "ANY": "Egal",
-    "MALE": "Männlich",
-    "FEMALE": "Weiblich",
-    "MIXED": "Gemischt",
-    "OTHER": "Andere",
-
-    "yes": "Ja",
-    "no": "Nein",
-
-    "instagramProfiles": "Instagram-Profile"
-  },
-  "CreateGroup": {
-  "title": "Gruppe erstellen",
-  "uploadPhotos": "Gruppenfotos hochladen",
-  "maxPhotos": "• Bis zu 6 Fotos erlaubt",
-  "groupDetails": "Gruppendetails",
-  "members": "Mitglieder",
-  "memberGender": "Mitglieder-Geschlecht",
-  "ANY": "Egal",
-  "MALE": "Männlich",
-  "FEMALE": "Weiblich",
-  "OTHER": "Andere",
-  "ageRange": "Altersbereich",
-  "searchPreferences": "Suchpräferenzen",
-  "searchGender": "Gesuchtes Geschlecht",
-  "preferredAgeRange": "Bevorzugter Altersbereich",
-  "maxDistance": "Maximale Entfernung",
-  "publicProfile": "Öffentliches Profil",
-  "visibleToAll": "Sichtbar für alle Gruppen in der Nähe",
-  "instagramProfiles": "Instagram-Profile",
-  "instagramInfo": "Füge Instagram-Benutzernamen für dich oder deine Gruppenmitglieder hinzu. Diese erscheinen als @Links auf deinem öffentlichen Profil.",
-  "addInstagram": "Instagram hinzufügen",
-  "shortDescription": "Kurzbeschreibung (optional)",
-  "descriptionPlaceholder": "Erzähle anderen von eurer Gruppe, eurem Vibe oder euren Plänen...",
-  "termsText": "Ich stimme den <terms>Nutzungsbedingungen</terms> und den <guidelines>Community‑Richtlinien</guidelines> zu.",
-  "createProfile": "Profil erstellen",
-  "saving": "Speichern...",
-  "error": "Etwas ist schiefgelaufen. Bitte versuche es erneut."
+    "logoutButton": "Abmelden"
   }
 }
