@@ -52,35 +52,50 @@ model User {
 }
 
 model Group {
-  id             String    @id @default(cuid())
-  userId         String    @unique
-  user           User      @relation("HostGroup", fields: [userId], references: [id], onDelete: Cascade)
-
-  // Group Details
-  membersCount   Int       @default(1)
-  gender         String    @default("ANY")
-  ageMin         Int       @default(18)
-  ageMax         Int       @default(30)
-
-  // Photos
-  photos         String[]  // max 6
-
+  id               String      @id @default(cuid())
+  userId           String      @unique
+  user             User        @relation("HostGroup",fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Group Info
+  description      String?
+  membersCount     Int         @default(1)
+  gender           Gender      @default(ANY)
+  ageMin           Int         @default(18)
+  ageMax           Int         @default(30)
+  
   // Search Preferences
-  searchGender   String    @default("ANY")
-  searchAgeMax   Int       @default(35)
-  maxDistance    Int       @default(10)
+  searchGender     Gender      @default(ANY)
+  searchAgeMax     Int         @default(35)
+  maxDistance      Int         @default(10)
+  isPartyMode      Boolean     @default(false)
+  publicProfile    Boolean     @default(true)
+  
+  // Media & Social
+  photos           String[]    // Array of URLs
+  instagram        String[]
+  
+  // Location (Needed for "Nearby" logic)
+  latitude         Float?
+  longitude        Float?
 
-  // Public Profile
-  publicProfile  Boolean   @default(true)
+  // Relations
+  likesSent        GroupLike[] @relation("LikesSent")
+  likesReceived    GroupLike[] @relation("LikesReceived")
 
-  // Description
-  description    String?   @db.VarChar(200)
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+}
 
-  // Instagram
-  instagram      String[]
+model GroupLike {
+  id            String   @id @default(cuid())
+  fromGroupId   String
+  fromGroup     Group    @relation("LikesSent", fields: [fromGroupId], references: [id], onDelete: Cascade)
+  toGroupId     String
+  toGroup       Group    @relation("LikesReceived", fields: [toGroupId], references: [id], onDelete: Cascade)
+  
+  createdAt     DateTime @default(now())
 
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
+  @@unique([fromGroupId, toGroupId]) // One like per pair of groups
 }
 
 

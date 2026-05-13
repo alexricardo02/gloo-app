@@ -17,9 +17,9 @@ export default function Navigation({ isGuest, onSecureClick }: NavigationProps) 
 
   const navItems = [
     { id: 'Home', label: t('navHome'), icon: <Home className="w-6 h-6" />, path: '/dashboard' },
-    { id: 'Groups', label: t('navGroups'), icon: <Users className="w-6 h-6" />, path: '/dashboard' },
-    { id: 'Map', label: t('navMap'), icon: <Map className="w-6 h-6" />, path: '/dashboard' },
-    { id: 'Messages', label: t('navMessages'), icon: <MessageSquare className="w-6 h-6" />, path: '/dashboard' },
+    { id: 'Groups', label: t('navGroups'), icon: <Users className="w-6 h-6" />, path: '/groups' },
+    { id: 'Map', label: t('navMap'), icon: <Map className="w-6 h-6" />, path: '/map' },
+    { id: 'Messages', label: t('navMessages'), icon: <MessageSquare className="w-6 h-6" />, path: '/messages' },
     isGuest 
       ? { id: 'Login', label: 'Sign in', icon: <LogIn className="w-6 h-6" />, path: '/login' }
       : { id: 'Profile', label: t('navProfile'), icon: <User className="w-6 h-6" />, path: '/profile' }
@@ -38,7 +38,9 @@ export default function Navigation({ isGuest, onSecureClick }: NavigationProps) 
   return (
     <footer className="fixed bottom-0 w-full bg-[#111111] border-t border-white/5 py-4 flex justify-around z-50 pb-8 shadow-[0_-20px_40px_rgba(0,0,0,0.8)] rounded-t-[2.5rem]">
       {navItems.map((item) => {
-        const isActive = pathname.includes(item.path);
+        const isActive = item.path === '/dashboard' 
+          ? pathname.endsWith('/dashboard') 
+          : pathname.includes(item.path);
         
         return (
           <button 

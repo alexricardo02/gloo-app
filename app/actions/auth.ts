@@ -84,3 +84,44 @@ export async function loginUser(formData: FormData, locale: string) {
 
   redirect(`/${locale}/dashboard`);
 }
+
+export async function getCurrentUser() {
+  const cookieStore = await cookies();
+  const userId = cookieStore.get("gloo_user_id")?.value;
+  if (!userId) return null;
+
+  return await prisma.user.findUnique({
+    where: { id: userId },
+    select: {
+      name: true,
+      username: true,
+      image: true,
+    }
+  });
+}
+
+export async function logOutAction(locale: string) {
+  const cookieStore = await cookies();
+  
+  cookieStore.delete("gloo_user_id");
+  
+  const guestId = crypto.randomUUID();
+  
+  cookieStore.set("gloo_is_guest", "true", {
+    path: "/",
+    maxAge: 60 * 60 * 24,
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+  });
+
+  cookieStore.set("gloo_guest_id", guestId, {
+    path: "/",
+    maxAge: 60 * 60 * 24,
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+  });
+
+  redirect(`/${locale}/login`);
+}
