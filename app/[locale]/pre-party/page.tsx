@@ -17,7 +17,7 @@ export default function PrePartyPage() {
   const [distance, setDistance] = useState(10);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
-  const [page, setPage] = useState(0); // Cambiado a 'page' según tu backend
+  const [page, setPage] = useState(0);
   
   const [isDistanceModalOpen, setIsDistanceModalOpen] = useState(false);
   const [tempDistance, setTempDistance] = useState(distance);

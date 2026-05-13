@@ -67,7 +67,6 @@ export default function ProfilePage() {
         {/* Profile Info (Minimalist) */}
         <div className="flex flex-col items-center text-center gap-4 py-4">
           <div className="relative">
-            {/* Círculo de Foto más grande (110px) */}
             <div className="w-[110px] h-[110px] rounded-full border-2 border-[#FF725E] overflow-hidden bg-[#1A1A1A] flex items-center justify-center shadow-2xl">
               {user?.image ? (
                 <img src={user.image} alt="Profile" className="w-full h-full object-cover" />
@@ -76,7 +75,6 @@ export default function ProfilePage() {
               )}
             </div>
             
-            {/* Botón "+" ajustado */}
             <button 
               onClick={() => setIsModalOpen(true)}
               className="absolute bottom-1 right-1 bg-[#FF725E] text-black p-2 rounded-full border-2 border-black hover:scale-110 transition-transform shadow-lg z-10"
@@ -187,7 +185,6 @@ export default function ProfilePage() {
         <div className="flex justify-center mt-12 mb-10">
           <button
             onClick={async () => {
-              // Llamamos a la acción del servidor pasando el locale actual
               await logOutAction(locale);
             }}
             className="flex items-center gap-2.5 font-bold text-lg bg-[#111111] text-[#FF725E] border border-white/5 px-10 py-4 rounded-full hover:bg-white/5 transition-colors"
@@ -199,18 +196,14 @@ export default function ProfilePage() {
 
       </div>
 
-      {/* --- NUEVO: Modal de Subida de Foto --- */}
       {isModalOpen && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-6 animate-in fade-in duration-300">
-          {/* Fondo oscuro con Blur */}
           <div 
             className="absolute inset-0 bg-black/80 backdrop-blur-md" 
             onClick={() => setIsModalOpen(false)}
           />
           
-          {/* Panel Central */}
           <div className="relative bg-[#111111] border border-white/10 w-full max-w-sm rounded-[2.5rem] p-8 shadow-2xl flex flex-col items-center animate-in zoom-in-95 duration-300">
-            {/* Botón de cerrar */}
             <button 
               onClick={() => setIsModalOpen(false)}
               className="absolute top-6 right-6 text-gray-500 hover:text-white transition-colors"
@@ -222,7 +215,6 @@ export default function ProfilePage() {
               Update Photo
             </h3>
 
-            {/* Área de Drop/Preview */}
             <label 
               htmlFor="profile-upload"
               className="w-40 h-40 rounded-full border-2 border-dashed border-[#FF725E] flex flex-col items-center justify-center bg-white/5 mb-8 cursor-pointer hover:bg-[#FF725E]/5 transition-colors group"
@@ -235,7 +227,6 @@ export default function ProfilePage() {
                 className="hidden" 
                 accept="image/*"
                 onChange={(e) => {
-                  // Aquí iría tu lógica para manejar el archivo
                   console.log(e.target.files?.[0]);
                 }}
               />

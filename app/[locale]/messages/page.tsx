@@ -8,10 +8,9 @@ import Image from "next/image";
 
 export default function MessagesPage() {
   const locale = useLocale();
-  const t = useTranslations("Dashboard"); // Usamos el namespace de Dashboard para la Nav
+  const t = useTranslations("Dashboard"); 
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Mock data basado en tu imagen para visualizar la estructura
   const chats = [
     {
       id: 1,
