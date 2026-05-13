@@ -73,6 +73,21 @@
     "noGroupDesc": "¡Crea uno para salir y conectar con otros!",
     "createGroupButton": "Crear Perfil de Grupo",
     "accountSection": "Cuenta",
-    "logoutButton": "Cerrar sesión"
+    "logoutButton": "Cerrar sesión",
+    "members": "Miembros",
+    "gender": "Género",
+    "ANY": "Cualquiera",
+    "MALE": "Hombres",
+    "FEMALE": "Mujeres",
+    "MIXED": "Mixto",
+    "OTHER": "Otro",
+    "ageRange": "Rango de edad",
+    "searchGender": "Género buscado",
+    "preferredAgeRange": "Rango de edad preferido",
+    "maxDistance": "Distancia de búsqueda",
+    "publicProfile": "Perfil público",
+    "yes": "Sí",
+    "no": "No",
+    "instagramProfiles": "Perfiles de Instagram"
   }
 }

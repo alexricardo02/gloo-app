@@ -3,13 +3,22 @@
 import { useState, useEffect } from "react";
 import { checkIsGuest } from "@/app/actions/guest";
 import { getGroupByUser } from "@/app/actions/group";
+import { getCurrentUser, logOutAction } from "@/app/actions/auth";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import Navigation from "@/app/components/Navigation";
+import GroupCard from "@/app/components/GroupCard";
+import Image from "next/image";
+import Link from "next/link";
+
+import { Settings, Users, LogOut, ChevronRight, BarChart3, Plus, User, X, Camera, Upload } from "lucide-react";
+
 
 export default function ProfilePage() {
   const [isGuest, setIsGuest] = useState(false);
   const [group, setGroup] = useState<any | null>(null);
+  const [user, setUser] = useState<any | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const router = useRouter();
   const locale = useLocale();
@@ -23,148 +32,226 @@ export default function ProfilePage() {
 
       const g = await getGroupByUser();
       setGroup(g);
+
+      const userData = await getCurrentUser();
+      setUser(userData)
     };
     init();
   }, []);
 
+  const settingsOptions = [
+    { name: t("accountSection"), icon: <Users size={16} />, path: `/${locale}/profile/account` },
+    { name: "My Scores", icon: <BarChart3 size={16} />, path: `/${locale}/game-center` },
+    { name: "Data Policy", icon: <ChevronRight size={16} />, path: `/${locale}/privacy` },
+  ];
+
   return (
     <div className="min-h-screen bg-black text-white font-sans pb-32">
+      
+      {/* Top Header */}
+      <div className="flex items-center justify-between gap-4 p-6 border-b border-white/10 mb-6 bg-[#111111] rounded-b-[2.5rem]">
+        <h1 className="text-3xl font-extrabold text-white">
+          {t("title")}
+        </h1>
+        <Image
+          src={`/flags/${locale}.svg`}
+          alt={locale}
+          width={32}
+          height={24}
+          className="rounded border border-white/20"
+        />
+      </div>
 
-      {/* Header */}
-      <div className="bg-[#111111] pb-8 rounded-b-[2.5rem] shadow-lg border-b border-white/5">
+      <div className="px-6 space-y-10">
         
-        <div className="px-6 pt-12 pb-4 flex justify-between items-center">
-          <h1 className="text-3xl font-extrabold text-white">{t("title")}</h1>
-
-          <button className="p-3 bg-white/5 rounded-full text-gray-400 hover:bg-white/10 transition-colors">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M10.343 3.94c.09-.542.56-.94 1.11-.94h1.093c.55 0 1.02.398 1.11.94l.149.894c.07.424.384.764.797.939a4.106 4.106 0 0 1 1.21.724c.348.256.82.322 1.222.17l.866-.33c.515-.196 1.103.037 1.323.53l.547.1.22.947c.22.5.011 1.1-.478 1.365l-.763.42c-.41.226-.644.68-.586 1.144.023.183.035.37.035.558s-.012.375-.035.558c-.058.464.176.918.586 1.144l.763.42c.49.265.698.865.478 1.365l-.547.947c-.22.493-.808.726-1.323.53l-.866-.33c-.402-.152-.874-.086-1.222.17a4.109 4.109 0 0 1-1.21.724c-.413.175-.727.515-.797.939l-.149.894c-.09.542-.56.94-1.11.94h-1.093c-.55 0-1.02-.398-1.11-.94l-.149-.894c-.07-.424-.384-.764-.797-.939a4.108 4.108 0 0 1-1.21-.724c-.348-.256-.82-.322-1.222-.17l-.866.33c-.515.196-1.103-.037-1.323-.53l-.547-.947c-.22-.5-.011-1.1.478-1.365l.763-.42c.41-.226.644-.68.586-1.144A4.111 4.111 0 0 1 6.3 12c0-.188.012-.375.035-.558.058-.464-.176-.918-.586-1.144l-.763-.42c-.49-.265-.698-.865-.478-1.365l.547-.947c.22-.493.808-.726 1.323-.53l.866.33c.402.152.874.086 1.222-.17a4.107 4.107 0 0 1 1.21-.724c.413-.175.727-.515.797-.939l.149-.894Z" />
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-            </svg>
-          </button>
-        </div>
-
-        {/* Profile Picture */}
-        <div className="flex flex-col items-center mt-2">
+        {/* Profile Info (Minimalist) */}
+        <div className="flex flex-col items-center text-center gap-4 py-4">
           <div className="relative">
-            <div className="w-28 h-28 rounded-full overflow-hidden border-4 border-black shadow-2xl bg-[#222222]">
-              <img 
-                src="https://i.pravatar.cc/150?u=thomas" 
-                alt="Profile" 
-                className="w-full h-full object-cover"
-              />
+            <div className="w-[110px] h-[110px] rounded-full border-2 border-[#FF725E] overflow-hidden bg-[#1A1A1A] flex items-center justify-center shadow-2xl">
+              {user?.image ? (
+                <img src={user.image} alt="Profile" className="w-full h-full object-cover" />
+              ) : (
+                <User className="w-12 h-12 text-gray-600" />
+              )}
             </div>
-
-            <button className="absolute bottom-0 right-0 p-2.5 bg-[#FF5733] rounded-full text-white shadow-lg border-2 border-black hover:bg-[#e64d2e] transition-colors">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.89 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.89l12.673-12.673z" />
-                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 7.125L16.875 4.5" />
-              </svg>
-            </button>
-          </div>
-
-          <h2 className="mt-4 text-2xl font-bold text-white">Thomas</h2>
-        </div>
-      </div>
-
-      {/* Group Section */}
-      <div className="mt-8 px-6">
-        <h3 className="text-gray-500 font-bold text-xs uppercase tracking-widest mb-4 ml-1">
-          {t("groupsSection")}
-        </h3>
-
-        {group ? (
-          /* ⭐ GRUPPENPROFIL ANZEIGE ⭐ */
-          <div className="bg-[#111111] rounded-[2.5rem] p-8 shadow-xl border border-white/5 space-y-6">
-
-            {/* Fotos */}
-            <div className="grid grid-cols-3 gap-2">
-              {group.photos.map((url: string, i: number) => (
-                <img
-                  key={i}
-                  src={url}
-                  className="rounded-xl w-full h-full object-cover"
-                />
-              ))}
-            </div>
-
-            {/* Details */}
-            <div className="space-y-2 text-left">
-              <p><strong>{t("members")}:</strong> {group.membersCount}</p>
-              <p><strong>{t("gender")}:</strong> {t(group.gender)}</p>
-              <p><strong>{t("ageRange")}:</strong> {group.ageMin}–{group.ageMax}</p>
-
-              <p><strong>{t("searchGender")}:</strong> {t(group.searchGender)}</p>
-              <p><strong>{t("preferredAgeRange")}:</strong> 18–{group.searchAgeMax}</p>
-              <p><strong>{t("maxDistance")}:</strong> {group.maxDistance} km</p>
-
-              <p>
-                <strong>{t("publicProfile")}:</strong>{" "}
-                {group.publicProfile ? t("yes") : t("no")}
-              </p>
-
-              <p className="text-gray-400">{group.description}</p>
-            </div>
-
-            {/* Instagram */}
-            <div className="space-y-2">
-              <h4 className="font-bold">{t("instagramProfiles")}</h4>
-              {group.instagram.map((user: string, i: number) => (
-                <a
-                  key={i}
-                  href={`https://instagram.com/${user}`}
-                  target="_blank"
-                  className="text-[#FF55A5]"
-                >
-                  @{user}
-                </a>
-              ))}
-            </div>
-
-          </div>
-        ) : (
-          /* ⭐ KEINE GRUPPE → CREATE-GROUP BUTTON ⭐ */
-          <div className="bg-[#111111] rounded-[2.5rem] p-8 shadow-xl border border-white/5 flex flex-col items-center text-center">
-            <div className="w-16 h-16 bg-[#FF5733]/10 text-[#FF5733] rounded-full flex items-center justify-center mb-5">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-8 h-8">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" />
-              </svg>
-            </div>
-
-            <p className="text-gray-400 font-medium text-[15px] leading-relaxed mb-8">
-              {t("noGroupTitle")}<br />
-              {t("noGroupDesc")}
-            </p>
-
-            <button
-              onClick={() => router.push(`/${locale}/profile/create-group`)}
-              className="w-full bg-[#FF5733] text-white font-extrabold py-4 rounded-2xl shadow-[0_4px_20px_rgba(255,87,51,0.4)] hover:bg-[#e64d2e] active:scale-95 transition-all"
+            
+            <button 
+              onClick={() => setIsModalOpen(true)}
+              className="absolute bottom-1 right-1 bg-[#FF725E] text-black p-2 rounded-full border-2 border-black hover:scale-110 transition-transform shadow-lg z-10"
             >
-              {t("createGroupButton")}
+              <Plus size={18} strokeWidth={3} />
             </button>
           </div>
-        )}
-      </div>
 
-      {/* Account Section */}
-      <div className="mt-8 px-6">
-        <h3 className="text-gray-500 font-bold text-xs uppercase tracking-widest mb-4 ml-1">
-          {t("accountSection")}
-        </h3>
+          <div className="mt-2">
+            <h2 className="text-3xl font-black uppercase tracking-tighter text-white">
+              {user?.name || "Loading..."}
+            </h2>
+          </div>
+        </div>
 
-        <div className="bg-[#111111] rounded-3xl shadow-xl border border-white/5 overflow-hidden">
-          <button className="w-full px-4 py-4 flex items-center hover:bg-white/5 transition-colors">
-            <div className="w-12 h-12 bg-red-500/10 rounded-xl flex items-center justify-center text-red-500 mr-4">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
-              </svg>
-            </div>
-            <span className="font-bold text-gray-200 text-lg">{t("logoutButton")}</span>
+        {/* --- REDESIGN: Groups Section (Minimalist Card) --- */}
+        <div className="space-y-4">
+          <div className="flex justify-between items-center">
+            <h3 className="text-sm font-bold uppercase tracking-wider text-gray-500">
+              {t("groupsSection")}
+            </h3>
+          </div>
+
+          {!group ? (
+            // Empty State
+            <Link href={`/${locale}/profile/create-group`} className="block">
+              <div className="border border-white/10 bg-[#141414] rounded-2xl p-6 flex flex-col items-center justify-center text-center gap-4 hover:border-[#FF725E]/30 transition-all">
+                <div className="p-3 bg-[#1A1A1A] rounded-xl border border-white/5 text-[#FF725E]">
+                  <Users size={24} />
+                </div>
+                <h4 className="font-extrabold text-white text-lg">
+                  {t("noGroupTitle")}
+                </h4>
+                <p className="text-sm text-gray-500 max-w-xs">
+                  {t("noGroupDesc")}
+                </p>
+                <span className="mt-2 text-sm font-bold bg-[#FF725E] text-black px-6 py-2 rounded-full">
+                  {t("createGroupButton")}
+                </span>
+              </div>
+            </Link>
+          ) : (
+            // --- REDESIGNED GROUP CARD (Clickable to edit) ---
+            <Link href={`/${locale}/profile/create-group`} className="block">
+              <div className="border border-white/10 bg-[#141414] rounded-3xl p-5 flex items-center gap-4 hover:border-[#FF725E]/50 hover:bg-[#1A1A1A] transition-all relative">
+                
+                {/* Photo Preview Square */}
+                <div className="relative w-20 h-20 rounded-2xl overflow-hidden border border-white/10 flex-shrink-0 bg-[#1A1A1A]">
+                  <img
+                    src={group.photos?.[0] || "/images/vorgluehen.jpg"}
+                    alt="Group"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                
+                {/* Minimalist Details */}
+                <div className="flex-1 space-y-1.5">
+                  <div className="flex items-center gap-2">
+                    <h4 className="font-extrabold text-xl text-white">
+                      Your Group
+                    </h4>
+                    <span className="text-[10px] text-[#FF725E] bg-[#FF725E]/10 px-2 py-0.5 rounded uppercase font-bold">
+                      {t(group.gender)}
+                    </span>
+                  </div>
+                  
+                  <div className="flex items-center gap-4 text-sm text-gray-400 mt-1">
+                    <span className="flex items-center gap-1.5 font-bold">
+                      <Users size={16} className="text-[#FF725E]" />
+                      {group.membersCount}
+                    </span>
+                    <span className="font-bold flex items-center gap-1.5">
+                      <Settings size={14} className="text-[#FF725E]" />
+                      {group.ageMin}–{group.ageMax}
+                    </span>
+                  </div>
+                </div>
+                
+                <Settings size={20} className="text-white/20 absolute top-5 right-5" />
+              </div>
+            </Link>
+          )}
+        </div>
+
+        {/* Settings Options */}
+        <div className="space-y-4 mt-8">
+          <h3 className="text-sm font-bold uppercase tracking-wider text-gray-500">
+            Settings
+          </h3>
+          <div className="space-y-3">
+            {settingsOptions.map((option, i) => (
+              <Link key={i} href={option.path} className="block">
+                <div className="border border-white/5 bg-[#111111] rounded-3xl p-4 flex justify-between items-center hover:bg-white/5 transition-colors">
+                  <div className="flex items-center gap-4">
+                    <div className="p-3 bg-white/5 rounded-xl text-[#FF725E]">
+                      {option.icon}
+                    </div>
+                    <span className="font-bold">{option.name}</span>
+                  </div>
+                  <ChevronRight size={18} className="text-white/20" />
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        {/* Logout Button */}
+        <div className="flex justify-center mt-12 mb-10">
+          <button
+            onClick={async () => {
+              await logOutAction(locale);
+            }}
+            className="flex items-center gap-2.5 font-bold text-lg bg-[#111111] text-[#FF725E] border border-white/5 px-10 py-4 rounded-full hover:bg-white/5 transition-colors"
+          >
+            <LogOut size={20} />
+            {t("logoutButton")}
           </button>
         </div>
+
       </div>
 
-      <Navigation isGuest={isGuest} />
+      {isModalOpen && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-6 animate-in fade-in duration-300">
+          <div 
+            className="absolute inset-0 bg-black/80 backdrop-blur-md" 
+            onClick={() => setIsModalOpen(false)}
+          />
+          
+          <div className="relative bg-[#111111] border border-white/10 w-full max-w-sm rounded-[2.5rem] p-8 shadow-2xl flex flex-col items-center animate-in zoom-in-95 duration-300">
+            <button 
+              onClick={() => setIsModalOpen(false)}
+              className="absolute top-6 right-6 text-gray-500 hover:text-white transition-colors"
+            >
+              <X size={24} />
+            </button>
+            
+            <h3 className="text-2xl font-black italic uppercase mb-8 text-center tracking-tight">
+              Update Photo
+            </h3>
+
+            <label 
+              htmlFor="profile-upload"
+              className="w-40 h-40 rounded-full border-2 border-dashed border-[#FF725E] flex flex-col items-center justify-center bg-white/5 mb-8 cursor-pointer hover:bg-[#FF725E]/5 transition-colors group"
+            >
+              <Camera size={40} className="text-[#FF725E] mb-2 group-hover:scale-110 transition-transform" />
+              <span className="text-[10px] font-bold uppercase text-gray-500">Tap to select</span>
+              <input 
+                type="file" 
+                id="profile-upload" 
+                className="hidden" 
+                accept="image/*"
+                onChange={(e) => {
+                  console.log(e.target.files?.[0]);
+                }}
+              />
+            </label>
+
+            <button 
+              className="w-full bg-[#FF725E] text-black font-black py-4 rounded-full uppercase tracking-widest text-sm hover:scale-[1.02] transition-transform mb-4 flex items-center justify-center gap-2"
+            >
+              <Upload size={18} />
+              Upload Now
+            </button>
+
+            <button 
+              onClick={() => setIsModalOpen(false)}
+              className="text-gray-500 font-bold uppercase text-xs tracking-widest hover:text-white transition-colors"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Your Original Navigation */}
+      <Navigation/>
+      
     </div>
   );
 }

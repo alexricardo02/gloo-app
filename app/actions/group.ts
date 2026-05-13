@@ -2,6 +2,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
+import { Gender } from "@prisma/client";
 
 export async function getGroupByUser() {
   const user = await prisma.user.findFirst();
@@ -17,14 +18,17 @@ export async function createGroupAction(formData: FormData, locale: string) {
   if (!user) throw new Error("User not found");
 
   const membersCount = Number(formData.get("membersCount")) || 1;
-  const groupGender = String(formData.get("groupGender") || "ANY");
+  const groupGender = (formData.get("groupGender") as Gender) || "ANY";
 
   const ageMin = Number(formData.get("ageMin")) || 18;
   const ageMax = Number(formData.get("ageMax")) || 30;
 
-  const searchGender = String(formData.get("searchGender") || "ANY");
+  const searchGender = (formData.get("searchGender") as Gender) || "ANY";
   const searchAgeMax = Number(formData.get("searchAgeMax")) || 35;
   const maxDistance = Number(formData.get("maxDistance")) || 10;
+
+  const latitude = parseFloat(formData.get("latitude") as string);
+  const longitude = parseFloat(formData.get("longitude") as string);
 
   const publicProfile = ["true", "on", "1"].includes(
     String(formData.get("publicProfile"))
@@ -55,6 +59,8 @@ export async function createGroupAction(formData: FormData, locale: string) {
       description,
       instagram,
       photos,
+      latitude: isNaN(latitude) ? null : latitude,
+      longitude: isNaN(longitude) ? null : longitude,
     },
     create: {
       userId: user.id,
@@ -69,8 +75,10 @@ export async function createGroupAction(formData: FormData, locale: string) {
       description,
       instagram,
       photos,
+      latitude: isNaN(latitude) ? null : latitude,
+      longitude: isNaN(longitude) ? null : longitude,
     },
   });
 
-  redirect(`/${locale}/profile`);
+  redirect(`/${locale}/dashboard`);
 }
