@@ -47,7 +47,8 @@
     "termsPrefix": "En vous connectant, vous acceptez les",
     "termsOfService": "Conditions d'utilisation",
     "and": "et la",
-    "privacyPolicy": "Politique de confidentialité."
+    "privacyPolicy": "Politique de confidentialité.",
+    "error": "Échec de l'inscription. Veuillez vérifier vos données."
   },
   "Register": {
     "title": "S'inscrire",
@@ -73,6 +74,57 @@
     "noGroupDesc": "Créez-en un pour sortir et rencontrer d'autres personnes !",
     "createGroupButton": "Créer un profil de groupe",
     "accountSection": "Compte",
-    "logoutButton": "Se déconnecter"
+    "logoutButton": "Se déconnecter",
+    "errorCount": "Le nombre de membres doit être un nombre positif.",
+    "errorGeneric": "Quelque chose a mal tourné. Veuillez réessayer.",
+
+    "members": "Mitglieder",
+    "gender": "Geschlecht",
+    "ageRange": "Altersbereich",
+    "publicProfile": "Öffentliches Profil",
+    "description": "Beschreibung",
+
+    "searchGender": "Gesuchtes Geschlecht",
+    "preferredAgeRange": "Bevorzugter Altersbereich",
+    "maxDistance": "Maximale Entfernung",
+
+    "ANY": "Egal",
+    "MALE": "Männlich",
+    "FEMALE": "Weiblich",
+    "MIXED": "Gemischt",
+    "OTHER": "Andere",
+
+    "yes": "Ja",
+    "no": "Nein",
+
+    "instagramProfiles": "Instagram-Profile"
+  },
+  "CreateGroup": {
+  "title": "Create Group",
+  "uploadPhotos": "Upload group photos",
+  "maxPhotos": "• Up to 6 photos allowed",
+  "groupDetails": "Group Details",
+  "members": "Members",
+  "memberGender": "Member Gender",
+  "ANY": "Any",
+  "MALE": "Male",
+  "FEMALE": "Female",
+  "OTHER": "Other",
+  "ageRange": "Members Age Range",
+  "searchPreferences": "Search Preferences",
+  "searchGender": "Search Gender",
+  "preferredAgeRange": "Preferred Age Range",
+  "maxDistance": "Max Distance",
+  "publicProfile": "Public Profile",
+  "visibleToAll": "Visible to all nearby groups",
+  "instagramProfiles": "Instagram Profiles",
+  "instagramInfo": "Add Instagram usernames for yourself or your group members. These will appear as @links on your public profile.",
+  "addInstagram": "Add Instagram",
+  "shortDescription": "Short Description (Optional)",
+  "descriptionPlaceholder": "Tell others about your group, vibe, or plans...",
+  "termsText": "I agree to the <terms>Terms of Service</terms> and the <guidelines>Community Guidelines</guidelines>.",
+  "createProfile": "Create Profile",
+  "saving": "Saving...",
+  "error": "Something went wrong. Please try again."
   }
 }
