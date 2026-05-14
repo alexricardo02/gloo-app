@@ -19,7 +19,7 @@ export default function GroupCard({ group }: GroupCardProps) {
   };
 
   return (
-    <div className="relative h-[600px] w-full rounded-[2.5rem] overflow-hidden shadow-2xl">
+    <div className="relative h-full w-full rounded-[2.5rem] overflow-hidden shadow-2xl">
       {/* Background Image */}
       <img
         src={group.photos?.[0] || "/images/bg-fallback.jpg"}
