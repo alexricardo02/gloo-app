@@ -88,10 +88,9 @@ export default function PrePartyPage() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white font-sans pb-32">
-      
+<div className="h-[100dvh] bg-black text-white font-sans overflow-hidden relative">      
       {/* Header */}
-      <div className="fixed top-0 w-full z-40 bg-black/90 backdrop-blur-sm border-b border-white/5 rounded-b-[2rem]">
+      <div className="absolute top-0 w-full z-40 bg-black/80 backdrop-blur-md border-b border-white/5 rounded-b-[2rem]">
         <div className="flex items-center justify-between gap-4 px-6 py-5">
           <button 
             onClick={openDistanceModal}
@@ -103,36 +102,59 @@ export default function PrePartyPage() {
             <span className="text-sm font-bold text-gray-500">{distance} km</span>
           </button>
 
-          <Link href={`/${locale}/profile/create-group`} className="block">
-            <div className="flex items-center gap-2.5 text-sm font-bold bg-[#141414] border border-white/10 px-5 py-2.5 rounded-full hover:bg-[#1A1A1A] hover:border-[#FF725E]/20 transition-all text-white">
+          <Link href={`/${locale}/profile/preferences`} className="block">
+            <div className="flex items-center gap-2.5 text-sm font-bold bg-[#141414] border border-white/10 px-5 py-2.5 rounded-full hover:bg-[#1A1A1A] transition-all text-white">
               <SlidersHorizontal size={18} className="text-[#FF725E]" />
-              <span>Preferences</span>
+              <span className="hidden md:inline">Preferences</span>
             </div>
           </Link>
         </div>
       </div>
 
-      <main className="pt-28 px-4 space-y-5">
+      <main 
+        className="h-full w-full overflow-y-scroll snap-y snap-mandatory scroll-smooth pb-20"
+        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+      >
+        <style dangerouslySetInnerHTML={{__html: `main::-webkit-scrollbar { display: none; }`}} />
 
-        <div className="space-y-4">
-          {groups.map((group, index) => (
-            <div
-              key={group.id}
-              ref={index === groups.length - 1 ? lastGroupElementRef : null}
-            >
+        {groups.length === 0 && !loading && (
+          <div className="h-full flex flex-col items-center justify-center px-10 text-center gap-4">
+            <div className="border border-white/5 bg-[#141414] rounded-3xl p-10 flex flex-col items-center gap-4">
+              <MapPin size={40} className="text-gray-700" />
+              <h3 className="text-lg font-extrabold text-white">No groups found nearby</h3>
+              <p className="text-sm text-gray-500 max-w-xs">
+                Try increasing your search distance or check back later for new crews.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Mapeo de tarjetas */}
+        {groups.map((group, index) => (
+          <div
+            key={group.id}
+            ref={index === groups.length - 1 ? lastGroupElementRef : null}
+            // Cada contenedor toma 100dvh y fuerza el "snap" (imán) en el centro
+            className="h-[100dvh] w-full snap-center snap-always flex items-center justify-center px-4 pt-24 pb-28"
+          >
+            <div className="w-full h-full max-h-[800px] relative">
               <GroupCard group={group} />
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
 
         {loading && (
-          <div className="flex justify-center p-10 text-[#FF725E]">
+          <div className="h-[100dvh] w-full snap-center flex justify-center items-center text-[#FF725E]">
             <span className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#FF725E]"></span>
           </div>
         )}
 
-        {groups.length === 0 && !loading && (
-          <div className="text-center p-20 text-gray-500">No groups found in this range.</div>
+        {!hasMore && groups.length > 0 && (
+          <div className="h-[50dvh] w-full snap-center flex flex-col justify-center items-center p-10 text-center">
+            <span className="text-xs text-gray-700 font-bold uppercase tracking-widest">
+              You've seen all the pre-parties near Mainz.
+            </span>
+          </div>
         )}
       </main>
 
@@ -166,7 +188,9 @@ export default function PrePartyPage() {
         </div>
       )}
 
-      <Navigation />
+      <div className="absolute bottom-0 w-full z-40">
+        <Navigation />
+      </div>
     </div>
   );
 }
