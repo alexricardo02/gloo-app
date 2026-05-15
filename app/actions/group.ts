@@ -3,19 +3,24 @@
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import { Gender } from "@prisma/client";
+import { cookies } from "next/headers";
 
 export async function getGroupByUser() {
-  const user = await prisma.user.findFirst();
-  if (!user) return null;
+  const cookieStore = await cookies();
+  const userId = cookieStore.get("gloo_user_id")?.value;
+  
+  if (!userId) return null;
 
   return await prisma.group.findUnique({
-    where: { userId: user.id },
+    where: { userId: userId },
   });
 }
 
 export async function createGroupAction(formData: FormData, locale: string) {
-  const user = await prisma.user.findFirst();
-  if (!user) throw new Error("User not found");
+  const cookieStore = await cookies();
+  const userId = cookieStore.get("gloo_user_id")?.value;
+  
+  if (!userId) throw new Error("User not found or unauthorized");
 
   const membersCount = Number(formData.get("membersCount")) || 1;
   const groupGender = (formData.get("groupGender") as Gender) || "ANY";
@@ -43,10 +48,27 @@ export async function createGroupAction(formData: FormData, locale: string) {
     }
   }
 
-  const photos: string[] = [];
+
+  const keptPhotos = formData.getAll("existingPhotos") as string[];
+
+
+  const newPhotos: string[] = [];
+  const uploadedFiles = formData.getAll("photos") as File[];
+
+  for (const file of uploadedFiles) {
+    if (file && typeof file === "object" && file.size > 0) {
+      const bytes = await file.arrayBuffer();
+      const buffer = Buffer.from(bytes);
+      
+      const base64Image = `data:${file.type};base64,${buffer.toString("base64")}`;
+      newPhotos.push(base64Image);
+    }
+  }
+
+  const finalPhotos = [...keptPhotos, ...newPhotos];
 
   await prisma.group.upsert({
-    where: { userId: user.id },
+    where: { userId: userId },
     update: {
       membersCount,
       gender: groupGender,
@@ -58,12 +80,12 @@ export async function createGroupAction(formData: FormData, locale: string) {
       publicProfile,
       description,
       instagram,
-      photos,
+      photos: finalPhotos,
       latitude: isNaN(latitude) ? null : latitude,
       longitude: isNaN(longitude) ? null : longitude,
     },
     create: {
-      userId: user.id,
+      userId: userId,
       membersCount,
       gender: groupGender,
       ageMin,
@@ -74,7 +96,7 @@ export async function createGroupAction(formData: FormData, locale: string) {
       publicProfile,
       description,
       instagram,
-      photos,
+      photos: finalPhotos,
       latitude: isNaN(latitude) ? null : latitude,
       longitude: isNaN(longitude) ? null : longitude,
     },
