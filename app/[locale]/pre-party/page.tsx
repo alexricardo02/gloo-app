@@ -88,11 +88,11 @@ export default function PrePartyPage() {
   };
 
   return (
-<div className="h-[100dvh] bg-black text-white font-sans overflow-hidden relative">      
+    <div className="h-[100dvh] bg-black text-white font-sans overflow-hidden relative">
       {/* Header */}
       <div className="absolute top-0 w-full z-40 bg-black/80 backdrop-blur-md border-b border-white/5 rounded-b-[2rem]">
         <div className="flex items-center justify-between gap-4 px-6 py-5">
-          <button 
+          <button
             onClick={openDistanceModal}
             className="flex items-center gap-2.5 bg-[#141414] border border-white/10 px-5 py-2.5 rounded-full hover:border-[#FF725E]/30 transition-all"
           >
@@ -101,7 +101,7 @@ export default function PrePartyPage() {
             <ChevronRight size={16} className="text-white/20" />
             <span className="text-sm font-bold text-gray-500">{distance} km</span>
           </button>
-
+ 
           <Link href={`/${locale}/profile/preferences`} className="block">
             <div className="flex items-center gap-2.5 text-sm font-bold bg-[#141414] border border-white/10 px-5 py-2.5 rounded-full hover:bg-[#1A1A1A] transition-all text-white">
               <SlidersHorizontal size={18} className="text-[#FF725E]" />
@@ -110,13 +110,18 @@ export default function PrePartyPage() {
           </Link>
         </div>
       </div>
-
-      <main 
-        className="h-full w-full overflow-y-scroll snap-y snap-mandatory scroll-smooth pb-20"
-        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+ 
+      {/*
+        touch-pan-y es clave: le indica al navegador que este contenedor
+        solo debe capturar gestos VERTICALES. Así los swipes horizontales
+        dentro de cada GroupCard llegan correctamente al carrusel interno.
+      */}
+      <main
+        className="h-full w-full overflow-y-scroll snap-y snap-mandatory scroll-smooth pb-20 touch-pan-y"
+        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
       >
-        <style dangerouslySetInnerHTML={{__html: `main::-webkit-scrollbar { display: none; }`}} />
-
+        <style dangerouslySetInnerHTML={{ __html: `main::-webkit-scrollbar { display: none; }` }} />
+ 
         {groups.length === 0 && !loading && (
           <div className="h-full flex flex-col items-center justify-center px-10 text-center gap-4">
             <div className="border border-white/5 bg-[#141414] rounded-3xl p-10 flex flex-col items-center gap-4">
@@ -128,13 +133,11 @@ export default function PrePartyPage() {
             </div>
           </div>
         )}
-
-        {/* Mapeo de tarjetas */}
+ 
         {groups.map((group, index) => (
           <div
             key={group.id}
             ref={index === groups.length - 1 ? lastGroupElementRef : null}
-            // Cada contenedor toma 100dvh y fuerza el "snap" (imán) en el centro
             className="h-[100dvh] w-full snap-center snap-always flex items-center justify-center px-4 pt-24 pb-28"
           >
             <div className="w-full h-full max-h-[800px] relative">
@@ -142,13 +145,13 @@ export default function PrePartyPage() {
             </div>
           </div>
         ))}
-
+ 
         {loading && (
           <div className="h-[100dvh] w-full snap-center flex justify-center items-center text-[#FF725E]">
             <span className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#FF725E]"></span>
           </div>
         )}
-
+ 
         {!hasMore && groups.length > 0 && (
           <div className="h-[50dvh] w-full snap-center flex flex-col justify-center items-center p-10 text-center">
             <span className="text-xs text-gray-700 font-bold uppercase tracking-widest">
@@ -157,13 +160,17 @@ export default function PrePartyPage() {
           </div>
         )}
       </main>
-
-
+ 
       {isDistanceModalOpen && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-6">
-          <div className="absolute inset-0 bg-black/80 backdrop-blur-md" onClick={() => setIsDistanceModalOpen(false)} />
+          <div
+            className="absolute inset-0 bg-black/80 backdrop-blur-md"
+            onClick={() => setIsDistanceModalOpen(false)}
+          />
           <div className="relative bg-[#111111] border border-white/10 w-full max-w-xs rounded-[2rem] p-7 shadow-2xl flex flex-col items-center">
-            <button onClick={() => setIsDistanceModalOpen(false)} className="absolute top-5 right-5 text-gray-500"><X size={20} /></button>
+            <button onClick={() => setIsDistanceModalOpen(false)} className="absolute top-5 right-5 text-gray-500">
+              <X size={20} />
+            </button>
             <h3 className="text-xl font-extrabold mb-6">Set Distance</h3>
             <div className="mb-1 text-center">
               <span className="text-5xl font-black text-[#FF725E]">{tempDistance}</span>
@@ -177,7 +184,7 @@ export default function PrePartyPage() {
               onChange={(e) => setTempDistance(parseInt(e.target.value, 10))}
               className="w-full h-1 bg-[#1A1A1A] rounded-full appearance-none cursor-pointer accent-[#FF725E] my-8"
             />
-            <button 
+            <button
               onClick={confirmDistance}
               className="w-full bg-[#FF725E] text-black font-black py-4 rounded-full uppercase text-sm flex items-center justify-center gap-2"
             >
@@ -187,7 +194,7 @@ export default function PrePartyPage() {
           </div>
         </div>
       )}
-
+ 
       <div className="absolute bottom-0 w-full z-40">
         <Navigation />
       </div>

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { createGroupAction, getGroupByUser } from "@/app/actions/group";
+import { Plus, X } from "lucide-react";
 
 export default function CreateGroupPage() {
   const router = useRouter();
@@ -20,6 +21,7 @@ export default function CreateGroupPage() {
 
   const [instagramLinks, setInstagramLinks] = useState<string[]>([""]);
   const [photos, setPhotos] = useState<File[]>([]);
+  const [existingPhotos, setExistingPhotos] = useState<string[]>([]);
   const [isEditing, setIsEditing] = useState(false);
 
   // Load existing data if the user already has a group
@@ -34,11 +36,34 @@ export default function CreateGroupPage() {
         if (existingGroup.instagram && existingGroup.instagram.length > 0) {
           setInstagramLinks(existingGroup.instagram);
         }
+        if (existingGroup.photos && existingGroup.photos.length > 0) {
+          setExistingPhotos(existingGroup.photos);
+        }
         setAgreed(true); // Since they already agreed before
       }
     }
     loadData();
   }, []);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const selectedFiles = Array.from(e.target.files);
+      const availableSlots = 6 - (existingPhotos.length + photos.length);
+      
+      if (availableSlots > 0) {
+        setPhotos((prev) => [...prev, ...selectedFiles.slice(0, availableSlots)]);
+      }
+    }
+  };
+
+  const removePhoto = (index: number) => {
+    if (index < existingPhotos.length) {
+      setExistingPhotos((prev) => prev.filter((_, i) => i !== index));
+    } else {
+      const fileIndex = index - existingPhotos.length;
+      setPhotos((prev) => prev.filter((_, i) => i !== fileIndex));
+    }
+  };
 
   const addInstagram = () => setInstagramLinks([...instagramLinks, ""]);
   const updateInstagram = (i: number, v: string) => {
@@ -56,6 +81,16 @@ export default function CreateGroupPage() {
 
     const form = event.currentTarget;
     const formData = new FormData(form);
+
+    formData.delete("photos");
+    photos.forEach((photoFile) => {
+      formData.append("photos", photoFile);
+    });
+
+    formData.delete("existingPhotos");
+    existingPhotos.forEach((url) => {
+      formData.append("existingPhotos", url);
+    });
 
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
@@ -116,6 +151,9 @@ export default function CreateGroupPage() {
     }
   }
 
+  const localPhotoUrls = photos.map((file) => URL.createObjectURL(file));
+  const displayPhotos = [...existingPhotos, ...localPhotoUrls];
+
   return (
     <div className="min-h-screen bg-black text-white font-sans pb-20">
       {/* Header */}
@@ -151,100 +189,81 @@ export default function CreateGroupPage() {
       </div>
 
       <form onSubmit={onSubmit} className="px-6 space-y-8">
-        {/* Upload Section */}
-        <div className="space-y-4">
+        
+        {/* --- GALERÍA DE FOTOS (Rediseñada y funcional) --- */}
+        <div className="space-y-3">
+          <div className="flex justify-between items-center">
+            <label className="block text-sm font-bold uppercase tracking-wider text-gray-500">
+              Group Gallery ({displayPhotos.length}/6)
+            </label>
+          </div>
+
+          {/* El input nativo, completamente oculto */}
           <input
             type="file"
-            id="photoUpload"
+            id="gallery-upload"
             accept="image/*"
             multiple
             className="hidden"
-            onChange={(e) => {
-              const files = Array.from(e.target.files || []);
-
-              // max 6 Bilder
-              const limited = [...photos, ...files].slice(0, 6);
-              setPhotos(limited);
-
-              // reset input damit gleiche Datei erneut gewählt werden kann
-              e.target.value = "";
-            }}
+            onChange={handleFileChange}
+            disabled={displayPhotos.length >= 6}
           />
 
-          <button
-            type="button"
-            onClick={() => document.getElementById("photoUpload")?.click()}
-            className="w-full bg-[#FF725E] hover:bg-[#ff8575] text-black font-bold py-5 rounded-2xl 
-                    flex items-center justify-center gap-3 transition-colors 
-                    shadow-[0_4px_0_#E85C4A]"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={2}
-              stroke="currentColor"
-              className="w-6 h-6"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z"
-              />
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM18.75 10.5h.008v.008h-.008V10.5Z"
-              />
-            </svg>
+          {/* Grid de 6 Casillas */}
+          <div className="grid grid-cols-3 gap-3">
+            {Array.from({ length: 6 }).map((_, index) => {
+              const currentPhoto = displayPhotos[index];
 
-            {t("uploadPhotos")}
-          </button>
+              if (currentPhoto) {
+                // Casilla Ocupada con imagen y botón de borrado
+                return (
+                  <div key={index} className="relative aspect-square w-full rounded-2xl overflow-hidden border border-white/10 bg-[#141414] animate-in fade-in duration-200">
+                    <img
+                      src={currentPhoto}
+                      alt={`Upload index ${index}`}
+                      className="w-full h-full object-cover"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removePhoto(index)}
+                      className="absolute top-1.5 right-1.5 bg-black/80 text-white p-1 rounded-full hover:bg-black transition-colors border border-white/10"
+                    >
+                      <X size={14} />
+                    </button>
+                  </div>
+                );
+              }
 
-          {/* Photo Grid */}
-          <div className="grid grid-cols-3 gap-2">
-            {photos.map((file, i) => (
-              <div key={i} className="relative aspect-square">
-                <img
-                  src={URL.createObjectURL(file)}
-                  alt={`photo-${i}`}
-                  className="w-full h-full object-cover rounded-xl"
-                />
+              // Casilla Activa para Subir (Se comporta como botón)
+              if (index === displayPhotos.length) {
+                return (
+                  <label
+                    key={index}
+                    htmlFor="gallery-upload"
+                    className="flex flex-col items-center justify-center aspect-square w-full rounded-2xl border-2 border-dashed border-[#FF725E] bg-[#FF725E]/5 cursor-pointer hover:bg-[#FF725E]/10 transition-all group shadow-inner"
+                  >
+                    <Plus size={24} className="text-[#FF725E] group-hover:scale-110 transition-transform duration-200" />
+                    <span className="text-[10px] font-black uppercase text-[#FF725E] mt-1 tracking-wider">Add</span>
+                  </label>
+                );
+              }
 
-                <button
-                  type="button"
-                  onClick={() => {
-                    setPhotos(photos.filter((_, idx) => idx !== i));
-                  }}
-                  className="absolute top-2 right-2 bg-black/70 text-white rounded-full 
-                            w-7 h-7 flex items-center justify-center backdrop-blur-sm
-                            hover:bg-black transition"
+              // Casillas Vacías Restantes (Bloqueadas estéticamente)
+              return (
+                <div
+                  key={index}
+                  className="flex items-center justify-center aspect-square w-full rounded-2xl border border-white/5 bg-[#0A0A0A] text-gray-800"
                 >
-                  ✕
-                </button>
-              </div>
-            ))}
-
-            {/* Empty placeholders */}
-            {Array.from({ length: 6 - photos.length }).map((_, i) => (
-              <button
-                key={`empty-${i}`}
-                type="button"
-                onClick={() => document.getElementById("photoUpload")?.click()}
-                className="aspect-square bg-[#121212] rounded-xl border-2 border-dashed
-                        border-[#FF725E]/20 flex items-center justify-center
-                        text-gray-600 hover:border-[#FF725E]/40 hover:text-[#FF725E]
-                        transition"
-              >
-                <span className="text-2xl font-light">+</span>
-              </button>
-            ))}
+                  <Plus size={20} className="opacity-20" />
+                </div>
+              );
+            })}
           </div>
-
-          <p className="text-[9px] text-center text-[#FF725E] font-bold uppercase tracking-widest">
-            {photos.length}/6 {t("maxPhotos")}
+          <p className="text-[9px] text-center text-[#FF725E] font-bold uppercase tracking-widest mt-2">
+            {displayPhotos.length === 0 ? "Upload at least one cool picture of your crew!" : "Great! Add more to stand out."}
           </p>
         </div>
+        {/* --------------------------------------------------- */}
 
         {/* Group Details */}
         <div className="bg-[#121212] rounded-[2rem] p-6 space-y-8 shadow-[0_0_20px_rgba(0,0,0,0.4)]">
