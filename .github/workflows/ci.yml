@@ -1,41 +1,19 @@
-name: CI
-
-on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+name: GLOO CI
+on: [push, pull_request]
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
-
     env:
       DATABASE_URL: "postgresql://dummy:dummy@localhost:5432/dummy" #Just to satisfy Prisma during tests
-
-    strategy:
-      matrix:
-        node-version: [24.x]
-
     steps:
       - uses: actions/checkout@v4
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Install Node
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Prisma Validate
-        run: npx prisma validate
-
-      - name: Prisma Generate
-        run: npx prisma generate
-
-      - name: Run Unit Tests
-        run: npm run test:ci
-
-      - name: Build
-        run: npm run build
+          node-version: 24
+      - run: npm install
+      - run: npx prisma validate
+      - run: npx prisma generate
+      - run: npm run test:ci
+      - run: npm run build
