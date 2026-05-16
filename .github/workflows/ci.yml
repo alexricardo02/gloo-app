@@ -4,6 +4,8 @@ on: [push, pull_request]
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: "postgresql://dummy:dummy@localhost:5432/dummy" #Just to satisfy Prisma during tests
     steps:
       - uses: actions/checkout@v4
       - name: Install Node
@@ -13,4 +15,5 @@ jobs:
       - run: npm install
       - run: npx prisma validate
       - run: npx prisma generate
+      - run: npm run test:ci
       - run: npm run build
