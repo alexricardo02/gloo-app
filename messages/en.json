@@ -7,7 +7,8 @@
     "titleHighlight": " nights ",
     "titleEnd": "of your life.",
     "buttonStart": "Start the party",
-    "matchingNow": "groups matching right now"
+    "matchingNow": "groups matching right now",
+    "loading": "Loading"
   },
   "Dashboard": {
     "welcome": "Welcome to gloo,",
@@ -26,7 +27,11 @@
     "paywallDesc": "Sign in now to unlock the full experience and connect with other people!",
     "paywallButton": "Sign in to Continue",
     "browseContent": "Browse Content",
-    "findGroup": "Find group ({count})"
+    "findGroup": "Find group ({count})",
+    "actionSheetTitle": "This feature requires an account",
+    "actionSheetDesc": "Create a free account to unlock groups, messages, maps and much more.",
+    "actionSheetRegister": "Create free account",
+    "actionSheetLogin": "Sign in"
   },
   "Games": {
     "title": "Games",

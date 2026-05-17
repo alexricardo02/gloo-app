@@ -26,7 +26,11 @@
     "paywallDesc": "Registriere dich jetzt, um die volle Erfahrung zu genießen und dich mit anderen zu vernetzen!",
     "paywallButton": "Anmelden um fortzufahren",
     "browseContent": "Weiter umschauen",
-    "findGroup": "Gruppe finden ({count})"
+    "findGroup": "Gruppe finden ({count})",
+    "actionSheetTitle": "Diese Funktion erfordert ein Konto",
+    "actionSheetDesc": "Erstelle ein kostenloses Konto, um Gruppen, Nachrichten, Karten und vieles mehr freizuschalten.",
+    "actionSheetRegister": "Kostenloses Konto erstellen",
+    "actionSheetLogin": "Anmelden"
   },
   "Games": {
     "title": "Spiele",
@@ -47,7 +51,8 @@
     "termsPrefix": "Mit der Anmeldung stimmst du den",
     "termsOfService": "Nutzungsbedingungen",
     "and": "und der",
-    "privacyPolicy": "Datenschutzrichtlinie zu"
+    "privacyPolicy": "Datenschutzrichtlinie zu",
+    "error": "Ungültige E-Mail oder Passwort."
   },
   "Register": {
     "title": "Registrieren",
@@ -74,5 +79,8 @@
     "createGroupButton": "Gruppenprofil erstellen",
     "accountSection": "Konto",
     "logoutButton": "Abmelden"
+  },
+  "Map": {
+    "title": "Karte"
   }
 }

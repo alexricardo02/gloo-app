@@ -6,6 +6,7 @@ import { useTranslations, useLocale } from "next-intl";
 import { useRouter } from "next/navigation";
 import { checkIsGuest } from "@/app/actions/guest";
 import Navigation from "@/app/components/Navigation";
+import { X } from "lucide-react";
 
 interface PreviewGroup {
   imageUrl: string;
@@ -13,49 +14,102 @@ interface PreviewGroup {
   distance: string;
 }
 
+function GuestActionSheet({
+  open,
+  onClose,
+  locale,
+}: {
+  open: boolean;
+  onClose: () => void;
+  locale: string;
+}) {
+  const router = useRouter();
+  const t = useTranslations("Dashboard");
+ 
+  useEffect(() => {
+    document.body.style.overflow = open ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [open]);
+ 
+  if (!open) return null;
+ 
+  return (
+    <div className="fixed inset-0 z-[200] flex items-end justify-center">
+      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
+      <div className="relative w-full max-w-md bg-[#111111] border border-white/10 rounded-t-[2.5rem] p-8 pb-12 flex flex-col items-center gap-6 animate-in slide-in-from-bottom duration-300">
+        <div className="w-10 h-1 bg-white/20 rounded-full mb-2" />
+        <button onClick={onClose} className="absolute top-5 right-5 text-gray-500 hover:text-white transition-colors">
+          <X size={22} />
+        </button>
+        <div className="w-16 h-16 bg-[#FF5733] rounded-2xl flex items-center justify-center shadow-[0_8px_24px_rgba(255,87,51,0.35)] rotate-6">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="white" className="w-8 h-8 -rotate-6">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
+          </svg>
+        </div>
+        <div className="text-center space-y-2">
+          <h3 className="text-xl font-black text-white">{t("actionSheetTitle")}</h3>
+          <p className="text-sm text-gray-400 leading-relaxed max-w-xs">{t("actionSheetDesc")}</p>
+        </div>
+        <div className="w-full space-y-3">
+          <button
+            onClick={() => router.push(`/${locale}/register`)}
+            className="w-full bg-[#FF5733] text-white font-black py-4 rounded-2xl shadow-[0_4px_20px_rgba(255,87,51,0.35)] active:scale-95 transition-transform text-sm uppercase tracking-wider"
+          >
+            {t("actionSheetRegister")}
+          </button>
+          <button
+            onClick={() => router.push(`/${locale}/login`)}
+            className="w-full bg-white/5 border border-white/10 text-white font-bold py-4 rounded-2xl active:scale-95 transition-transform text-sm"
+          >
+            {t("actionSheetLogin")}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+const PAYWALL_DISMISSED_KEY = "gloo_paywall_dismissed";
+
 export default function MainDashboard() {
   const [isGuest, setIsGuest] = useState(false);
   const [previewGroup, setPreviewGroup] = useState<PreviewGroup | null>(null);
   const [showPaywall, setShowPaywall] = useState(false);
+
+  const [showActionSheet, setShowActionSheet] = useState(false);
   
   const t = useTranslations("Dashboard");
   const locale = useLocale();
   const router = useRouter();
 
   useEffect(() => {
-    const initDashboard = async () => {
+    const init = async () => {
       const status = await checkIsGuest();
       setIsGuest(status);
-
+ 
       if (status) {
-        setShowPaywall(true); 
-        setPreviewGroup({
-          imageUrl: "", 
-          memberCount: 4,
-          distance: "0.8 km"
-        });
+        setPreviewGroup({ imageUrl: "", memberCount: 4, distance: "0.8 km" });
+ 
+        const alreadyDismissed = sessionStorage.getItem(PAYWALL_DISMISSED_KEY);
+        if (!alreadyDismissed) {
+          setShowPaywall(true);
+        }
       }
     };
-    initDashboard();
-
-    const handleScroll = () => {
-      if (isGuest && window.scrollY > 100) {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        setShowPaywall(true);
-      }
-    };
-
-    if (isGuest) {
-      window.addEventListener("scroll", handleScroll);
-    }
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [isGuest]);
-
+    init();
+  }, []);
+ 
+  const handleDismissPaywall = () => {
+    sessionStorage.setItem(PAYWALL_DISMISSED_KEY, "true");
+    setShowPaywall(false);
+  };
+ 
   const handleSecureInteraction = (e: React.MouseEvent, targetUrl?: string) => {
     if (isGuest) {
       e.preventDefault();
       e.stopPropagation();
-      router.push(`/${locale}/login?reason=interaction_blocked`);
+      setShowActionSheet(true);
     } else if (targetUrl) {
       router.push(targetUrl);
     }
@@ -81,7 +135,7 @@ export default function MainDashboard() {
         </div>
 
         <button 
-          onClick={(e) => handleSecureInteraction(e, `/${locale}/games`)} 
+          onClick={() => router.push(`/${locale}/games`)}
           className="w-full bg-[#FF5733] text-white rounded-2xl py-4 flex items-center justify-center gap-3 shadow-[0_8px_20px_rgba(255,87,51,0.3)] hover:scale-[1.02] transition-transform active:scale-95 mb-8"
         >
           <span className="text-xl font-bold">{t('enterGames')}</span>
@@ -163,22 +217,34 @@ export default function MainDashboard() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
               </svg>
             </div>
-            <h2 className="text-2xl font-black text-white mb-4">{t('paywallTitle')}</h2>
-            <p className="text-gray-400 mb-8 text-sm leading-relaxed">{t('paywallDesc')}</p>
-            <button 
-              onClick={() => router.push(`/${locale}/login`)} 
+            <h2 className="text-2xl font-black text-white mb-4">{t("paywallTitle")}</h2>
+            <p className="text-gray-400 mb-8 text-sm leading-relaxed">{t("paywallDesc")}</p>
+            <button
+              onClick={() => router.push(`/${locale}/login`)}
               className="w-full bg-[#FF5733] text-white font-bold py-4 rounded-2xl mb-4 shadow-[0_4px_20px_rgba(255,87,51,0.4)] active:scale-95 transition-transform"
             >
-              {t('paywallButton')}
+              {t("paywallButton")}
             </button>
-            <button onClick={() => setShowPaywall(false)} className="text-gray-500 hover:text-gray-300 transition-colors text-xs font-medium uppercase tracking-widest">
-              {t('browseContent')}
+            <button
+              onClick={handleDismissPaywall}
+              className="text-gray-500 hover:text-gray-300 transition-colors text-xs font-medium uppercase tracking-widest"
+            >
+              {t("browseContent")}
             </button>
           </div>
         </div>
       )}
-
-      <Navigation isGuest={isGuest} onSecureClick={(e) => handleSecureInteraction(e)} />
+ 
+      <GuestActionSheet
+        open={showActionSheet}
+        onClose={() => setShowActionSheet(false)}
+        locale={locale}
+      />
+ 
+      <Navigation
+        isGuest={isGuest}
+        onSecureClick={(e) => handleSecureInteraction(e)}
+      />
     </div>
   );
 }

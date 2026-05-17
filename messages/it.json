@@ -26,7 +26,11 @@
     "paywallDesc": "Accedi ora per sbloccare l'esperienza completa e connetterti con altre persone!",
     "paywallButton": "Accedi per continuare",
     "browseContent": "Esplora i contenuti",
-    "findGroup": "Trova gruppo ({count})"
+    "findGroup": "Trova gruppo ({count})",
+    "actionSheetTitle": "Questa funzione richiede un account",
+    "actionSheetDesc": "Crea un account gratuito per accedere a gruppi, messaggi, mappa e molto altro.",
+    "actionSheetRegister": "Crea account gratuito",
+    "actionSheetLogin": "Accedi"
   },
   "Games": {
     "title": "Giochi",
@@ -47,7 +51,8 @@
     "termsPrefix": "Accedendo, accetti i",
     "termsOfService": "Termini di servizio",
     "and": "e la",
-    "privacyPolicy": "Informativa sulla privacy."
+    "privacyPolicy": "Informativa sulla privacy.",
+    "error": "Email o password non validi."
   },
   "Register": {
     "title": "Registrati",
@@ -74,5 +79,8 @@
     "createGroupButton": "Crea Profilo di Gruppo",
     "accountSection": "Account",
     "logoutButton": "Disconnetti"
+  },
+  "Map": {
+    "title": "Mappa"
   }
 }
