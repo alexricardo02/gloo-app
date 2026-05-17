@@ -27,7 +27,21 @@ export async function getDiscoveryGroups({
   });
 
   if (!userGroup || !userGroup.latitude || !userGroup.longitude) {
-    return { error: "User location not found" };
+    const teaserGroup = await prisma.group.findFirst({
+      where: {
+        userId: { not: userId } // Prevent showing the user themselves if a partial record exists
+      },
+      include: {
+        user: {
+          select: { name: true, image: true }
+        }
+      }
+    });
+
+    return {
+      groups: teaserGroup ? [teaserGroup] : [],
+      hasNoGroup: true // Flag passed to client to trigger the restriction modal
+    };
   }
 
   const limit = 10;
