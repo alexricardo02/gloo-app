@@ -92,7 +92,7 @@ export default function LoginPage() {
           </div>
 
           <div className="flex justify-start">
-            <Link href="#" className="text-sm font-bold text-gray-800 hover:underline">
+            <Link href="/forgotPassword" className="text-sm font-bold text-gray-800 hover:underline">
               {t('forgotPassword')}
             </Link>
           </div>

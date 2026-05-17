@@ -56,17 +56,17 @@
   },
   "Register": {
     "title": "Sign up",
-    "alreadyHaveAccount": "Already have an account?",
+    "alreadyHaveAccount": "Already have an account? ",
     "signIn": "Sign in",
     "namePlaceholder": "Name",
     "dobPlaceholder": "Date of Birth",
     "emailPlaceholder": "Email Address",
     "usernamePlaceholder": "Username",
     "passwordPlaceholder": "Password",
-    "agreePrefix": "I agree to gloo's",
+    "agreePrefix": "I agree to gloo's ",
     "termsOfService": "Terms of Service",
     "and": "and",
-    "privacyPolicy": "Privacy Policy.",
+    "privacyPolicy": "Privacy Policy",
     "createAccountButton": "Create Account",
     "orSignUpWith": "or sign up with"
   },
@@ -144,5 +144,34 @@
     "emptyDesc": "Try increasing your search distance or check back later for new groups.",
     "emptyTitle": "No groups found nearby",
     "preferences": "Preferences"
+  },
+  "ForgotPassword": {
+    "title": "Reset Password",
+    "description": "Enter your email address and we will send you a link to reset your password.",
+    "emailPlaceholder": "Email Address",
+    "submitButton": "Send Reset Link",
+    "backToLogin": "Back to Sign in"
+  },
+  "Terms": {
+    "title": "Terms of Service",
+    "lastUpdated": "Last Updated: May 2026",
+    "intro": "Welcome to gloo. By accessing or using our application, you agree to be bound by these Terms of Service and our Community Guidelines.",
+    "section1Title": "1. Account Registration",
+    "section1Content": "You must be at least 18 years old to create an account. You are responsible for safeguarding your account password and for any activities or actions under your password.",
+    "section2Title": "2. Acceptable Use",
+    "section2Content": "You agree not to use the app for any illegal or unauthorized purpose. Harassment, hate speech, or inappropriate behavior towards other crews is strictly prohibited.",
+    "section3Title": "3. Termination",
+    "section3Content": "We reserve the right to suspend or terminate your account at any time, without notice or liability, for any reason, including breach of these Terms."
+  },
+  "Privacy": {
+    "title": "Privacy Policy",
+    "lastUpdated": "Last Updated: May 2026",
+    "intro": "At gloo, we take your privacy seriously. This policy explains how we collect, use, and protect your personal information.",
+    "section1Title": "1. Information We Collect",
+    "section1Content": "We collect information you provide directly to us, such as your name, email, date of birth, and location data when explicitly shared to match you with nearby groups.",
+    "section2Title": "2. How We Use Your Data",
+    "section2Content": "Your data is used solely to provide and improve our services, match you with relevant groups, and ensure a safe environment for our community.",
+    "section3Title": "3. Data Sharing",
+    "section3Content": "We do not sell your personal data. We only share information with third parties when necessary to provide our services or comply with legal obligations."
   }
 }
