@@ -88,8 +88,8 @@ export async function getDiscoveryGroups({
     .map((group) => ({
       ...group,
       distance: getDistanceKm(
-        userGroup.latitude,
-        userGroup.longitude,
+        userGroup.latitude ?? 0,
+        userGroup.longitude ?? 0,
         group.latitude ?? 0,
         group.longitude ?? 0,
       ),
