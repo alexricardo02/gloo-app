@@ -66,6 +66,7 @@ model Group {
   
   // Search Preferences
   searchGender     Gender      @default(ANY)
+  searchAgeMin     Int         @default(18)
   searchAgeMax     Int         @default(35)
   maxDistance      Int         @default(10)
   isPartyMode      Boolean     @default(false)

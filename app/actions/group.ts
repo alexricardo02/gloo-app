@@ -29,6 +29,7 @@ export async function createGroupAction(formData: FormData, locale: string) {
   const ageMax = Number(formData.get("ageMax")) || 30;
 
   const searchGender = (formData.get("searchGender") as Gender) || "ANY";
+  const searchAgeMin = Number(formData.get("searchAgeMin")) || 18;
   const searchAgeMax = Number(formData.get("searchAgeMax")) || 35;
   const maxDistance = Number(formData.get("maxDistance")) || 10;
 
@@ -75,6 +76,7 @@ export async function createGroupAction(formData: FormData, locale: string) {
       ageMin,
       ageMax,
       searchGender,
+      searchAgeMin,
       searchAgeMax,
       maxDistance,
       publicProfile,
@@ -91,6 +93,7 @@ export async function createGroupAction(formData: FormData, locale: string) {
       ageMin,
       ageMax,
       searchGender,
+      searchAgeMin,
       searchAgeMax,
       maxDistance,
       publicProfile,
