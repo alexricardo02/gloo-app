@@ -17,6 +17,8 @@ export default function RegisterPage() {
   const [error, setError] = useState("");
   const [agreed, setAgreed] = useState(false);
 
+  const [dob, setDob] = useState("");
+
   async function handleSubmit(formData: FormData) {
     const result = await registerUser(formData, locale);
     if (result?.error) setError(result.error);
@@ -84,16 +86,30 @@ export default function RegisterPage() {
           {/* Row 2: Date of Birth (Below names) */}
           {/* --- MODERNIZED DATE OF BIRTH SELECTOR --- */}
           {/* Why: We transform the native picker into a premium custom UI block using specialized Tailwind utility spacing and color focus overrides. */}
-          <div className="space-y-1.5 relative">
-            <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">
-              {t("dobPlaceholder")}
-            </label>
+          <div className="relative flex items-center bg-[#F7F7F7] rounded-2xl px-4 py-4 focus-within:ring-2 focus-within:ring-black/20 transition-all w-full overflow-hidden">
+            
+            {/* Calendar Icon */}
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-gray-500 shrink-0">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
+            </svg>
+
+            {/* Custom Fake Placeholder */}
+            {!dob && (
+              <span className="absolute left-[3.25rem] text-gray-400 font-medium pointer-events-none">
+                {t('dobPlaceholder')}
+              </span>
+            )}
+
             <input
               type="date"
               name="birthDate"
               required
               max={maxDate}
-              className="w-full bg-gray-50 border border-gray-200 rounded-2xl p-4 text-sm font-medium text-gray-700 focus:outline-none focus:border-[#FF725E] transition-all appearance-none cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-40 [&::-webkit-calendar-picker-indicator]:hover:opacity-100 [&::-webkit-calendar-picker-indicator]:transition-opacity"
+              value={dob}
+              onChange={(e) => setDob(e.target.value)}
+              className={`bg-transparent outline-none w-full ml-3 font-medium cursor-pointer relative z-10 
+                ${dob ? 'text-gray-800' : 'text-transparent'} 
+                [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:cursor-pointer`}
             />
           </div>
 
