@@ -24,7 +24,9 @@ export default function Home() {
   const [isPending, startTransition] = useTransition();
 
   const [isOpen, setIsOpen] = useState(false);
+  const [videoReady, setVideoReady] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   const activeLanguage = languages.find(lang => lang.code === currentLocale) || languages[0];
 
@@ -45,6 +47,15 @@ export default function Home() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // if video was already in cache it will be ready immediately, otherwise we wait for it to load
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    if (video.readyState >= 3) {
+      setVideoReady(true);
+    }
+  }, []);
+
   /**
    * Function to change the language of the application using the dropdown menu
    */
@@ -61,14 +72,17 @@ export default function Home() {
 
   return (
     <main className="relative flex flex-col items-center justify-between min-h-screen text-[#FDFEFE] p-8 font-sans overflow-hidden">
-      
+      <div className="absolute inset-0 bg-black -z-30" />
       <video
+        ref={videoRef}
         autoPlay
         loop
         muted
         playsInline
-        className="absolute inset-0 w-full h-full object-cover -z-20"
-        poster="/images/bg-fallback.jpg"
+        onCanPlay={() => setVideoReady(true)}
+        className={`absolute inset-0 w-full h-full object-cover -z-20 transition-opacity duration-700 ${
+          videoReady ? "opacity-100" : "opacity-0"
+        }`}
       >
         <source src="/videos/video1.mp4" type="video/mp4" />
       </video>
