@@ -167,7 +167,7 @@ export default function RegisterPage() {
               className="mt-1 w-5 h-5 rounded border-gray-300 text-black accent-black focus:ring-black cursor-pointer"
             />
             <label htmlFor="terms" className="text-sm text-gray-600 font-medium leading-tight cursor-pointer">
-              {t('agreePrefix')}<Link href="#" className="text-black font-bold hover:underline">{t('termsOfService')}</Link> {t('and')} <Link href="#" className="text-black font-bold hover:underline">{t('privacyPolicy')}</Link>.
+              {t('agreePrefix')}<Link href="/termsOfService" className="text-black font-bold hover:underline">{t('termsOfService')}</Link> {t('and')} <Link href="/privacyPolicy" className="text-black font-bold hover:underline">{t('privacyPolicy')}</Link>.
             </label>
           </div>
 
