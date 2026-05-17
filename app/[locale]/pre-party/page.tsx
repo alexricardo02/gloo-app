@@ -97,7 +97,7 @@ export default function PrePartyPage() {
             className="flex items-center gap-2.5 bg-[#141414] border border-white/10 px-5 py-2.5 rounded-full hover:border-[#FF725E]/30 transition-all"
           >
             <MapPin size={18} className="text-[#FF725E]" />
-            <span className="font-extrabold text-sm tracking-tight">Mainz, Germany</span>
+            <span className="font-extrabold text-sm tracking-tight">Mainz, Germany</span> {/* Necesary change: dynamic position*/}
             <ChevronRight size={16} className="text-white/20" />
             <span className="text-sm font-bold text-gray-500">{distance} km</span>
           </button>
@@ -105,17 +105,12 @@ export default function PrePartyPage() {
           <Link href={`/${locale}/profile/preferences`} className="block">
             <div className="flex items-center gap-2.5 text-sm font-bold bg-[#141414] border border-white/10 px-5 py-2.5 rounded-full hover:bg-[#1A1A1A] transition-all text-white">
               <SlidersHorizontal size={18} className="text-[#FF725E]" />
-              <span className="hidden md:inline">Preferences</span>
+              <span className="hidden md:inline">{t("preferences")}</span>
             </div>
           </Link>
         </div>
       </div>
  
-      {/*
-        touch-pan-y es clave: le indica al navegador que este contenedor
-        solo debe capturar gestos VERTICALES. Así los swipes horizontales
-        dentro de cada GroupCard llegan correctamente al carrusel interno.
-      */}
       <main
         className="h-full w-full overflow-y-scroll snap-y snap-mandatory scroll-smooth pb-20 touch-pan-y"
         style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
@@ -126,9 +121,9 @@ export default function PrePartyPage() {
           <div className="h-full flex flex-col items-center justify-center px-10 text-center gap-4">
             <div className="border border-white/5 bg-[#141414] rounded-3xl p-10 flex flex-col items-center gap-4">
               <MapPin size={40} className="text-gray-700" />
-              <h3 className="text-lg font-extrabold text-white">No groups found nearby</h3>
+              <h3 className="text-lg font-extrabold text-white">{t("emptyTitle")}</h3>
               <p className="text-sm text-gray-500 max-w-xs">
-                Try increasing your search distance or check back later for new crews.
+                {t("emptyDesc")}
               </p>
             </div>
           </div>
@@ -155,7 +150,7 @@ export default function PrePartyPage() {
         {!hasMore && groups.length > 0 && (
           <div className="h-[50dvh] w-full snap-center flex flex-col justify-center items-center p-10 text-center">
             <span className="text-xs text-gray-700 font-bold uppercase tracking-widest">
-              You've seen all the pre-parties near Mainz.
+              {t("endOfList")}
             </span>
           </div>
         )}
@@ -189,7 +184,7 @@ export default function PrePartyPage() {
               className="w-full bg-[#FF725E] text-black font-black py-4 rounded-full uppercase text-sm flex items-center justify-center gap-2"
             >
               <Users size={18} />
-              Set Radius
+              {t("modalButton")}
             </button>
           </div>
         </div>

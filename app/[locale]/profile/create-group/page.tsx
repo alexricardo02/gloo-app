@@ -190,7 +190,7 @@ export default function CreateGroupPage() {
 
       <form onSubmit={onSubmit} className="px-6 space-y-8">
         
-        {/* --- GALERÍA DE FOTOS (Rediseñada y funcional) --- */}
+
         <div className="space-y-3">
           <div className="flex justify-between items-center">
             <label className="block text-sm font-bold uppercase tracking-wider text-gray-500">
@@ -198,7 +198,6 @@ export default function CreateGroupPage() {
             </label>
           </div>
 
-          {/* El input nativo, completamente oculto */}
           <input
             type="file"
             id="gallery-upload"
@@ -209,13 +208,11 @@ export default function CreateGroupPage() {
             disabled={displayPhotos.length >= 6}
           />
 
-          {/* Grid de 6 Casillas */}
           <div className="grid grid-cols-3 gap-3">
             {Array.from({ length: 6 }).map((_, index) => {
               const currentPhoto = displayPhotos[index];
 
               if (currentPhoto) {
-                // Casilla Ocupada con imagen y botón de borrado
                 return (
                   <div key={index} className="relative aspect-square w-full rounded-2xl overflow-hidden border border-white/10 bg-[#141414] animate-in fade-in duration-200">
                     <img
@@ -234,7 +231,6 @@ export default function CreateGroupPage() {
                 );
               }
 
-              // Casilla Activa para Subir (Se comporta como botón)
               if (index === displayPhotos.length) {
                 return (
                   <label
@@ -248,7 +244,6 @@ export default function CreateGroupPage() {
                 );
               }
 
-              // Casillas Vacías Restantes (Bloqueadas estéticamente)
               return (
                 <div
                   key={index}

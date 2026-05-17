@@ -41,8 +41,8 @@ export default function ProfilePage() {
 
   const settingsOptions = [
     { name: t("accountSection"), icon: <Users size={16} />, path: `/${locale}/profile/account` },
-    { name: "My Scores", icon: <BarChart3 size={16} />, path: `/${locale}/game-center` },
-    { name: "Data Policy", icon: <ChevronRight size={16} />, path: `/${locale}/privacy` },
+    { name: t("myScores"), icon: <BarChart3 size={16} />, path: `/${locale}/game-center` },
+    { name: t("dataPolicy"), icon: <ChevronRight size={16} />, path: `/${locale}/privacy` },
   ];
 
   return (
@@ -134,7 +134,7 @@ export default function ProfilePage() {
                 <div className="flex-1 space-y-1.5">
                   <div className="flex items-center gap-2">
                     <h4 className="font-extrabold text-xl text-white">
-                      Your Group
+                      {t("yourGroup")}
                     </h4>
                     <span className="text-[10px] text-[#FF725E] bg-[#FF725E]/10 px-2 py-0.5 rounded uppercase font-bold">
                       {t(group.gender)}
@@ -162,7 +162,7 @@ export default function ProfilePage() {
         {/* Settings Options */}
         <div className="space-y-4 mt-8">
           <h3 className="text-sm font-bold uppercase tracking-wider text-gray-500">
-            Settings
+            {t("settings")}
           </h3>
           <div className="space-y-3">
             {settingsOptions.map((option, i) => (
@@ -212,7 +212,7 @@ export default function ProfilePage() {
             </button>
             
             <h3 className="text-2xl font-black italic uppercase mb-8 text-center tracking-tight">
-              Update Photo
+              {t("updatePhoto")}
             </h3>
 
             <label 
@@ -220,7 +220,7 @@ export default function ProfilePage() {
               className="w-40 h-40 rounded-full border-2 border-dashed border-[#FF725E] flex flex-col items-center justify-center bg-white/5 mb-8 cursor-pointer hover:bg-[#FF725E]/5 transition-colors group"
             >
               <Camera size={40} className="text-[#FF725E] mb-2 group-hover:scale-110 transition-transform" />
-              <span className="text-[10px] font-bold uppercase text-gray-500">Tap to select</span>
+              <span className="text-[10px] font-bold uppercase text-gray-500">{t("tapToSelect")}</span>
               <input 
                 type="file" 
                 id="profile-upload" 
@@ -236,14 +236,14 @@ export default function ProfilePage() {
               className="w-full bg-[#FF725E] text-black font-black py-4 rounded-full uppercase tracking-widest text-sm hover:scale-[1.02] transition-transform mb-4 flex items-center justify-center gap-2"
             >
               <Upload size={18} />
-              Upload Now
+              {t("uploadNow")}
             </button>
 
             <button 
               onClick={() => setIsModalOpen(false)}
               className="text-gray-500 font-bold uppercase text-xs tracking-widest hover:text-white transition-colors"
             >
-              Cancel
+              {t("cancel")}
             </button>
           </div>
         </div>
