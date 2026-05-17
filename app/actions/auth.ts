@@ -53,7 +53,7 @@ export async function registerUser(formData: FormData, locale: string) {
   } catch (error) {
     return { error: "Email already exists" };
   }
-  redirect(`/${locale}/profile/create-group`);
+  redirect(`/${locale}/profile/create-group?from=register`);
 }
 
 export async function loginUser(formData: FormData, locale: string) {

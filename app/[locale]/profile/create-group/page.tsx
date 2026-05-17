@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { createGroupAction, getGroupByUser } from "@/app/actions/group";
 import { Plus, X } from "lucide-react";
@@ -10,6 +10,7 @@ export default function CreateGroupPage() {
   const router = useRouter();
   const locale = useLocale();
   const t = useTranslations("CreateGroup");
+  const searchParams = useSearchParams();
 
   const [membersCount, setMembersCount] = useState(4);
   const [loading, setLoading] = useState(false);
@@ -23,6 +24,15 @@ export default function CreateGroupPage() {
   const [photos, setPhotos] = useState<File[]>([]);
   const [existingPhotos, setExistingPhotos] = useState<string[]>([]);
   const [isEditing, setIsEditing] = useState(false);
+
+  const handleBack = () => {
+    const fromRegister = searchParams.get("from") === "register";
+    if (fromRegister) {
+      router.push(`/${locale}/dashboard`);
+    } else {
+      router.push(`/${locale}/profile`);
+    }
+  };
 
   // Load existing data if the user already has a group
   useEffect(() => {

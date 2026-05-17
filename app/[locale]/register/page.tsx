@@ -15,6 +15,7 @@ export default function RegisterPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const locale = useLocale();
   const [error, setError] = useState("");
+  const [agreed, setAgreed] = useState(false);
 
   async function handleSubmit(formData: FormData) {
     const result = await registerUser(formData, locale);
@@ -32,10 +33,9 @@ export default function RegisterPage() {
       {/* Main Card */}
       <div className="w-full max-w-md bg-white rounded-[2.5rem] px-8 pb-8 pt-6 shadow-xl flex flex-col">
         
-        {/* Contenedor de la flecha (sin 'absolute' para no romper la tarjeta) */}
         <div className="flex items-center mb-6">
           <button 
-            onClick={() => router.push(`/${locale}/login`)} // 3. Navegación al dashboard
+            onClick={() => router.push(`/${locale}/login`)} 
             className="p-2 -ml-2 rounded-full hover:bg-gray-100 transition-colors text-gray-600"
             aria-label="Go to Dashboard"
           >
@@ -52,6 +52,13 @@ export default function RegisterPage() {
             {t('alreadyHaveAccount')}<Link href="/login" className="text-black font-bold hover:underline">{t('signIn')}</Link>
           </p>
         </div>
+
+        {/* Error Alert Display */}
+        {error && (
+          <div className="mb-6 p-4 bg-red-50 border border-red-100 text-red-600 text-xs font-bold uppercase tracking-wider rounded-2xl animate-in fade-in duration-200">
+            {error}
+          </div>
+        )}
 
         {/* Form */}
         <form action={handleSubmit} className="flex flex-col gap-4">
@@ -75,17 +82,18 @@ export default function RegisterPage() {
           </div>
 
           {/* Row 2: Date of Birth (Below names) */}
-          <div className="relative flex items-center bg-[#F7F7F7] rounded-2xl px-4 py-4 focus-within:ring-2 focus-within:ring-black/20 transition-all">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-[#FF5733] shrink-0">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
-            </svg>
-            <input 
+          {/* --- MODERNIZED DATE OF BIRTH SELECTOR --- */}
+          {/* Why: We transform the native picker into a premium custom UI block using specialized Tailwind utility spacing and color focus overrides. */}
+          <div className="space-y-1.5 relative">
+            <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">
+              {t("dobPlaceholder")}
+            </label>
+            <input
+              type="date"
               name="birthDate"
-              type="date" 
               required
               max={maxDate}
-              className="bg-transparent outline-none w-full ml-3 text-gray-800 invalid:text-gray-400 font-medium"
-              placeholder={t('dobPlaceholder')}
+              className="w-full bg-gray-50 border border-gray-200 rounded-2xl p-4 text-sm font-medium text-gray-700 focus:outline-none focus:border-[#FF725E] transition-all appearance-none cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-40 [&::-webkit-calendar-picker-indicator]:hover:opacity-100 [&::-webkit-calendar-picker-indicator]:transition-opacity"
             />
           </div>
 
@@ -152,7 +160,11 @@ export default function RegisterPage() {
             <input 
               type="checkbox" 
               id="terms" 
-              className="mt-1 w-5 h-5 rounded border-gray-300 text-black accent-black focus:ring-black"
+              // --- FIX: Bind the checkbox state to React ---
+              // Why: Without 'checked' and 'onChange', React doesn't know the user clicked the box, so 'agreed' remains false.
+              checked={agreed}
+              onChange={(e) => setAgreed(e.target.checked)}
+              className="mt-1 w-5 h-5 rounded border-gray-300 text-black accent-black focus:ring-black cursor-pointer"
             />
             <label htmlFor="terms" className="text-sm text-gray-600 font-medium leading-tight cursor-pointer">
               {t('agreePrefix')}<Link href="#" className="text-black font-bold hover:underline">{t('termsOfService')}</Link> {t('and')} <Link href="#" className="text-black font-bold hover:underline">{t('privacyPolicy')}</Link>.
@@ -160,10 +172,22 @@ export default function RegisterPage() {
           </div>
 
           {/* Action Button */}
-          <button type="submit" className="w-full bg-[#FF5733] text-white font-bold py-4 rounded-full mt-4 shadow-[0_4px_14px_rgba(255,87,51,0.39)] hover:bg-[#e64d2e] transition-all active:scale-95 transform">
-            {t('createAccountButton')}
-          </button>
+          <div className="pt-4">
+            <button
+              type="submit"
+              disabled={!agreed}
+              className={`w-full font-black py-4 rounded-full text-sm uppercase tracking-widest transition-all ${
+                agreed
+                  ? "bg-[#FF725E] text-black hover:scale-[1.01] active:scale-[0.99] shadow-xl shadow-[#FF725E]/10 cursor-pointer"
+                  : "bg-gray-200 text-gray-400 cursor-not-allowed opacity-70"
+              }`}
+            >
+              {t("createAccountButton")}
+            </button>
+          </div>
         </form>
+
+        
 
         {/* Social Register */}
         <div className="flex items-center my-6">
