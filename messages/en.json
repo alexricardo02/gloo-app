@@ -131,16 +131,18 @@
   "termsText": "I agree to the <terms>Terms of Service</terms> and the <guidelines>Community Guidelines</guidelines>.",
   "createProfile": "Create Profile",
   "saving": "Saving...",
-  "error": "Something went wrong. Please try again.",
-  "modalButton": "Set Radius",
-  "endOfList": "You've seen all the pre-parties near Mainz.",
-  "emptyDesc": "Try increasing your search distance or check back later for new crews.",
-  "emptyTitle": "No groups found nearby",
-  "preferences": "Preferences"
+  "error": "Something went wrong. Please try again."
   },
   "Messages": {
   "emptyDesc": "Match with other groups in the carousel to start a conversation.",
   "emptyTitle": "No messages yet",
   "title": "Messages"
+  },
+  "Pre-party": {
+    "modalButton": "Set Radius",
+    "endOfList": "You've seen all the pre-parties near Mainz.",
+    "emptyDesc": "Try increasing your search distance or check back later for new groups.",
+    "emptyTitle": "No groups found nearby",
+    "preferences": "Preferences"
   }
 }
