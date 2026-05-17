@@ -56,14 +56,14 @@
   },
   "Register": {
     "title": "Registrieren",
-    "alreadyHaveAccount": "Hast du bereits ein Konto?",
+    "alreadyHaveAccount": "Hast du bereits ein Konto? ",
     "signIn": "Anmelden",
     "namePlaceholder": "Name",
     "dobPlaceholder": "Geburtsdatum",
     "emailPlaceholder": "E-Mail Adresse",
     "usernamePlaceholder": "Benutzername",
     "passwordPlaceholder": "Passwort",
-    "agreePrefix": "Ich stimme den",
+    "agreePrefix": "Ich stimme den ",
     "termsOfService": "Nutzungsbedingungen",
     "and": "und der",
     "privacyPolicy": "Datenschutzrichtlinie zu.",
@@ -131,16 +131,50 @@
     "termsText": "Ich stimme den <terms>Nutzungsbedingungen</terms> und <guidelines>Community-Richtlinien</guidelines> zu.",
     "createProfile": "Profil erstellen",
     "saving": "Speichern...",
-    "error": "Etwas ist schiefgelaufen. Bitte versuche es erneut.",
-    "modalButton": "Radius einstellen",
-    "endOfList": "Du hast alle Vorglühen-Gruppen in der Nähe von Mainz gesehen.",
-    "emptyDesc": "Versuche deinen Suchradius zu erweitern oder schau später wieder vorbei.",
-    "emptyTitle": "Keine Gruppen in der Nähe gefunden",
-    "preferences": "Einstellungen"
+    "error": "Etwas ist schiefgelaufen. Bitte versuche es erneut."
   },
   "Messages": {
     "emptyDesc": "Matche mit anderen Gruppen im Karussell, um einen Chat zu starten.",
     "emptyTitle": "Noch keine Nachrichten",
     "title": "Nachrichten"
+  },
+  "Pre-party": {
+    "modalButton": "Radius einstellen",
+    "endOfList": "Du hast alle Vorglühen-Gruppen in der Nähe von Mainz gesehen.",
+    "emptyDesc": "Versuche deinen Suchradius zu erweitern oder schau später wieder vorbei.",
+    "emptyTitle": "Keine Gruppen in der Nähe gefunden",
+    "preferences": "Einstellungen",
+    "groupRequiredTitle": "Gruppe erforderlich",
+    "groupRequiredDesc": "Um zu matchen, zu liken, Nachrichten zu senden oder weitere Gruppen in deiner Nähe freizuschalten, musst du zuerst ein Profil für deine eigene Gruppe erstellen.",
+    "createGroupButton": "Gruppenprofil erstellen"
+  },
+  "ForgotPassword": {
+    "title": "Passwort zurücksetzen",
+    "description": "Gib deine E-Mail-Adresse ein und wir senden dir einen Link, um dein Passwort zurückzusetzen.",
+    "emailPlaceholder": "E-Mail Adresse",
+    "submitButton": "Link senden",
+    "backToLogin": "Zurück zur Anmeldung"
+  },
+  "Terms": {
+    "title": "Nutzungsbedingungen",
+    "lastUpdated": "Zuletzt aktualisiert: Mai 2026",
+    "intro": "Willkommen bei gloo. Durch den Zugriff auf oder die Nutzung unserer App erklärst du dich mit diesen Nutzungsbedingungen und unseren Community-Richtlinien einverstanden.",
+    "section1Title": "1. Kontoregistrierung",
+    "section1Content": "Du musst mindestens 18 Jahre alt sein, um ein Konto zu erstellen. Du bist für den Schutz deines Passworts und für alle Aktivitäten unter deinem Passwort verantwortlich.",
+    "section2Title": "2. Zulässige Nutzung",
+    "section2Content": "Du erklärst dich damit einverstanden, die App nicht für illegale oder unbefugte Zwecke zu nutzen. Belästigung, Hassreden oder unangemessenes Verhalten gegenüber anderen Gruppen sind strengstens untersagt.",
+    "section3Title": "3. Kündigung",
+    "section3Content": "Wir behalten uns das Recht vor, dein Konto jederzeit, ohne vorherige Ankündigung oder Haftung, aus beliebigem Grund, einschließlich der Verletzung dieser Bedingungen, zu sperren oder zu kündigen."
+  },
+  "Privacy": {
+    "title": "Datenschutzrichtlinie",
+    "lastUpdated": "Zuletzt aktualisiert: Mai 2026",
+    "intro": "Bei gloo nehmen wir deinen Datenschutz ernst. Diese Richtlinie erklärt, wie wir deine persönlichen Daten sammeln, verwenden und schützen.",
+    "section1Title": "1. Informationen, die wir sammeln",
+    "section1Content": "Wir sammeln Informationen, die du uns direkt zur Verfügung stellst, wie deinen Namen, deine E-Mail-Adresse, dein Geburtsdatum und Standortdaten, wenn diese ausdrücklich geteilt werden, um dich mit Gruppen in der Nähe zu matchen.",
+    "section2Title": "2. Wie wir deine Daten nutzen",
+    "section2Content": "Deine Daten werden ausschließlich dazu verwendet, unsere Dienste bereitzustellen und zu verbessern, dich mit relevanten Gruppen zu matchen und eine sichere Umgebung für unsere Community zu gewährleisten.",
+    "section3Title": "3. Datenweitergabe",
+    "section3Content": "Wir verkaufen deine persönlichen Daten nicht. Wir geben Informationen nur an Dritte weiter, wenn dies zur Bereitstellung unserer Dienste erforderlich ist oder um gesetzlichen Verpflichtungen nachzukommen."
   }
 }

@@ -63,7 +63,7 @@
     "emailPlaceholder": "Correo Electrónico",
     "usernamePlaceholder": "Usuario",
     "passwordPlaceholder": "Contraseña",
-    "agreePrefix": "Acepto los",
+    "agreePrefix": "Acepto los ",
     "termsOfService": "Términos de Servicio",
     "and": "y la",
     "privacyPolicy": "Política de Privacidad.",
@@ -131,16 +131,50 @@
     "termsText": "Acepto los <terms>Términos de Servicio</terms> y las <guidelines>Normas de la Comunidad</guidelines>.",
     "createProfile": "Crear Perfil",
     "saving": "Guardando...",
-    "error": "Algo salió mal. Por favor intenta de nuevo.",
-    "modalButton": "Establecer Radio",
-    "endOfList": "Has visto todas las pre-fiestas cerca de Mainz.",
-    "emptyDesc": "Intenta ampliar tu distancia de búsqueda o vuelve más tarde para ver grupos nuevos.",
-    "emptyTitle": "No se encontraron grupos cerca",
-    "preferences": "Preferencias"
+    "error": "Algo salió mal. Por favor intenta de nuevo."
   },
   "Messages": {
     "emptyDesc": "Haz match con otros grupos en el carrusel para empezar una conversación.",
     "emptyTitle": "Aún no hay mensajes",
     "title": "Mensajes"
+  },
+  "Pre-party": {
+    "modalButton": "Establecer Radio",
+    "endOfList": "Has visto todas las pre-fiestas cerca de Mainz.",
+    "emptyDesc": "Intenta ampliar tu distancia de búsqueda o vuelve más tarde para ver grupos nuevos.",
+    "emptyTitle": "No se encontraron grupos cerca",
+    "preferences": "Preferencias",
+    "groupRequiredTitle": "Grupo Requerido",
+    "groupRequiredDesc": "Para hacer match, dar like, enviar mensajes o desbloquear más grupos cerca de ti, primero debes crear un perfil para tu propio grupo.",
+    "createGroupButton": "Crear Perfil de Grupo"
+  },
+  "ForgotPassword": {
+    "title": "Restablecer Contraseña",
+    "description": "Ingresa tu dirección de correo electrónico y te enviaremos un enlace para restablecer tu contraseña.",
+    "emailPlaceholder": "Correo Electrónico",
+    "submitButton": "Enviar Enlace",
+    "backToLogin": "Volver a Iniciar sesión"
+  },
+  "Terms": {
+    "title": "Términos de Servicio",
+    "lastUpdated": "Última actualización: Mayo 2026",
+    "intro": "Bienvenido a gloo. Al acceder o usar nuestra aplicación, aceptas estar sujeto a estos Términos de Servicio y a nuestras Normas de la Comunidad.",
+    "section1Title": "1. Registro de Cuenta",
+    "section1Content": "Debes tener al menos 18 años para crear una cuenta. Eres responsable de proteger la contraseña de tu cuenta y de cualquier actividad o acción bajo tu contraseña.",
+    "section2Title": "2. Uso Aceptable",
+    "section2Content": "Aceptas no usar la aplicación para ningún propósito ilegal o no autorizado. El acoso, el discurso de odio o el comportamiento inapropiado hacia otros grupos está estrictamente prohibido.",
+    "section3Title": "3. Terminación",
+    "section3Content": "Nos reservamos el derecho de suspender o cancelar tu cuenta en cualquier momento, sin previo aviso ni responsabilidad, por cualquier motivo, incluido el incumplimiento de estos Términos."
+  },
+  "Privacy": {
+    "title": "Política de Privacidad",
+    "lastUpdated": "Última actualización: Mayo 2026",
+    "intro": "En gloo, nos tomamos tu privacidad en serio. Esta política explica cómo recopilamos, usamos y protegemos tu información personal.",
+    "section1Title": "1. Información que Recopilamos",
+    "section1Content": "Recopilamos información que nos proporcionas directamente, como tu nombre, correo electrónico, fecha de nacimiento y datos de ubicación cuando los compartes explícitamente para emparejarte con grupos cercanos.",
+    "section2Title": "2. Cómo Usamos tus Datos",
+    "section2Content": "Tus datos se utilizan exclusivamente para proporcionar y mejorar nuestros servicios, emparejarte con grupos relevantes y garantizar un entorno seguro para nuestra comunidad.",
+    "section3Title": "3. Intercambio de Datos",
+    "section3Content": "No vendemos tus datos personales. Solo compartimos información con terceros cuando es necesario para proporcionar nuestros servicios o cumplir con obligaciones legales."
   }
 }
