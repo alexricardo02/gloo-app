@@ -145,10 +145,8 @@ export default function PrePartyPage() {
           >
             <div className="w-full h-full max-h-[800px] relative">
               
-              {/* 1. La tarjeta real del grupo */}
               <GroupCard group={group} />
               
-              {/* 2. La capa invisible bloqueadora (Solo si no tiene grupo) */}
               {hasNoGroup && (
                 <div 
                   onClick={(e) => {
@@ -233,18 +231,18 @@ export default function PrePartyPage() {
             </div>
 
             <h3 className="text-2xl font-black italic uppercase tracking-tight mb-3">
-              Crew Required
+              t("groupRequiredTitle")
             </h3>
             
             <p className="text-sm text-gray-400 mb-8 leading-relaxed">
-              To match, like, send messages, or unlock more groups near you, you must create a profile for your own crew first.
+              t("groupRequiredDesc")
             </p>
 
             <Link
               href={`/${locale}/profile/create-group`}
               className="w-full bg-[#FF725E] text-black font-black py-4 rounded-full uppercase tracking-widest text-sm hover:scale-[1.02] active:scale-[0.98] transition-transform shadow-lg shadow-[#FF725E]/20 text-center"
             >
-              Create Crew Profile
+              t("createGroupButton")
             </Link>
           </div>
         </div>

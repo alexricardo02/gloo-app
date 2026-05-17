@@ -143,7 +143,10 @@
     "endOfList": "You've seen all the pre-parties near Mainz.",
     "emptyDesc": "Try increasing your search distance or check back later for new groups.",
     "emptyTitle": "No groups found nearby",
-    "preferences": "Preferences"
+    "preferences": "Preferences",
+    "groupRequiredTitle": "Group Required",
+    "groupRequiredDesc": "To match, like, send messages, or unlock more groups near you, you must create a profile for your own group first.",
+    "createGroupButton": "Create Group Profile"
   },
   "ForgotPassword": {
     "title": "Reset Password",
