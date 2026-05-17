@@ -13,7 +13,7 @@ export default function PrePartyPage() {
   const locale = useLocale();
   const t = useTranslations("Pre-party");
 
-  type DiscoveryGroup = Record<string, unknown>;
+  type DiscoveryGroup = { id: string } & Record<string, unknown>;
   const [groups, setGroups] = useState<DiscoveryGroup[]>([]);
   const [distance, setDistance] = useState(10);
   const [loading, setLoading] = useState(false);
