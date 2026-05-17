@@ -26,7 +26,11 @@
     "paywallDesc": "Inscrivez-vous maintenant pour débloquer l'expérience complète et vous connecter avec d'autres personnes !",
     "paywallButton": "Se connecter pour continuer",
     "browseContent": "Explorer le contenu",
-    "findGroup": "Trouver un groupe ({count})"
+    "findGroup": "Trouver un groupe ({count})",
+    "actionSheetTitle": "Cette fonctionnalité nécessite un compte",
+    "actionSheetDesc": "Créez un compte gratuit pour accéder aux groupes, messages, carte et bien plus encore.",
+    "actionSheetRegister": "Créer un compte gratuit",
+    "actionSheetLogin": "Se connecter"
   },
   "Games": {
     "title": "Jeux",
@@ -47,7 +51,8 @@
     "termsPrefix": "En vous connectant, vous acceptez les",
     "termsOfService": "Conditions d'utilisation",
     "and": "et la",
-    "privacyPolicy": "Politique de confidentialité."
+    "privacyPolicy": "Politique de confidentialité.",
+    "error": "Email ou mot de passe invalide."
   },
   "Register": {
     "title": "S'inscrire",
@@ -74,5 +79,8 @@
     "createGroupButton": "Créer un profil de groupe",
     "accountSection": "Compte",
     "logoutButton": "Se déconnecter"
+  },
+  "Map": {
+    "title": "Carte"
   }
 }

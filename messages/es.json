@@ -26,7 +26,11 @@
     "paywallDesc": "Inicia sesión ahora para desbloquear la experiencia completa y conectar con otras personas.",
     "paywallButton": "Iniciar sesión para continuar",
     "browseContent": "Seguir explorando",
-    "findGroup": "Encontrar grupo ({count})"
+    "findGroup": "Encontrar grupo ({count})",
+    "actionSheetTitle": "Esta función requiere una cuenta",
+    "actionSheetDesc": "Crea una cuenta gratuita para acceder a grupos, mensajes, mapa y mucho más.",
+    "actionSheetRegister": "Crear cuenta gratuita",
+    "actionSheetLogin": "Iniciar sesión"
   },
   "Games": {
     "title": "Juegos",
@@ -47,7 +51,8 @@
     "termsPrefix": "Al iniciar sesión, aceptas los",
     "termsOfService": "Términos de servicio",
     "and": "y la",
-    "privacyPolicy": "Política de privacidad de gloo."
+    "privacyPolicy": "Política de privacidad de gloo.",
+    "error": "Correo o contraseña incorrectos."
   },
   "Register": {
     "title": "Registrarse",
@@ -89,5 +94,8 @@
     "yes": "Sí",
     "no": "No",
     "instagramProfiles": "Perfiles de Instagram"
+  },
+  "Map": {
+    "title": "Mapa"
   }
 }
