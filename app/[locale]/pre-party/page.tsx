@@ -11,6 +11,7 @@ import { MapPin, SlidersHorizontal, ChevronRight, X, Users } from "lucide-react"
 
 export default function PrePartyPage() {
   const locale = useLocale();
+  const t = useTranslations("Pre-party");
 
   type DiscoveryGroup = Record<string, unknown>;
   const [groups, setGroups] = useState<DiscoveryGroup[]>([]);
@@ -21,6 +22,9 @@ export default function PrePartyPage() {
   
   const [isDistanceModalOpen, setIsDistanceModalOpen] = useState(false);
   const [tempDistance, setTempDistance] = useState(distance);
+
+  const [hasNoGroup, setHasNoGroup] = useState(false);
+  const [isBlockModalOpen, setIsBlockModalOpen] = useState(false)
 
   useEffect(() => {
     async function loadPreferences() {
@@ -43,7 +47,7 @@ export default function PrePartyPage() {
   }, [distance]);
 
   useEffect(() => {
-    if (loading || !hasMore) return;
+    if (loading || !hasMore || hasNoGroup) return;
     if (observerRef.current) observerRef.current.disconnect();
 
     observerRef.current = new IntersectionObserver((entries) => {
@@ -55,41 +59,45 @@ export default function PrePartyPage() {
     if (lastGroupElementRef.current) {
       observerRef.current.observe(lastGroupElementRef.current);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loading, hasMore, groups]);
 
-  async function fetchGroups(reset = false) {
+    return () => {
+      if (observerRef.current) observerRef.current.disconnect();
+    };
+  }, [loading, hasMore, hasNoGroup]);
+
+  const fetchGroups = async (reset = false) => {
     if (loading) return;
     setLoading(true);
-
-    const nextPage = reset ? 0 : page;
+    const newPage = reset ? 0 : page;
 
     try {
-      const response = await getDiscoveryGroups({
-        page: nextPage,
-        distance: distance,
-        isPartyMode: false,
-      });
-
-      if ("error" in response) {
-        if (response.error === "User location not found") {
-          setHasMore(false);
-        }
-        console.error("Discovery error:", response.error);
+      const res = await getDiscoveryGroups({ page: newPage, distance, isPartyMode: false });
+      
+      // --- CHANGE: Handle setup for teaser preview state ---
+      if (res && res.hasNoGroup) {
+        setHasNoGroup(true);
+        setGroups(res.groups || []);
+        setHasMore(false); // Force lock list propagation
+        setPage(0);
         return;
       }
 
-      const newGroups = response.groups || [];
-      
-      setGroups(prev => reset ? newGroups : [...prev, ...newGroups]);
-      setHasMore(newGroups.length === 10);
-      setPage(nextPage + 1);
-    } catch (error) {
-      console.error("Error fetching groups:", error);
+      if (res && res.groups) {
+        setHasNoGroup(false);
+        if (reset) {
+          setGroups(res.groups);
+        } else {
+          setGroups((prev) => [...prev, ...res.groups]);
+        }
+        setHasMore(res.groups.length === 10);
+        setPage(newPage + 1);
+      }
+    } catch (err) {
+      console.error(err);
     } finally {
       setLoading(false);
     }
-  }
+  };
 
   const openDistanceModal = () => {
     setTempDistance(distance);
@@ -111,7 +119,7 @@ export default function PrePartyPage() {
             className="flex items-center gap-2.5 bg-[#141414] border border-white/10 px-5 py-2.5 rounded-full hover:border-[#FF725E]/30 transition-all"
           >
             <MapPin size={18} className="text-[#FF725E]" />
-            <span className="font-extrabold text-sm tracking-tight">Mainz, Germany</span>
+            <span className="font-extrabold text-sm tracking-tight">Mainz, Germany</span> {/* Necesary change: dynamic position*/}
             <ChevronRight size={16} className="text-white/20" />
             <span className="text-sm font-bold text-gray-500">{distance} km</span>
           </button>
@@ -119,17 +127,12 @@ export default function PrePartyPage() {
           <Link href={`/${locale}/profile/preferences`} className="block">
             <div className="flex items-center gap-2.5 text-sm font-bold bg-[#141414] border border-white/10 px-5 py-2.5 rounded-full hover:bg-[#1A1A1A] transition-all text-white">
               <SlidersHorizontal size={18} className="text-[#FF725E]" />
-              <span className="hidden md:inline">Preferences</span>
+              <span className="hidden md:inline">{t("preferences")}</span>
             </div>
           </Link>
         </div>
       </div>
  
-      {/*
-        touch-pan-y es clave: le indica al navegador que este contenedor
-        solo debe capturar gestos VERTICALES. Así los swipes horizontales
-        dentro de cada GroupCard llegan correctamente al carrusel interno.
-      */}
       <main
         className="h-full w-full overflow-y-scroll snap-y snap-mandatory scroll-smooth pb-20 touch-pan-y"
         style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
@@ -140,9 +143,9 @@ export default function PrePartyPage() {
           <div className="h-full flex flex-col items-center justify-center px-10 text-center gap-4">
             <div className="border border-white/5 bg-[#141414] rounded-3xl p-10 flex flex-col items-center gap-4">
               <MapPin size={40} className="text-gray-700" />
-              <h3 className="text-lg font-extrabold text-white">No groups found nearby</h3>
+              <h3 className="text-lg font-extrabold text-white">{t("emptyTitle")}</h3>
               <p className="text-sm text-gray-500 max-w-xs">
-                Try increasing your search distance or check back later for new crews.
+                {t("emptyDesc")}
               </p>
             </div>
           </div>
@@ -155,7 +158,22 @@ export default function PrePartyPage() {
             className="h-[100dvh] w-full snap-center snap-always flex items-center justify-center px-4 pt-24 pb-28"
           >
             <div className="w-full h-full max-h-[800px] relative">
+              
+              {/* 1. La tarjeta real del grupo */}
               <GroupCard group={group} />
+              
+              {/* 2. La capa invisible bloqueadora (Solo si no tiene grupo) */}
+              {hasNoGroup && (
+                <div 
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setIsBlockModalOpen(true);
+                  }}
+                  className="absolute inset-0 z-50 cursor-pointer bg-transparent"
+                />
+              )}
+
             </div>
           </div>
         ))}
@@ -169,7 +187,7 @@ export default function PrePartyPage() {
         {!hasMore && groups.length > 0 && (
           <div className="h-[50dvh] w-full snap-center flex flex-col justify-center items-center p-10 text-center">
             <span className="text-xs text-gray-700 font-bold uppercase tracking-widest">
-              You have seen all the pre-parties near Mainz.
+              {t("endOfList")}
             </span>
           </div>
         )}
@@ -203,8 +221,45 @@ export default function PrePartyPage() {
               className="w-full bg-[#FF725E] text-black font-black py-4 rounded-full uppercase text-sm flex items-center justify-center gap-2"
             >
               <Users size={18} />
-              Set Radius
+              {t("modalButton")}
             </button>
+          </div>
+        </div>
+      )}
+
+      {isBlockModalOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 animate-in fade-in duration-300">
+          <div 
+            className="absolute inset-0 bg-black/85 backdrop-blur-md" 
+            onClick={() => setIsBlockModalOpen(false)}
+          />
+          
+          <div className="relative bg-[#111111] border border-white/10 w-full max-w-sm rounded-[2.5rem] p-8 shadow-2xl flex flex-col items-center text-center animate-in zoom-in-95 duration-300">
+            <button 
+              onClick={() => setIsBlockModalOpen(false)}
+              className="absolute top-6 right-6 text-gray-500 hover:text-white transition-colors"
+            >
+              <X size={24} />
+            </button>
+            
+            <div className="w-16 h-16 bg-[#FF725E]/10 rounded-2xl flex items-center justify-center text-[#FF725E] mb-6 border border-[#FF725E]/20">
+              <Users size={28} />
+            </div>
+
+            <h3 className="text-2xl font-black italic uppercase tracking-tight mb-3">
+              Crew Required
+            </h3>
+            
+            <p className="text-sm text-gray-400 mb-8 leading-relaxed">
+              To match, like, send messages, or unlock more groups near you, you must create a profile for your own crew first.
+            </p>
+
+            <Link
+              href={`/${locale}/profile/create-group`}
+              className="w-full bg-[#FF725E] text-black font-black py-4 rounded-full uppercase tracking-widest text-sm hover:scale-[1.02] active:scale-[0.98] transition-transform shadow-lg shadow-[#FF725E]/20 text-center"
+            >
+              Create Crew Profile
+            </Link>
           </div>
         </div>
       )}

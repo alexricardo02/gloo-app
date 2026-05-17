@@ -93,11 +93,20 @@
     "publicProfile": "Public Profile",
     "yes": "Yes",
     "no": "No",
-    "instagramProfiles": "Instagram Profiles"
+    "instagramProfiles": "Instagram Profiles",
+    "myScores": "My Scores",
+    "dataPolicy": "Data Policy",
+    "loading": "Loading...",
+    "yourGroup": "Your Group",
+    "settings": "Settings",
+    "updatePhoto": "Update Photo",
+    "tapToSelect": "Tap to select",
+    "uploadNow": "Upload Now",
+    "cancel": "Cancel"
   },
   "CreateGroup": {
-    "title": "Create Group",
-    "createGroupButton": "Create Group Profile",
+  "title": "Create Group",
+  "createGroupButton": "Create Group Profile",
   "uploadPhotos": "Upload group photos",
   "maxPhotos": "• Up to 6 photos allowed",
   "groupDetails": "Group Details",
@@ -123,5 +132,17 @@
   "createProfile": "Create Profile",
   "saving": "Saving...",
   "error": "Something went wrong. Please try again."
+  },
+  "Messages": {
+  "emptyDesc": "Match with other groups in the carousel to start a conversation.",
+  "emptyTitle": "No messages yet",
+  "title": "Messages"
+  },
+  "Pre-party": {
+    "modalButton": "Set Radius",
+    "endOfList": "You've seen all the pre-parties near Mainz.",
+    "emptyDesc": "Try increasing your search distance or check back later for new groups.",
+    "emptyTitle": "No groups found nearby",
+    "preferences": "Preferences"
   }
 }

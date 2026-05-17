@@ -8,7 +8,7 @@ import Image from "next/image";
 
 export default function MessagesPage() {
   const locale = useLocale();
-  const t = useTranslations("Dashboard"); 
+  const t = useTranslations("Messages"); 
   const [searchQuery, setSearchQuery] = useState("");
 
   const chats = [
@@ -44,7 +44,7 @@ export default function MessagesPage() {
       {/* Header */}
       <div className="p-6 pt-12 flex justify-between items-center">
         <h1 className="text-3xl font-extrabold tracking-tight">
-          Messages
+          {t("title")}
         </h1>
         <button className="p-2 bg-[#111111] rounded-full border border-white/5">
           <MoreVertical size={20} className="text-gray-400" />
@@ -117,9 +117,9 @@ export default function MessagesPage() {
           <div className="w-20 h-20 bg-[#111111] rounded-full flex items-center justify-center mb-4 border border-white/5">
             <Search size={30} className="text-gray-600" />
           </div>
-          <h2 className="text-xl font-bold mb-2">No messages yet</h2>
+          <h2 className="text-xl font-bold mb-2">{t("emptyTitle")}</h2>
           <p className="text-gray-500 text-sm">
-            Match with other groups in the carousel to start a conversation.
+            {t("emptyDesc")}
           </p>
         </div>
       )}
