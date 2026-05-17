@@ -49,9 +49,7 @@ export async function createGroupAction(formData: FormData, locale: string) {
     }
   }
 
-
   const keptPhotos = formData.getAll("existingPhotos") as string[];
-
 
   const newPhotos: string[] = [];
   const uploadedFiles = formData.getAll("photos") as File[];
@@ -60,7 +58,6 @@ export async function createGroupAction(formData: FormData, locale: string) {
     if (file && typeof file === "object" && file.size > 0) {
       const bytes = await file.arrayBuffer();
       const buffer = Buffer.from(bytes);
-      
       const base64Image = `data:${file.type};base64,${buffer.toString("base64")}`;
       newPhotos.push(base64Image);
     }
