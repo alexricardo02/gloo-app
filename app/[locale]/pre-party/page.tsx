@@ -2,18 +2,18 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useTranslations, useLocale } from "next-intl";
-import Image from "next/image";
 import Link from "next/link";
 import Navigation from "@/app/components/Navigation";
 import GroupCard from "@/app/components/GroupCard";
 import { getDiscoveryGroups } from "@/app/actions/discoverGroups";
+import { getGroupByUser } from "@/app/actions/group";
 import { MapPin, SlidersHorizontal, ChevronRight, X, Users } from "lucide-react";
 
 export default function PrePartyPage() {
   const locale = useLocale();
-  const t = useTranslations("Dashboard");
 
-  const [groups, setGroups] = useState<any[]>([]);
+  type DiscoveryGroup = Record<string, unknown>;
+  const [groups, setGroups] = useState<DiscoveryGroup[]>([]);
   const [distance, setDistance] = useState(10);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
@@ -22,11 +22,24 @@ export default function PrePartyPage() {
   const [isDistanceModalOpen, setIsDistanceModalOpen] = useState(false);
   const [tempDistance, setTempDistance] = useState(distance);
 
+  useEffect(() => {
+    async function loadPreferences() {
+      const userGroup = await getGroupByUser();
+      if (userGroup?.maxDistance) {
+        setDistance(userGroup.maxDistance);
+        setTempDistance(userGroup.maxDistance);
+      }
+    }
+
+    loadPreferences();
+  }, []);
+
   const observerRef = useRef<IntersectionObserver | null>(null);
   const lastGroupElementRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     fetchGroups(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [distance]);
 
   useEffect(() => {
@@ -42,6 +55,7 @@ export default function PrePartyPage() {
     if (lastGroupElementRef.current) {
       observerRef.current.observe(lastGroupElementRef.current);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loading, hasMore, groups]);
 
   async function fetchGroups(reset = false) {
@@ -155,7 +169,7 @@ export default function PrePartyPage() {
         {!hasMore && groups.length > 0 && (
           <div className="h-[50dvh] w-full snap-center flex flex-col justify-center items-center p-10 text-center">
             <span className="text-xs text-gray-700 font-bold uppercase tracking-widest">
-              You've seen all the pre-parties near Mainz.
+              You have seen all the pre-parties near Mainz.
             </span>
           </div>
         )}

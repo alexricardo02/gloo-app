@@ -33,22 +33,35 @@ export async function getDiscoveryGroups({
   const limit = 10;
   const skip = page * limit;
 
-  // 2. Fetch groups (Basic bounding box for proximity or simple filter)
-  // Note: For real distance calculation, a raw SQL query with Haversine formula is better.
-  // This is a simplified version using Prisma filters.
-  const groups = await prisma.group.findMany({
+  function getDistanceKm(lat1: number, lon1: number, lat2: number, lon2: number) {
+    const toRad = (deg: number) => (deg * Math.PI) / 180;
+    const R = 6371; // Earth radius in km
+    const dLat = toRad(lat2 - lat1);
+    const dLon = toRad(lon2 - lon1);
+    const a =
+      Math.sin(dLat / 2) ** 2 +
+      Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+  }
+
+  // 2. Fetch groups (Basic bounding box for proximity, then refine in JS)
+  const rawGroups = await prisma.group.findMany({
     where: {
       userId: { not: userId }, // Exclude own group
       isPartyMode: isPartyMode,
-      gender: userGroup.searchGender === 'ANY' ? undefined : (userGroup.searchGender as any),
+      gender: userGroup.searchGender === 'ANY' ? undefined : userGroup.searchGender,
       // Basic coordinates filter (approximate range)
       latitude: {
-        gte: userGroup.latitude - (distance / 111), 
-        lte: userGroup.latitude + (distance / 111)
+        gte: userGroup.latitude - (distance / 111),
+        lte: userGroup.latitude + (distance / 111),
+      },
+      longitude: {
+        gte: userGroup.longitude - (distance / 111),
+        lte: userGroup.longitude + (distance / 111),
       },
     },
-    take: limit,
-    skip: skip,
+    take: 100,
     orderBy: { createdAt: "desc" },
     include: {
       user: {
@@ -56,6 +69,25 @@ export async function getDiscoveryGroups({
       }
     }
   });
+
+  const filteredGroups = rawGroups
+    .map((group) => ({
+      ...group,
+      distance: getDistanceKm(
+        userGroup.latitude,
+        userGroup.longitude,
+        group.latitude ?? 0,
+        group.longitude ?? 0,
+      ),
+    }))
+    .filter((group) =>
+      group.distance <= distance &&
+      (userGroup.searchAgeMin == null || userGroup.searchAgeMax == null
+        ? true
+        : group.ageMax >= userGroup.searchAgeMin && group.ageMin <= userGroup.searchAgeMax)
+    );
+
+  const groups = filteredGroups.slice(skip, skip + limit);
 
   return { groups };
 }

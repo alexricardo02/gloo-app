@@ -16,6 +16,11 @@ export default function CreateGroupPage() {
   const [ageMin] = useState(21);
   const [ageMax, setAgeMax] = useState(30);
 
+  const [searchGender, setSearchGender] = useState("ANY");
+  const [searchAgeMin, setSearchAgeMin] = useState(18);
+  const [searchAgeMax, setSearchAgeMax] = useState(35);
+  const [maxDistance, setMaxDistance] = useState(10);
+
   const [description, setDescription] = useState("");
   const [agreed, setAgreed] = useState(false);
 
@@ -27,11 +32,27 @@ export default function CreateGroupPage() {
   // Load existing data if the user already has a group
   useEffect(() => {
     async function loadData() {
-      const existingGroup = await getGroupByUser();
+      type SavedGroupData = {
+        membersCount?: number;
+        ageMax?: number;
+        searchGender?: string;
+        searchAgeMin?: number;
+        searchAgeMax?: number;
+        maxDistance?: number;
+        description?: string;
+        instagram?: string[];
+        photos?: string[];
+      } | null;
+
+      const existingGroup = (await getGroupByUser()) as SavedGroupData;
       if (existingGroup) {
         setIsEditing(true);
-        setMembersCount(existingGroup.membersCount);
-        setAgeMax(existingGroup.ageMax);
+        setMembersCount(existingGroup.membersCount ?? 4);
+        setAgeMax(existingGroup.ageMax ?? 30);
+        setSearchGender(existingGroup.searchGender || "ANY");
+        setSearchAgeMin(existingGroup.searchAgeMin ?? 18);
+        setSearchAgeMax(existingGroup.searchAgeMax ?? 35);
+        setMaxDistance(existingGroup.maxDistance ?? 10);
         setDescription(existingGroup.description || "");
         if (existingGroup.instagram && existingGroup.instagram.length > 0) {
           setInstagramLinks(existingGroup.instagram);
@@ -105,9 +126,10 @@ export default function CreateGroupPage() {
             formData.append("ageMin", ageMin.toString());
             formData.append("ageMax", ageMax.toString());
 
-            formData.append("searchGender", formData.get("searchGender") as string);
-            formData.append("searchAgeMax", formData.get("searchAgeMax") as string);
-            formData.append("maxDistance", formData.get("maxDistance") as string);
+            formData.append("searchGender", searchGender);
+            formData.append("searchAgeMin", searchAgeMin.toString());
+            formData.append("searchAgeMax", searchAgeMax.toString());
+            formData.append("maxDistance", maxDistance.toString());
             formData.append(
               "publicProfile",
               formData.get("publicProfile") ? "true" : "false"
@@ -133,17 +155,18 @@ export default function CreateGroupPage() {
             await createGroupAction(formData, locale);
             router.push(`/${locale}/profile`);
             
-          } catch (error: any) {
-            if (error.message === "NEXT_REDIRECT") {
+          } catch (unknownError: unknown) {
+            const err = unknownError as Error;
+            if (err?.message === "NEXT_REDIRECT") {
                return; 
             }
-            console.error("Error processing group:", error);
+            console.error("Error processing group:", err);
             alert(t("error"));
           } finally {
             setLoading(false);
           }
         },
-        (error) => {
+        () => {
           setLoading(false);
           alert("Location required to update group.");
         }
@@ -378,6 +401,7 @@ export default function CreateGroupPage() {
               {["ANY", "MALE", "FEMALE", "OTHER"].map((g) => (
                 <label
                   key={g}
+                  data-checked={searchGender === g}
                   className="flex-1 text-center py-2 rounded-lg cursor-pointer 
                              text-gray-500 transition-all hover:scale-105
                              data-[checked=true]:bg-[#FF725E] data-[checked=true]:text-black"
@@ -387,13 +411,8 @@ export default function CreateGroupPage() {
                     name="searchGender"
                     value={g}
                     className="hidden peer"
-                    defaultChecked={g === "ANY"}
-                    onChange={(e) => {
-                      e.target.parentElement?.setAttribute(
-                        "data-checked",
-                        "true",
-                      );
-                    }}
+                    checked={searchGender === g}
+                    onChange={() => setSearchGender(g)}
                   />
                   <span className="text-[11px] font-semibold tracking-wide">
                     {t(g)}
@@ -408,18 +427,47 @@ export default function CreateGroupPage() {
             <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-widest text-gray-500">
               <span>{t("preferredAgeRange")}</span>
               <span className="text-white bg-[#222] px-3 py-1 rounded-full border border-[#333]">
-                18 — 35
+                {searchAgeMin} — {searchAgeMax}
               </span>
             </div>
 
-            <input
-              type="range"
-              name="searchAgeMax"
-              min="18"
-              max="50"
-              defaultValue="35"
-              className="w-full accent-[#FF725E] h-1 bg-[#333] rounded-lg appearance-none"
-            />
+            <div className="space-y-3">
+              <div className="flex justify-between items-center text-[11px] text-gray-400">
+                <span>{t("minAge")}</span>
+                <span>{searchAgeMin}</span>
+              </div>
+              <input
+                type="range"
+                name="searchAgeMin"
+                min="18"
+                max="49"
+                value={searchAgeMin}
+                onChange={(e) => {
+                  const value = Number(e.target.value);
+                  setSearchAgeMin(Math.min(value, searchAgeMax - 1));
+                }}
+                className="w-full accent-[#FF725E] h-1 bg-[#333] rounded-lg appearance-none"
+              />
+            </div>
+
+            <div className="space-y-3">
+              <div className="flex justify-between items-center text-[11px] text-gray-400">
+                <span>{t("maxAge")}</span>
+                <span>{searchAgeMax}</span>
+              </div>
+              <input
+                type="range"
+                name="searchAgeMax"
+                min="19"
+                max="50"
+                value={searchAgeMax}
+                onChange={(e) => {
+                  const value = Number(e.target.value);
+                  setSearchAgeMax(Math.max(value, searchAgeMin + 1));
+                }}
+                className="w-full accent-[#FF725E] h-1 bg-[#333] rounded-lg appearance-none"
+              />
+            </div>
           </div>
 
           {/* Max Distance */}
@@ -427,7 +475,7 @@ export default function CreateGroupPage() {
             <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-widest text-gray-500">
               <span>{t("maxDistance")}</span>
               <span className="text-white bg-[#222] px-3 py-1 rounded-full border border-[#333]">
-                10 km
+                {maxDistance} km
               </span>
             </div>
 
@@ -436,7 +484,8 @@ export default function CreateGroupPage() {
               name="maxDistance"
               min="1"
               max="50"
-              defaultValue="10"
+              value={maxDistance}
+              onChange={(e) => setMaxDistance(Number(e.target.value))}
               className="w-full accent-[#FF725E] h-1 bg-[#333] rounded-lg appearance-none"
             />
           </div>
