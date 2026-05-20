@@ -81,7 +81,7 @@ export async function loginUser(formData: FormData, locale: string) {
   cookieStore.set("gloo_user_id", user.id, { httpOnly: true, path: "/" });
   cookieStore.delete("gloo_is_guest"); 
 
-  redirect(`/${locale}/dashboard`);
+  redirect(`/${locale}/pre-party`);
 }
 
 export async function getCurrentUser() {

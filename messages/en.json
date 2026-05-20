@@ -131,7 +131,9 @@
   "termsText": "I agree to the <terms>Terms of Service</terms> and the <guidelines>Community Guidelines</guidelines>.",
   "createProfile": "Create Profile",
   "saving": "Saving...",
-  "error": "Something went wrong. Please try again."
+  "error": "Something went wrong. Please try again.",
+  "minAge": "Minimum age must be at least 18.",
+  "maxAge": "Maximum age must be greater than minimum age."
   },
   "Messages": {
   "emptyDesc": "Match with other groups in the carousel to start a conversation.",
@@ -146,7 +148,9 @@
     "preferences": "Preferences",
     "groupRequiredTitle": "Group Required",
     "groupRequiredDesc": "To match, like, send messages, or unlock more groups near you, you must create a profile for your own group first.",
-    "createGroupButton": "Create Group Profile"
+    "createGroupButton": "Create Group Profile",
+    "title": "Discover",
+    "radius": "Radius"
   },
   "ForgotPassword": {
     "title": "Reset Password",

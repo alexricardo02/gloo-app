@@ -7,11 +7,13 @@ import Navigation from "@/app/components/Navigation";
 import GroupCard from "@/app/components/GroupCard";
 import { getDiscoveryGroups } from "@/app/actions/discoverGroups";
 import { getGroupByUser } from "@/app/actions/group";
-import { MapPin, SlidersHorizontal, ChevronRight, X, Users } from "lucide-react";
+import { checkIsGuest } from "@/app/actions/guest";
+import { MapPin, SlidersHorizontal, ChevronRight, X, Users, Lock } from "lucide-react";
 
 export default function PrePartyPage() {
   const locale = useLocale();
   const t = useTranslations("Pre-party");
+  const dashboardT = useTranslations("Dashboard");
 
   type DiscoveryGroup = { id: string } & Record<string, unknown>;
   const [groups, setGroups] = useState<DiscoveryGroup[]>([]);
@@ -26,16 +28,23 @@ export default function PrePartyPage() {
   const [hasNoGroup, setHasNoGroup] = useState(false);
   const [isBlockModalOpen, setIsBlockModalOpen] = useState(false)
 
+  const [isGuest, setIsGuest] = useState(false);
+  const [showPaywall, setShowPaywall] = useState(false);
+
   useEffect(() => {
-    async function loadPreferences() {
-      const userGroup = await getGroupByUser();
-      if (userGroup?.maxDistance) {
-        setDistance(userGroup.maxDistance);
-        setTempDistance(userGroup.maxDistance);
+    async function init() {
+      const guestStatus = await checkIsGuest();
+      setIsGuest(guestStatus);
+
+      if (!guestStatus) {
+        const userGroup = await getGroupByUser();
+        if (userGroup?.maxDistance) {
+          setDistance(userGroup.maxDistance);
+          setTempDistance(userGroup.maxDistance);
+        }
       }
     }
-
-    loadPreferences();
+    init();
   }, []);
 
   const observerRef = useRef<IntersectionObserver | null>(null);
@@ -44,15 +53,16 @@ export default function PrePartyPage() {
   useEffect(() => {
     fetchGroups(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [distance]);
+  }, [distance, isGuest]);
 
   useEffect(() => {
-    if (loading || !hasMore || hasNoGroup) return;
+    if (loading || hasNoGroup) return;
+
     if (observerRef.current) observerRef.current.disconnect();
 
     observerRef.current = new IntersectionObserver((entries) => {
-      if (entries[0].isIntersecting) {
-        fetchGroups(false);
+      if (entries[0].isIntersecting && hasMore) {
+        fetchGroups();
       }
     });
 
@@ -60,44 +70,50 @@ export default function PrePartyPage() {
       observerRef.current.observe(lastGroupElementRef.current);
     }
 
-    return () => {
-      if (observerRef.current) observerRef.current.disconnect();
-    };
-  }, [loading, hasMore, hasNoGroup]);
+    return () => observerRef.current?.disconnect();
+  }, [loading, hasMore, groups, hasNoGroup]);
 
-  const fetchGroups = async (reset = false) => {
-    if (loading) return;
+  // Intercept interactions if user is guest or has no group
+  const handleInteractionAttempt = () => {
+    if (isGuest) {
+      setShowPaywall(true);
+    } else if (hasNoGroup) {
+      setIsBlockModalOpen(true);
+    }
+  };
+
+  async function fetchGroups(reset = false) {
+    if (loading || (!hasMore && !reset)) return;
     setLoading(true);
-    const newPage = reset ? 0 : page;
 
     try {
-      const res = await getDiscoveryGroups({ page: newPage, distance, isPartyMode: false });
+      const currentPage = reset ? 0 : page;
       
-      // --- CHANGE: Handle setup for teaser preview state ---
-      if (res && res.hasNoGroup) {
-        setHasNoGroup(true);
-        setGroups(res.groups || []);
-        setHasMore(false); // Force lock list propagation
-        setPage(0);
-        return;
-      }
+      const response = await getDiscoveryGroups({
+        page: currentPage,
+        distance,
+      });
 
-      if (res && res.groups) {
-        setHasNoGroup(false);
-        if (reset) {
-          setGroups(res.groups);
+      if (response.hasNoGroup) {
+        setHasNoGroup(true);
+        setGroups(response.groups as DiscoveryGroup[]);
+        setHasMore(false);
+      } else if (response.groups) {
+        if (response.groups.length === 0) {
+          setHasMore(false);
         } else {
-          setGroups((prev) => [...prev, ...res.groups]);
+          setGroups((prev) => 
+            reset ? (response.groups as DiscoveryGroup[]) : [...prev, ...response.groups as DiscoveryGroup[]]
+          );
+          setPage(currentPage + 1);
         }
-        setHasMore(res.groups.length === 10);
-        setPage(newPage + 1);
       }
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      console.error("Failed to load groups:", error);
     } finally {
       setLoading(false);
     }
-  };
+  }
 
   const openDistanceModal = () => {
     setTempDistance(distance);
@@ -110,129 +126,124 @@ export default function PrePartyPage() {
   };
 
   return (
-    <div className="h-[100dvh] bg-black text-white font-sans overflow-hidden relative">
-      {/* Header */}
-      <div className="absolute top-0 w-full z-40 bg-black/80 backdrop-blur-md border-b border-white/5 rounded-b-[2rem]">
-        <div className="flex items-center justify-between gap-4 px-6 py-5">
-          <button
-            onClick={openDistanceModal}
-            className="flex items-center gap-2.5 bg-[#141414] border border-white/10 px-5 py-2.5 rounded-full hover:border-[#FF725E]/30 transition-all"
-          >
-            <MapPin size={18} className="text-[#FF725E]" />
-            <span className="font-extrabold text-sm tracking-tight">Mainz, Germany</span> {/* Necesary change: dynamic position*/}
-            <ChevronRight size={16} className="text-white/20" />
-            <span className="text-sm font-bold text-gray-500">{distance} km</span>
-          </button>
- 
-          <Link href={`/${locale}/profile/preferences`} className="block">
-            <div className="flex items-center gap-2.5 text-sm font-bold bg-[#141414] border border-white/10 px-5 py-2.5 rounded-full hover:bg-[#1A1A1A] transition-all text-white">
-              <SlidersHorizontal size={18} className="text-[#FF725E]" />
-              <span className="hidden md:inline">{t("preferences")}</span>
-            </div>
-          </Link>
+    <div className="bg-black min-h-screen text-white font-sans selection:bg-[#FF725E] selection:text-black">
+      
+      {/* Top Header */}
+      <header className="fixed top-0 left-0 right-0 bg-gradient-to-b from-black/80 via-black/50 to-transparent backdrop-blur-sm z-30 px-6 py-6 pt-12 flex justify-between items-center">
+        <div>
+          <h1 className="text-3xl font-black italic uppercase tracking-tight leading-none">
+            {t("title") || "DISCOVER"}
+          </h1>
+          <p className="text-[#FF725E] text-[10px] font-bold uppercase tracking-widest mt-1">
+            {distance} KM {t("radius") || "RADIUS"}
+          </p>
         </div>
-      </div>
- 
-      <main
-        className="h-full w-full overflow-y-scroll snap-y snap-mandatory scroll-smooth pb-20 touch-pan-y"
-        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-      >
-        <style dangerouslySetInnerHTML={{ __html: `main::-webkit-scrollbar { display: none; }` }} />
- 
-        {groups.length === 0 && !loading && (
-          <div className="h-full flex flex-col items-center justify-center px-10 text-center gap-4">
-            <div className="border border-white/5 bg-[#141414] rounded-3xl p-10 flex flex-col items-center gap-4">
-              <MapPin size={40} className="text-gray-700" />
-              <h3 className="text-lg font-extrabold text-white">{t("emptyTitle")}</h3>
-              <p className="text-sm text-gray-500 max-w-xs">
-                {t("emptyDesc")}
-              </p>
-            </div>
-          </div>
-        )}
- 
-        {groups.map((group, index) => (
-          <div
-            key={group.id}
-            ref={index === groups.length - 1 ? lastGroupElementRef : null}
-            className="h-[100dvh] w-full snap-center snap-always flex items-center justify-center px-4 pt-24 pb-28"
-          >
-            <div className="w-full h-full max-h-[800px] relative">
-              
-              <GroupCard group={group} />
-              
-              {hasNoGroup && (
-                <div 
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    setIsBlockModalOpen(true);
-                  }}
-                  className="absolute inset-0 z-50 cursor-pointer bg-transparent"
-                />
-              )}
+        
+        <button 
+          onClick={() => setIsDistanceModalOpen(true)}
+          className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors backdrop-blur-md"
+        >
+          <SlidersHorizontal size={18} className="text-white" />
+        </button>
+      </header>
 
-            </div>
-          </div>
-        ))}
- 
-        {loading && (
-          <div className="h-[100dvh] w-full snap-center flex justify-center items-center text-[#FF725E]">
-            <span className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#FF725E]"></span>
-          </div>
+      {/* Main Carousel Feed */}
+      <main className="h-screen w-full overflow-y-auto snap-y snap-mandatory scroll-smooth pb-24 relative">
+        
+        {/* Invisible Overlay to block interactions if restricted */}
+        {(hasNoGroup || isGuest) && (
+          <div 
+            className="absolute inset-0 z-50 cursor-pointer"
+            onClick={handleInteractionAttempt}
+          />
         )}
- 
-        {!hasMore && groups.length > 0 && (
-          <div className="h-[50dvh] w-full snap-center flex flex-col justify-center items-center p-10 text-center">
-            <span className="text-xs text-gray-700 font-bold uppercase tracking-widest">
-              {t("endOfList")}
-            </span>
+
+        {groups.map((group, index) => {
+          const isLastElement = index === groups.length - 1;
+          return (
+            <div 
+              key={group.id} 
+              ref={isLastElement ? lastGroupElementRef : null}
+              className={`h-screen w-full snap-center snap-always ${isGuest ? "blur-xl select-none" : ""}`}
+            >
+              <GroupCard group={group} />
+            </div>
+          );
+        })}
+
+        {/* Empty States */}
+        {!loading && groups.length === 0 && (
+          <div className="h-screen w-full flex flex-col items-center justify-center p-8 text-center snap-center">
+            <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mb-6">
+              <MapPin size={32} className="text-[#FF725E]" />
+            </div>
+            <h2 className="text-2xl font-black uppercase tracking-tight mb-2">
+              {t("emptyTitle")}
+            </h2>
+            <p className="text-gray-400 text-sm leading-relaxed max-w-[280px]">
+              {t("emptyDesc")}
+            </p>
+            <button 
+              onClick={() => setIsDistanceModalOpen(true)}
+              className="mt-8 px-8 py-3 rounded-full bg-white/10 text-xs font-bold uppercase tracking-widest hover:bg-white/20 transition-colors"
+            >
+              {t("preferences")}
+            </button>
           </div>
         )}
       </main>
- 
+
+      <Navigation />
+
+      {/* --- MODALS --- */}
+
+      {/* 1. Distance Adjust Modal */}
       {isDistanceModalOpen && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-6">
-          <div
-            className="absolute inset-0 bg-black/80 backdrop-blur-md"
-            onClick={() => setIsDistanceModalOpen(false)}
-          />
-          <div className="relative bg-[#111111] border border-white/10 w-full max-w-xs rounded-[2rem] p-7 shadow-2xl flex flex-col items-center">
-            <button onClick={() => setIsDistanceModalOpen(false)} className="absolute top-5 right-5 text-gray-500">
-              <X size={20} />
-            </button>
-            <h3 className="text-xl font-extrabold mb-6">Set Distance</h3>
-            <div className="mb-1 text-center">
-              <span className="text-5xl font-black text-[#FF725E]">{tempDistance}</span>
-              <span className="text-xl font-bold text-white/50 ml-1">km</span>
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[100] flex items-end justify-center animate-in fade-in duration-200">
+          <div className="bg-[#121212] w-full max-w-md rounded-t-[2.5rem] p-8 border-t border-white/10 animate-in slide-in-from-bottom-8 duration-300 pb-12">
+            <div className="flex justify-between items-center mb-8">
+              <h3 className="text-xl font-black uppercase tracking-tight">Search Radius</h3>
+              <button 
+                onClick={() => setIsDistanceModalOpen(false)}
+                className="p-2 bg-white/5 rounded-full text-gray-400 hover:text-white transition-colors"
+              >
+                <X size={20} />
+              </button>
             </div>
-            <input
-              type="range"
-              min="5"
-              max="50"
-              value={tempDistance}
-              onChange={(e) => setTempDistance(parseInt(e.target.value, 10))}
-              className="w-full h-1 bg-[#1A1A1A] rounded-full appearance-none cursor-pointer accent-[#FF725E] my-8"
-            />
+            
+            <div className="mb-10">
+              <div className="flex justify-between text-xs font-bold uppercase tracking-widest text-[#FF725E] mb-4">
+                <span>1 KM</span>
+                <span>{tempDistance} KM</span>
+                <span>50 KM</span>
+              </div>
+              <input
+                type="range"
+                min="1"
+                max="50"
+                value={tempDistance}
+                onChange={(e) => setTempDistance(Number(e.target.value))}
+                className="w-full h-2 bg-white/10 rounded-lg appearance-none cursor-pointer accent-[#FF725E]"
+              />
+            </div>
+            
             <button
-              onClick={confirmDistance}
-              className="w-full bg-[#FF725E] text-black font-black py-4 rounded-full uppercase text-sm flex items-center justify-center gap-2"
+              onClick={() => {
+                setDistance(tempDistance);
+                setIsDistanceModalOpen(false);
+              }}
+              className="w-full bg-[#FF725E] text-black font-black py-4 rounded-full uppercase tracking-widest text-sm hover:scale-[1.02] active:scale-[0.98] transition-transform"
             >
-              <Users size={18} />
               {t("modalButton")}
             </button>
           </div>
         </div>
       )}
 
-      {isBlockModalOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 animate-in fade-in duration-300">
-          <div 
-            className="absolute inset-0 bg-black/85 backdrop-blur-md" 
-            onClick={() => setIsBlockModalOpen(false)}
-          />
-          
-          <div className="relative bg-[#111111] border border-white/10 w-full max-w-sm rounded-[2.5rem] p-8 shadow-2xl flex flex-col items-center text-center animate-in zoom-in-95 duration-300">
+      {/* 2. Missing Group Modal */}
+      {isBlockModalOpen && !isGuest && (
+        <div className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="relative bg-[#121212] border border-white/10 w-full max-w-sm rounded-[2.5rem] p-8 shadow-2xl flex flex-col items-center text-center animate-in zoom-in-95 duration-300">
             <button 
               onClick={() => setIsBlockModalOpen(false)}
               className="absolute top-6 right-6 text-gray-500 hover:text-white transition-colors"
@@ -245,26 +256,64 @@ export default function PrePartyPage() {
             </div>
 
             <h3 className="text-2xl font-black italic uppercase tracking-tight mb-3">
-              t("groupRequiredTitle")
+              {t("groupRequiredTitle") || "Crew Required"}
             </h3>
             
             <p className="text-sm text-gray-400 mb-8 leading-relaxed">
-              t("groupRequiredDesc")
+              {t("groupRequiredDesc") || "To match, like, send messages, or unlock more groups near you, you must create a profile for your own crew first."}
             </p>
 
             <Link
               href={`/${locale}/profile/create-group`}
               className="w-full bg-[#FF725E] text-black font-black py-4 rounded-full uppercase tracking-widest text-sm hover:scale-[1.02] active:scale-[0.98] transition-transform shadow-lg shadow-[#FF725E]/20 text-center"
             >
-              t("createGroupButton")
+              {t("createGroupButton") || "Create Profile"}
             </Link>
           </div>
         </div>
       )}
- 
-      <div className="absolute bottom-0 w-full z-40">
-        <Navigation />
-      </div>
+
+      {/* 3. Guest Paywall Modal */}
+      {showPaywall && isGuest && (
+        <div className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="relative bg-[#121212] border border-white/10 w-full max-w-sm rounded-[2.5rem] p-8 shadow-2xl flex flex-col items-center text-center animate-in zoom-in-95 duration-300">
+            <button 
+              onClick={() => setShowPaywall(false)}
+              className="absolute top-6 right-6 text-gray-500 hover:text-white transition-colors"
+            >
+              <X size={24} />
+            </button>
+            
+            <div className="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center text-white mb-6 border border-white/10">
+              <Lock size={28} />
+            </div>
+
+            <h3 className="text-2xl font-black italic uppercase tracking-tight mb-3">
+              {dashboardT("actionSheetTitle") || "Create an Account"}
+            </h3>
+            
+            <p className="text-sm text-gray-400 mb-8 leading-relaxed">
+              {dashboardT("actionSheetDesc") || "Sign up for free to unlock groups, send messages, and connect with other crews near you."}
+            </p>
+
+            <div className="flex flex-col w-full gap-3">
+              <Link
+                href={`/${locale}/register`}
+                className="w-full bg-white text-black font-black py-4 rounded-full uppercase tracking-widest text-sm hover:scale-[1.02] active:scale-[0.98] transition-transform text-center"
+              >
+                {dashboardT("actionSheetRegister") || "Sign Up Free"}
+              </Link>
+              <Link
+                href={`/${locale}/login`}
+                className="w-full bg-transparent border border-white/20 text-white font-bold py-4 rounded-full uppercase tracking-widest text-sm hover:bg-white/5 transition-colors text-center"
+              >
+                {dashboardT("actionSheetLogin") || "Log In"}
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

@@ -31,9 +31,12 @@ export default function CreateGroupPage() {
   const [isEditing, setIsEditing] = useState(false);
 
   const handleBack = () => {
+    // Check if the user arrived here immediately after registration
     const fromRegister = searchParams.get("from") === "register";
+    
+    // --- FIX: Redirect to the new core feed instead of the legacy dashboard ---
     if (fromRegister) {
-      router.push(`/${locale}/dashboard`);
+      router.push(`/${locale}/pre-party`);
     } else {
       router.push(`/${locale}/profile`);
     }
