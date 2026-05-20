@@ -148,7 +148,9 @@
     "preferences": "Preferences",
     "groupRequiredTitle": "Group Required",
     "groupRequiredDesc": "To match, like, send messages, or unlock more groups near you, you must create a profile for your own group first.",
-    "createGroupButton": "Create Group Profile"
+    "createGroupButton": "Create Group Profile",
+    "title": "Discover",
+    "radius": "Radius"
   },
   "ForgotPassword": {
     "title": "Reset Password",

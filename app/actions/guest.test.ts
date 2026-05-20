@@ -24,7 +24,7 @@ describe('Guest Actions', () => {
     vi.unstubAllEnvs();
   });
 
-  it('loginAsGuest: should set the cookies and redirect to the dashboard', async () => {
+  it('loginAsGuest: should set the cookies and redirect to the search group page', async () => {
     const mockSet = vi.fn();
     vi.mocked(cookies).mockResolvedValue({ set: mockSet } as any);
 
@@ -42,7 +42,7 @@ describe('Guest Actions', () => {
       expect.any(Object)
     );
 
-    expect(redirect).toHaveBeenCalledWith('/en/dashboard');
+    expect(redirect).toHaveBeenCalledWith('/en/pre-party');
   });
 
   it('loginAsGuest: should set secure cookies when in a production environment', async () => {

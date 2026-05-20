@@ -15,7 +15,7 @@ export default function GamesPage() {
       {/* HEADER*/}
       <header className="flex items-center p-6 relative">
         <button 
-          onClick={() => router.push(`/${locale}/dashboard`)}
+          onClick={() => router.push(`/${locale}/pre-party`)}
           className="p-2 -ml-2 rounded-full hover:bg-gray-100 transition-colors text-gray-600 z-10"
           aria-label="Go back"
         >

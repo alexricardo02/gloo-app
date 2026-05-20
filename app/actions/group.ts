@@ -105,5 +105,5 @@ export async function createGroupAction(formData: FormData, locale: string) {
     },
   });
 
-  redirect(`/${locale}/dashboard`);
+  redirect(`/${locale}/pre-party`);
 }
