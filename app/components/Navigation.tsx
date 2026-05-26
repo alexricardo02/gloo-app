@@ -48,38 +48,49 @@ export default function Navigation({ isGuest, onSecureClick }: NavigationProps) 
 
   const navItems = [
     {
-      label: t("navGroups"), // "Groups" / "Discover"
+      id: "discover",
+      label: t("navGroups"), 
       href: `/${locale}/pre-party`,
       icon: Compass,
     },
     {
-      label: t("enterGames") || "Games", // "Games" 
+      id: "games",
+      label: t("enterGames") || "Games", 
       href: `/${locale}/games`,
       icon: Gamepad2,
     },
     {
-      label: t("navMap"), // "Map"
+      id: "map",
+      label: t("navMap"), 
       href: `/${locale}/map`,
       icon: Map,
     },
     {
-      label: t("navMessages"), // "Messages"
+      id: "messages",
+      label: t("navMessages"), 
       href: `/${locale}/messages`,
       icon: MessageSquare,
     },
     {
-      label: t("navProfile"), // "My Profile"
+      id: "profile",
+      label: t("navProfile"), 
       href: `/${locale}/profile`,
       icon: User,
     },
   ];
 
   const handleNavigation = (e: React.MouseEvent, item: any) => {
-    if (isGuest && item.id !== 'Home' && item.id !== 'Login' && onSecureClick) {
+    e.preventDefault(); // Prevent default behavior just in case
+
+    // If the user is a guest, and the click handler is provided, 
+    // AND they are trying to access restricted areas (messages, profile)
+    if (isGuest && onSecureClick && (item.id === "messages" || item.id === "profile")) {
       onSecureClick(e);
       return;
     }
-    router.push(`/${locale}${item.path}`);
+
+    // Otherwise (including for 'games', 'discover', and 'map'), navigate normally
+    router.push(item.href);
   };
 
   return (
@@ -91,10 +102,10 @@ export default function Navigation({ isGuest, onSecureClick }: NavigationProps) 
           const isMessagesTab = item.icon === MessageSquare;
 
           return (
-            <Link
+            <button
               key={item.href}
-              href={item.href}
-              className="flex flex-col items-center justify-center flex-1 min-w-0 transition-all duration-200 relative group"
+              onClick={(e) => handleNavigation(e, item)}
+              className="flex flex-col items-center justify-center flex-1 min-w-0 transition-all duration-200 relative group bg-transparent border-none cursor-pointer"
             >
               {/* Icon layout with dynamic color matching */}
               <div
@@ -106,7 +117,7 @@ export default function Navigation({ isGuest, onSecureClick }: NavigationProps) 
               >
                 <Icon size={22} strokeWidth={isActive ? 2.5 : 2} />
                 
-                {/* DYNAMIC NOTIFICATION BADGE: Displays only on the Message icon if there are unread messages */}
+                {/* DYNAMIC NOTIFICATION BADGE */}
                 {isMessagesTab && unreadCount > 0 && (
                   <div className="absolute -top-1 -right-1 w-4 h-4 bg-[#FF725E] text-black text-[10px] font-black flex items-center justify-center rounded-full border-2 border-black animate-in zoom-in">
                     {unreadCount}
@@ -127,7 +138,7 @@ export default function Navigation({ isGuest, onSecureClick }: NavigationProps) 
               {isActive && (
                 <div className="absolute -top-3 w-8 h-0.5 bg-[#FF725E] rounded-full shadow-[0_0_10px_#FF725E]" />
               )}
-            </Link>
+            </button>
           );
         })}
       </div>

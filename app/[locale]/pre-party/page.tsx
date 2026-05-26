@@ -153,7 +153,7 @@ export default function PrePartyPage() {
         {/* Invisible Overlay to block interactions if restricted */}
         {(hasNoGroup || isGuest) && (
           <div 
-            className="absolute inset-0 z-50 cursor-pointer"
+            className="absolute inset-0 z-30 cursor-pointer"
             onClick={handleInteractionAttempt}
           />
         )}
@@ -193,7 +193,10 @@ export default function PrePartyPage() {
         )}
       </main>
 
-      <Navigation />
+      <Navigation 
+        isGuest={isGuest} 
+        onSecureClick={() => setShowPaywall(true)} 
+      />
 
       {/* --- MODALS --- */}
 
