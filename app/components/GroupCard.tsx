@@ -29,10 +29,10 @@ export default function GroupCard({ group }: GroupCardProps) {
     }
   };
  
-  // ── Swipe support (sin preventDefault — no hace falta con el enfoque transform) ──
-  // Registramos en el contenedor para detectar swipes horizontales en touchend.
-  // Como no llamamos preventDefault(), los gestos verticales siguen subiendo
-  // al scroll vertical del padre sin ningún conflicto.
+  // ── Swipe support (no preventDefault — not needed with the translate approach) ──
+  // We register on the container to detect horizontal swipes on touchend.
+  // Because we don't call preventDefault(), vertical gestures still bubble
+  // to the parent's vertical scroll without any conflict.
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
     touchStartY.current = e.touches[0].clientY;
@@ -43,7 +43,7 @@ export default function GroupCard({ group }: GroupCardProps) {
     const dy = e.changedTouches[0].clientY - touchStartY.current;
     const THRESHOLD = 50;
  
-    // Solo actuamos si el gesto fue más horizontal que vertical
+    // Only act if the gesture was more horizontal than vertical
     if (Math.abs(dx) > THRESHOLD && Math.abs(dx) > Math.abs(dy)) {
       if (dx < 0) goNext();
       else goPrev();
@@ -57,9 +57,9 @@ export default function GroupCard({ group }: GroupCardProps) {
       onTouchEnd={handleTouchEnd}
     >
  
-      {/* ── 1. CARRUSEL: transform en lugar de overflow-x-auto ─────────────────
-           Mover fotos con translateX evita completamente el conflicto entre
-           el scroll-x del carrusel y el snap-y del contenedor padre.          */}
+      {/* ── 1. CAROUSEL: use transform instead of overflow-x-auto ────────────────
+           Moving photos with translateX completely avoids the conflict between
+           the carousel's horizontal scroll and the parent's vertical snap.    */}
       <div
         className="absolute inset-0 flex transition-transform duration-300 ease-out will-change-transform"
         style={{ transform: `translateX(-${currentIndex * 100}%)` }}
@@ -76,11 +76,11 @@ export default function GroupCard({ group }: GroupCardProps) {
         ))}
       </div>
  
-      {/* ── 2. GRADIENTE ───────────────────────────────────────────────────── */}
+      {/* ── 2. GRADIENT ───────────────────────────────────────────────────── */}
       <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent pointer-events-none z-10" />
  
-      {/* ── 3. INDICADORES SUPERIORES (barras, estilo Instagram Stories) ─────
-           Siempre visibles. Se estiran/encojen para mostrar la foto activa.   */}
+      {/* ── 3. TOP INDICATORS (bars, Instagram Stories style) ────────────────
+           Always visible. They expand/contract to indicate the active photo. */}
       <div className="absolute top-4 left-4 right-4 flex gap-1 z-30 pointer-events-none">
         {photos.map((_: string, index: number) => (
           <div
@@ -100,18 +100,12 @@ export default function GroupCard({ group }: GroupCardProps) {
         ))}
       </div>
  
-      {/* ── 4. ZONAS DE TAP (navegación primaria, como Instagram Stories) ────
-           Click events NUNCA son interceptados por scroll containers.
-           z-20 con pointer-events-auto garantiza que los taps siempre funcionen.
-           Los botones de acción están en z-40, por encima, así no se interfieren. */}
       {photos.length > 1 && (
         <div className="absolute inset-0 z-20 flex">
-          {/* Zona izquierda → foto anterior */}
           <div
             className="w-1/3 h-full cursor-pointer"
             onClick={goPrev}
           />
-          {/* Zona derecha → foto siguiente */}
           <div
             className="w-2/3 h-full cursor-pointer"
             onClick={goNext}
@@ -119,13 +113,13 @@ export default function GroupCard({ group }: GroupCardProps) {
         </div>
       )}
  
-      {/* ── 5. CONTENIDO E INTERFAZ ─────────────────────────────────────────── */}
+      {/* ── 5. Content and interface ─────────────────────────────────────────── */}
       <div className="absolute inset-0 flex flex-col justify-end p-6 pointer-events-none z-40">
         <div className="flex justify-between items-end">
           {/* Info */}
           <div className="flex-1 pr-4 space-y-2">
             <h2 className="text-3xl font-black text-white italic uppercase tracking-tight drop-shadow-md">
-              {group.user?.name ? `${group.user.name}'s Crew` : "Group"}
+              {group.user?.name ? `${group.user.name}'s Group` : "Group"}
             </h2>
             <p className="text-sm text-gray-200 line-clamp-2 drop-shadow">
               {group.description || "Looking for a fun night out!"}
@@ -140,7 +134,6 @@ export default function GroupCard({ group }: GroupCardProps) {
             </div>
           </div>
  
-          {/* Botones — pointer-events-auto para que los clicks lleguen */}
           <div className="flex flex-col gap-4 pointer-events-auto">
             <button
               onClick={() => handleLike(group.id)}

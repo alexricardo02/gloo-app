@@ -53,13 +53,6 @@ export default function ProfilePage() {
         <h1 className="text-3xl font-extrabold text-white">
           {t("title")}
         </h1>
-        <Image
-          src={`/flags/${locale}.svg`}
-          alt={locale}
-          width={32}
-          height={24}
-          className="rounded border border-white/20"
-        />
       </div>
 
       <div className="px-6 space-y-10">
@@ -152,9 +145,7 @@ export default function ProfilePage() {
                     </span>
                   </div>
                 </div>
-                
-                <Settings size={20} className="text-white/20 absolute top-5 right-5" />
-              </div>
+                              </div>
             </Link>
           )}
         </div>
