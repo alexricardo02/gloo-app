@@ -18,6 +18,13 @@ export default function PrePartyPage() {
   type DiscoveryGroup = { id: string } & Record<string, unknown>;
   const [groups, setGroups] = useState<DiscoveryGroup[]>([]);
   const [distance, setDistance] = useState(10);
+
+  useEffect(() => {
+    const savedDistance = localStorage.getItem('gloo_search_radius');
+    if (savedDistance) {
+      setDistance(Number(savedDistance));
+    }
+  }, []);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(0);
@@ -120,9 +127,12 @@ export default function PrePartyPage() {
     setIsDistanceModalOpen(true);
   };
 
-  const confirmDistance = () => {
+  const applyDistance = () => {
     setDistance(tempDistance);
+    localStorage.setItem('gloo_search_radius', tempDistance.toString());
+    
     setIsDistanceModalOpen(false);
+    setPage(0); // Reset pagination on new search
   };
 
   return (
@@ -141,9 +151,9 @@ export default function PrePartyPage() {
         
         <button 
           onClick={() => setIsDistanceModalOpen(true)}
-          className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors backdrop-blur-md"
+          className="bg-[#FF725E] text-black text-[10px] font-black uppercase tracking-wider px-4 py-2 rounded-full hover:bg-[#ff8573] active:scale-95 transition-all shadow-lg shadow-[#FF725E]/20"
         >
-          <SlidersHorizontal size={18} className="text-white" />
+          Change Radius
         </button>
       </header>
 
@@ -259,11 +269,11 @@ export default function PrePartyPage() {
             </div>
 
             <h3 className="text-2xl font-black italic uppercase tracking-tight mb-3">
-              {t("groupRequiredTitle") || "Crew Required"}
+              {t("groupRequiredTitle") || "Group Required"}
             </h3>
             
             <p className="text-sm text-gray-400 mb-8 leading-relaxed">
-              {t("groupRequiredDesc") || "To match, like, send messages, or unlock more groups near you, you must create a profile for your own crew first."}
+              {t("groupRequiredDesc") || "To match, like, send messages, or unlock more groups near you, you must create a profile for your own group first."}
             </p>
 
             <Link
@@ -296,7 +306,7 @@ export default function PrePartyPage() {
             </h3>
             
             <p className="text-sm text-gray-400 mb-8 leading-relaxed">
-              {dashboardT("actionSheetDesc") || "Sign up for free to unlock groups, send messages, and connect with other crews near you."}
+              {dashboardT("actionSheetDesc") || "Sign up for free to unlock groups, send messages, and connect with other groups near you."}
             </p>
 
             <div className="flex flex-col w-full gap-3">
