@@ -10,6 +10,7 @@ datasource db {
   provider = "postgresql"
 }
 
+
 // --- Enums ---
 enum Role {
   USER       // Thomas, Sophie (Group Hosts)
