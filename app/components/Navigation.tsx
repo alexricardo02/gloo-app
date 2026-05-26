@@ -1,9 +1,11 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { Compass, Map, MessageSquare, User, LogIn, Gamepad2 } from "lucide-react";
+import { supabase } from "@/lib/supabase";
 
 interface NavigationProps {
   isGuest?: boolean;
@@ -15,6 +17,34 @@ export default function Navigation({ isGuest, onSecureClick }: NavigationProps) 
   const locale = useLocale();
   const pathname = usePathname();
   const t = useTranslations("Dashboard");
+
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  useEffect(() => {
+    // 1. Reset the notification badge when the user enters the messages tab
+    if (pathname.includes(`/${locale}/messages`)) {
+      setUnreadCount(0);
+    }
+
+    // 2. Global Subscription to listen for new incoming messages anywhere in the app
+    const channel = supabase
+      .channel("global_navigation_notifications")
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "Message" },
+        () => {
+          // If a new message is inserted and the user is NOT on the messages page, increment badge
+          if (!pathname.includes(`/${locale}/messages`)) {
+            setUnreadCount((prev) => prev + 1);
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [pathname, locale]);
 
   const navItems = [
     {
@@ -49,8 +79,6 @@ export default function Navigation({ isGuest, onSecureClick }: NavigationProps) 
       onSecureClick(e);
       return;
     }
-
-
     router.push(`/${locale}${item.path}`);
   };
 
@@ -59,8 +87,8 @@ export default function Navigation({ isGuest, onSecureClick }: NavigationProps) 
       <div className="max-w-md mx-auto flex justify-between items-center">
         {navItems.map((item) => {
           const Icon = item.icon;
-          // Check if the current route matches the navigation item link to apply active styling
           const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
+          const isMessagesTab = item.icon === MessageSquare;
 
           return (
             <Link
@@ -68,18 +96,25 @@ export default function Navigation({ isGuest, onSecureClick }: NavigationProps) 
               href={item.href}
               className="flex flex-col items-center justify-center flex-1 min-w-0 transition-all duration-200 relative group"
             >
-              {/* Icon layout with dynamic color matching Gloo's brand alignment */}
+              {/* Icon layout with dynamic color matching */}
               <div
-                className={`p-1.5 rounded-xl transition-all duration-200 ${
+                className={`p-1.5 rounded-xl transition-all duration-200 relative ${
                   isActive 
                     ? "text-[#FF725E] scale-110" 
                     : "text-gray-500 group-hover:text-gray-300"
                 }`}
               >
                 <Icon size={22} strokeWidth={isActive ? 2.5 : 2} />
+                
+                {/* DYNAMIC NOTIFICATION BADGE: Displays only on the Message icon if there are unread messages */}
+                {isMessagesTab && unreadCount > 0 && (
+                  <div className="absolute -top-1 -right-1 w-4 h-4 bg-[#FF725E] text-black text-[10px] font-black flex items-center justify-center rounded-full border-2 border-black animate-in zoom-in">
+                    {unreadCount}
+                  </div>
+                )}
               </div>
 
-              {/* Text label with overflow protection for smaller smartphone screens */}
+              {/* Text label */}
               <span
                 className={`text-[10px] font-bold tracking-wide uppercase mt-0.5 truncate max-w-full block transition-colors duration-200 ${
                   isActive ? "text-[#FF725E]" : "text-gray-500"
