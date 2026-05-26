@@ -52,7 +52,8 @@
     "termsPrefix": "By signing in with an account, you agree to gloo's",
     "termsOfService": "Terms of Service",
     "and": "and",
-    "privacyPolicy": "Privacy Policy"
+    "privacyPolicy": "Privacy Policy",
+    "error": "Something went wrong. Please try again."
   },
   "Register": {
     "title": "Sign up",
@@ -138,7 +139,8 @@
   "Messages": {
   "emptyDesc": "Match with other groups in the carousel to start a conversation.",
   "emptyTitle": "No messages yet",
-  "title": "Messages"
+  "title": "Messages",
+  "searchPlaceholder": "Search"
   },
   "Pre-party": {
     "modalButton": "Set Radius",
