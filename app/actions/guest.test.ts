@@ -42,7 +42,7 @@ describe('Guest Actions', () => {
       expect.any(Object)
     );
 
-    expect(redirect).toHaveBeenCalledWith('/en/pre-party');
+    expect(redirect).toHaveBeenCalledWith('/en/search-groups');
   });
 
   it('loginAsGuest: should set secure cookies when in a production environment', async () => {

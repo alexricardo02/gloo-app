@@ -50,7 +50,7 @@ export default function Navigation({ isGuest, onSecureClick }: NavigationProps) 
     {
       id: "discover",
       label: t("navGroups"), 
-      href: `/${locale}/pre-party`,
+      href: `/${locale}/search-groups`,
       icon: Compass,
     },
     {

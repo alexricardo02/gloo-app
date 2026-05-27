@@ -36,7 +36,7 @@ export default function CreateGroupPage() {
     
     // --- FIX: Redirect to the new core feed instead of the legacy dashboard ---
     if (fromRegister) {
-      router.push(`/${locale}/pre-party`);
+      router.push(`/${locale}/search-groups`);
     } else {
       router.push(`/${locale}/profile`);
     }

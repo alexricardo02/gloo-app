@@ -32,7 +32,7 @@ export async function loginAsGuest(locale: string) {
   });
 
   // Nach dem Setzen der Cookies zum Dashboard weiterleiten
-  redirect(`/${locale}/pre-party`);
+  redirect(`/${locale}/search-groups`);
 }
 
 /**
