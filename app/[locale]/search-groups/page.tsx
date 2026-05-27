@@ -12,7 +12,7 @@ import { MapPin, SlidersHorizontal, ChevronRight, X, Users, Lock } from "lucide-
 
 export default function PrePartyPage() {
   const locale = useLocale();
-  const t = useTranslations("Pre-party");
+  const t = useTranslations("SearchGroups");
   const dashboardT = useTranslations("Dashboard");
 
   type DiscoveryGroup = { id: string } & Record<string, unknown>;

@@ -81,7 +81,7 @@ export default function PreferencesPage() {
             if (e?.message === "NEXT_REDIRECT") {
               // redirect is expected — show saved feedback before it fires
               setSaved(true);
-              setTimeout(() => router.push(`/${locale}/pre-party`), 800);
+              setTimeout(() => router.push(`/${locale}/search-groups`), 800);
               return;
             }
             console.error(err);
@@ -101,7 +101,7 @@ export default function PreferencesPage() {
             })
             .finally(() => {
               setSaved(true);
-              setTimeout(() => router.push(`/${locale}/pre-party`), 800);
+              setTimeout(() => router.push(`/${locale}/search-groups`), 800);
               setLoading(false);
             });
         }

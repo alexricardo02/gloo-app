@@ -142,9 +142,9 @@
   "title": "Messages",
   "searchPlaceholder": "Search"
   },
-  "Pre-party": {
+  "SearchGroups": {
     "modalButton": "Set Radius",
-    "endOfList": "You've seen all the pre-parties near Mainz.",
+    "endOfList": "You've seen all the groups near Mainz.",
     "emptyDesc": "Try increasing your search distance or check back later for new groups.",
     "emptyTitle": "No groups found nearby",
     "preferences": "Preferences",
