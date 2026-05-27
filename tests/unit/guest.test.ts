@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { loginAsGuest, clearGuestSession, checkIsGuest } from './guest';
+import { loginAsGuest, clearGuestSession, checkIsGuest } from '../../app/actions/guest';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
