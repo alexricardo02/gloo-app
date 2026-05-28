@@ -148,20 +148,8 @@ export default function CreateGroupPage() {
               formData.get("publicProfile") ? "true" : "false"
             );
 
-            instagramLinks.forEach((username, i) => {
-              if (username.trim() !== "") {
-                formData.append(`instagram[${i}]`, username.trim());
-              }
-            });
-
             formData.append("description", description.trim());
             formData.append("agreedToTerms", agreed ? "true" : "false");
-
-            photos.forEach((file) => {
-              formData.append(`photos`, file);
-            });
-
-
 
 
             // 3. Execute the Server Action

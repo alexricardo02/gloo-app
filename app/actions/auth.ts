@@ -153,3 +153,23 @@ export async function logOutAction(locale: string) {
 
   redirect(`/${locale}/login`);
 }
+
+
+export async function checkUsernameAvailability(username: string) {
+  // Return false instantly if the string is too short to avoid unnecessary DB calls
+  if (!username || username.length < 3) return { available: false };
+  
+  try {
+    // Optimize the query by only selecting the ID (faster than fetching the whole row)
+    const user = await prisma.user.findUnique({
+      where: { username },
+      select: { id: true },
+    });
+    
+    // If 'user' is null, the username is available
+    return { available: !user };
+  } catch (error) {
+    console.error("Error checking username:", error);
+    return { available: false };
+  }
+}

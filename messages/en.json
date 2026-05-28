@@ -77,7 +77,13 @@
     "emailExistsError": "This email address is already registered.",
     "usernameTakenError": "This username is already taken. Please choose another one.",
     "registrationGenericError": "An unexpected error occurred during registration. Please try again.",
-    "successCheckEmail": "Account created! Please check your email inbox to verify your account before logging in."
+    "successCheckEmail": "Account created! Please check your email inbox to verify your account before logging in.",
+    "usernameAvailable": "Username is available!",
+    "usernameTooShort": "Must be at least 3 characters",
+    "pwdMinChars": "Min 8 chars",
+    "pwdUppercase": "1 Uppercase",
+    "pwdNumber": "1 Number",
+    "pwdSpecial": "1 Special char"
   },
   "Profile": {
     "title": "Profile",
