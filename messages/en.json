@@ -53,13 +53,15 @@
     "termsOfService": "Terms of Service",
     "and": "and",
     "privacyPolicy": "Privacy Policy",
-    "error": "Something went wrong. Please try again."
+    "error": "Something went wrong. Please try again.",
+    "invalidCredentialsError": "Invalid username, email, or password.",
+    "emailNotVerifiedError": "Please verify your email address before logging in. Check your inbox for the activation link."
   },
   "Register": {
     "title": "Sign up",
     "alreadyHaveAccount": "Already have an account? ",
     "signIn": "Sign in",
-    "namePlaceholder": "Name",
+    "namePlaceholder": "Full Name",
     "dobPlaceholder": "Date of Birth",
     "emailPlaceholder": "Email Address",
     "usernamePlaceholder": "Username",
@@ -69,7 +71,13 @@
     "and": "and",
     "privacyPolicy": "Privacy Policy",
     "createAccountButton": "Create Account",
-    "orSignUpWith": "or sign up with"
+    "orSignUpWith": "or sign up with",
+    "ageMinError": "You must be at least 18 years old to register.",
+    "passwordWeakError": "Password must be at least 8 characters long, contain an uppercase letter, a number, and a special character.",
+    "emailExistsError": "This email address is already registered.",
+    "usernameTakenError": "This username is already taken. Please choose another one.",
+    "registrationGenericError": "An unexpected error occurred during registration. Please try again.",
+    "successCheckEmail": "Account created! Please check your email inbox to verify your account before logging in."
   },
   "Profile": {
     "title": "Profile",

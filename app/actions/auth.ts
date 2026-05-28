@@ -30,30 +30,55 @@ export async function registerUser(formData: FormData, locale: string) {
   if (age < 18) {
     return { error: "You must be at least 18 years old to register." };
   }
-  // encrypt password
-  const hashedPassword = await bcrypt.hash(password, 10);
+
+  // Requires: Min 8 chars, 1 uppercase, 1 number, 1 special character
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&.])[A-Za-z\d@$!%*?&.]{8,}$/;
+  if (!passwordRegex.test(password)) {
+    return { error: "passwordWeakError" };
+  }
 
   try {
-    // Create user in database
-    const user = await prisma.user.create({
+    
+    const existingEmail = await prisma.user.findUnique({ where: { email } });
+    if (existingEmail) {
+      return { error: "emailExistsError" };
+    }
+
+    if (username) {
+      const existingUsername = await prisma.user.findUnique({ where: { username } });
+      if (existingUsername) {
+        return { error: "usernameTakenError" };
+      }
+    }
+
+    // Encrypt password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // generate a secure random token for verification
+    const verificationToken = crypto.randomUUID();
+
+
+    await prisma.user.create({
       data: {
         email,
         username,
         name,
         password: hashedPassword,
         birthDate,
-        isGuest: false,
+        isVerified: false, // Account remains locked until verified
+        verificationToken,
       },
     });
 
-    // Create session with cookies
-    const cookieStore = await cookies();
-    cookieStore.set("gloo_user_id", user.id, { httpOnly: true, path: "/" });
-    cookieStore.delete("gloo_is_guest"); // if it was a guest user, remove the guest cookie
+    // In production, an email service provider like Resend/SendGrid triggers here
+    console.log(`[EMAIL SIMULATION] Verification link sent to ${email}: http://localhost:3000/${locale}/verify?token=${verificationToken}`);
+
+    return { success: true, needsVerification: true };
+
   } catch (error) {
-    return { error: "Email already exists" };
+    console.error("Registration critical error:", error);
+    return { error: "registrationGenericError" };
   }
-  redirect(`/${locale}/profile/create-group?from=register`);
 }
 
 export async function loginUser(formData: FormData, locale: string) {
@@ -70,16 +95,20 @@ export async function loginUser(formData: FormData, locale: string) {
     }
   });
   
-  if (!user) return { error: "Invalid credentials" };
+  if (!user) return { error: "invalidCredentialsError" };
 
   // Validate password
   const isPasswordValid = await bcrypt.compare(password, user.password);
-  if (!isPasswordValid) return { error: "Invalid credentials" };
+  if (!isPasswordValid) return { error: "invalidCredentialsError" };
+
+  if (!user.isVerified) {
+    return { error: "emailNotVerifiedError" };
+  }
 
   // Create session with cookies
   const cookieStore = await cookies();
   cookieStore.set("gloo_user_id", user.id, { httpOnly: true, path: "/" });
-  cookieStore.delete("gloo_is_guest"); 
+  cookieStore.delete("gloo_is_guest");
 
   redirect(`/${locale}/search-groups`);
 }
