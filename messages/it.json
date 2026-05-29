@@ -58,7 +58,7 @@
     "emailNotVerifiedError": "Verifica il tuo indirizzo email prima di accedere. Controlla la tua casella di posta per il link di attivazione."
   },
   "Register": {
-    "title": "Iscriviti",
+    "title": "Registrati",
     "alreadyHaveAccount": "Hai già un account? ",
     "signIn": "Accedi",
     "namePlaceholder": "Nome e cognome",
@@ -146,16 +146,50 @@
     "termsText": "Accetto i <terms>Termini di Servizio</terms> e le <guidelines>Linee Guida della Community</guidelines>.",
     "createProfile": "Crea Profilo",
     "saving": "Salvataggio...",
-    "error": "Qualcosa è andato storto. Riprova.",
-    "modalButton": "Imposta Raggio",
-    "endOfList": "Hai visto tutte le pre-serate vicino a Magonza.",
-    "emptyDesc": "Prova ad aumentare la distanza di ricerca o torna più tardi.",
-    "emptyTitle": "Nessun gruppo trovato nelle vicinanze",
-    "preferences": "Preferenze"
+    "error": "Qualcosa è andato storto. Riprova."
   },
   "Messages": {
     "emptyDesc": "Fai match con altri gruppi nel carosello per iniziare una conversazione.",
     "emptyTitle": "Nessun messaggio",
     "title": "Messaggi"
+  },
+  "Pre-party": {
+    "modalButton": "Imposta Raggio",
+    "endOfList": "Hai visto tutte le pre-serate vicino a Magonza.",
+    "emptyDesc": "Prova ad aumentare la distanza di ricerca o torna più tardi per vedere nuovi gruppi.",
+    "emptyTitle": "Nessun gruppo trovato nelle vicinanze",
+    "preferences": "Preferenze",
+    "groupRequiredTitle": "Gruppo Richiesto",
+    "groupRequiredDesc": "Per fare match, mettere mi piace, inviare messaggi o sbloccare più gruppi vicino a te, devi prima creare un profilo per il tuo gruppo.",
+    "createGroupButton": "Crea Profilo di Gruppo"
+  },
+  "ForgotPassword": {
+    "title": "Reimposta Password",
+    "description": "Inserisci il tuo indirizzo email e ti invieremo un link per reimpostare la tua password.",
+    "emailPlaceholder": "Indirizzo Email",
+    "submitButton": "Invia Link",
+    "backToLogin": "Torna al Login"
+  },
+  "Terms": {
+    "title": "Termini di Servizio",
+    "lastUpdated": "Ultimo aggiornamento: Maggio 2026",
+    "intro": "Benvenuto su gloo. Accedendo o utilizzando la nostra applicazione, accetti di essere vincolato da questi Termini di Servizio e dalle nostre Linee Guida della Community.",
+    "section1Title": "1. Registrazione Account",
+    "section1Content": "Devi avere almeno 18 anni per creare un account. Sei responsabile della salvaguardia della password del tuo account e di qualsiasi attività o azione effettuata con essa.",
+    "section2Title": "2. Uso Accettabile",
+    "section2Content": "Accetti di non utilizzare l'app per scopi illegali o non autorizzati. Molestie, incitamento all'odio o comportamenti inappropriati verso altri gruppi sono severamente vietati.",
+    "section3Title": "3. Risoluzione",
+    "section3Content": "Ci riserviamo il diritto di sospendere o chiudere il tuo account in qualsiasi momento, senza preavviso o responsabilità, per qualsiasi motivo, inclusa la violazione di questi Termini."
+  },
+  "Privacy": {
+    "title": "Informativa sulla Privacy",
+    "lastUpdated": "Ultimo aggiornamento: Maggio 2026",
+    "intro": "Su gloo, prendiamo sul serio la tua privacy. Questa politica spiega come raccogliamo, utilizziamo e proteggiamo le tue informazioni personali.",
+    "section1Title": "1. Informazioni che Raccogliamo",
+    "section1Content": "Raccogliamo le informazioni che ci fornisci direttamente, come nome, email, data di nascita e dati sulla posizione, quando esplicitamente condivisi per farti trovare gruppi nelle vicinanze.",
+    "section2Title": "2. Come Utilizziamo i Tuoi Dati",
+    "section2Content": "I tuoi dati vengono utilizzati esclusivamente per fornire e migliorare i nostri servizi, abbinarti a gruppi pertinenti e garantire un ambiente sicuro per la nostra community.",
+    "section3Title": "3. Condivisione dei Dati",
+    "section3Content": "Non vendiamo i tuoi dati personali. Condividiamo le informazioni con terze parti solo quando necessario per fornire i nostri servizi o conformarci a obblighi legali."
   }
 }

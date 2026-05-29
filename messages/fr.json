@@ -146,16 +146,50 @@
     "termsText": "J'accepte les <terms>Conditions d'utilisation</terms> et les <guidelines>Règles de la communauté</guidelines>.",
     "createProfile": "Créer le Profil",
     "saving": "Enregistrement...",
-    "error": "Une erreur est survenue. Veuillez réessayer.",
-    "modalButton": "Définir le rayon",
-    "endOfList": "Vous avez vu tous les before près de Mayence.",
-    "emptyDesc": "Essayez d'augmenter votre distance de recherche ou revenez plus tard.",
-    "emptyTitle": "Aucun groupe trouvé à proximité",
-    "preferences": "Préférences"
+    "error": "Une erreur est survenue. Veuillez réessayer."
   },
   "Messages": {
     "emptyDesc": "Matchez avec d'autres groupes dans le carrousel pour commencer à discuter.",
     "emptyTitle": "Pas encore de messages",
     "title": "Messages"
+  },
+  "Pre-party": {
+    "modalButton": "Définir le rayon",
+    "endOfList": "Vous avez vu tous les before près de Mayence.",
+    "emptyDesc": "Essayez d'augmenter votre distance de recherche ou revenez plus tard.",
+    "emptyTitle": "Aucun groupe trouvé à proximité",
+    "preferences": "Préférences",
+    "groupRequiredTitle": "Groupe requis",
+    "groupRequiredDesc": "Pour matcher, liker, envoyer des messages ou débloquer plus de groupes près de chez vous, vous devez d'abord créer un profil pour votre propre groupe.",
+    "createGroupButton": "Créer un Profil de Groupe"
+  },
+  "ForgotPassword": {
+    "title": "Réinitialiser le mot de passe",
+    "description": "Entrez votre adresse e-mail et nous vous enverrons un lien pour réinitialiser votre mot de passe.",
+    "emailPlaceholder": "Adresse E-mail",
+    "submitButton": "Envoyer le lien",
+    "backToLogin": "Retour à la connexion"
+  },
+  "Terms": {
+    "title": "Conditions d'utilisation",
+    "lastUpdated": "Dernière mise à jour : Mai 2026",
+    "intro": "Bienvenue sur gloo. En accédant ou en utilisant notre application, vous acceptez d'être lié par ces Conditions d'utilisation et nos Règles de la communauté.",
+    "section1Title": "1. Inscription du compte",
+    "section1Content": "Vous devez avoir au moins 18 ans pour créer un compte. Vous êtes responsable de la protection de votre mot de passe et de toutes les activités effectuées sous votre mot de passe.",
+    "section2Title": "2. Utilisation acceptable",
+    "section2Content": "Vous acceptez de ne pas utiliser l'application à des fins illégales ou non autorisées. Le harcèlement, les discours de haine ou tout comportement inapproprié envers d'autres groupes sont strictement interdits.",
+    "section3Title": "3. Résiliation",
+    "section3Content": "Nous nous réservons le droit de suspendre ou de résilier votre compte à tout moment, sans préavis ni responsabilité, pour quelque raison que ce soit, y compris en cas de violation de ces Conditions."
+  },
+  "Privacy": {
+    "title": "Politique de confidentialité",
+    "lastUpdated": "Dernière mise à jour : Mai 2026",
+    "intro": "Chez gloo, nous prenons votre vie privée au sérieux. Cette politique explique comment nous recueillons, utilisons et protégeons vos informations personnelles.",
+    "section1Title": "1. Informations que nous recueillons",
+    "section1Content": "Nous recueillons les informations que vous nous fournissez directement, telles que votre nom, adresse e-mail, date de naissance et données de localisation lorsqu'elles sont explicitement partagées pour vous matcher avec des groupes à proximité.",
+    "section2Title": "2. Comment nous utilisons vos données",
+    "section2Content": "Vos données sont utilisées uniquement pour fournir et améliorer nos services, vous matcher avec des groupes pertinents et garantir un environnement sûr pour notre communauté.",
+    "section3Title": "3. Partage des données",
+    "section3Content": "Nous ne vendons pas vos données personnelles. Nous ne partageons des informations avec des tiers que lorsque cela est nécessaire pour fournir nos services ou nous conformer à des obligations légales."
   }
 }
