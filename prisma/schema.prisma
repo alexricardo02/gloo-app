@@ -21,8 +21,7 @@ enum Gender {
   MALE
   FEMALE
   MIXED
-  OTHER      // Entspricht "Other" im UI
-  ANY        // Entspricht "Any" im UI
+  DIVERSE
 }
 
 enum GroupType {
@@ -64,12 +63,12 @@ model Group {
   // Group Info
   description      String?
   membersCount     Int         @default(1)
-  gender           Gender      @default(ANY)
+  gender           Gender      @default(MIXED)
   ageMin           Int         @default(18)
   ageMax           Int         @default(30)
   
   // Search Preferences
-  searchGender     Gender      @default(ANY)
+  searchGender     Gender      @default(MIXED)
   searchAgeMin     Int         @default(18)
   searchAgeMax     Int         @default(35)
   maxDistance      Int         @default(10)

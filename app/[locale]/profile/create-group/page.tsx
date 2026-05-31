@@ -14,10 +14,11 @@ export default function CreateGroupPage() {
 
   const [membersCount, setMembersCount] = useState(4);
   const [loading, setLoading] = useState(false);
-  const [ageMin] = useState(21);
+  const [ageMin, setAgeMin] = useState(18); 
   const [ageMax, setAgeMax] = useState(30);
 
-  const [searchGender, setSearchGender] = useState("ANY");
+  const [groupGender, setGroupGender] = useState("MIXED"); 
+  const [searchGender, setSearchGender] = useState("MIXED");
   const [searchAgeMin, setSearchAgeMin] = useState(18);
   const [searchAgeMax, setSearchAgeMax] = useState(35);
   const [maxDistance, setMaxDistance] = useState(10);
@@ -47,7 +48,9 @@ export default function CreateGroupPage() {
     async function loadData() {
       type SavedGroupData = {
         membersCount?: number;
+        ageMin?: number;
         ageMax?: number;
+        gender?: string;
         searchGender?: string;
         searchAgeMin?: number;
         searchAgeMax?: number;
@@ -61,8 +64,10 @@ export default function CreateGroupPage() {
       if (existingGroup) {
         setIsEditing(true);
         setMembersCount(existingGroup.membersCount ?? 4);
+        setAgeMin(existingGroup.ageMin ?? 18);
         setAgeMax(existingGroup.ageMax ?? 30);
-        setSearchGender(existingGroup.searchGender || "ANY");
+        setGroupGender(existingGroup.gender || "MIXED");
+        setSearchGender(existingGroup.searchGender || "MIXED");
         setSearchAgeMin(existingGroup.searchAgeMin ?? 18);
         setSearchAgeMax(existingGroup.searchAgeMax ?? 35);
         setMaxDistance(existingGroup.maxDistance ?? 10);
@@ -138,7 +143,6 @@ export default function CreateGroupPage() {
             formData.append("membersCount", membersCount.toString());
             formData.append("ageMin", ageMin.toString());
             formData.append("ageMax", ageMax.toString());
-
             formData.append("searchGender", searchGender);
             formData.append("searchAgeMin", searchAgeMin.toString());
             formData.append("searchAgeMax", searchAgeMax.toString());
@@ -330,9 +334,10 @@ export default function CreateGroupPage() {
             </span>
 
             <div className="flex bg-black/40 p-1 rounded-xl gap-1">
-              {["ANY", "MALE", "FEMALE", "OTHER"].map((g) => (
+              {["MIXED", "MALE", "FEMALE", "DIVERSE"].map((g) => (
                 <label
                   key={g}
+                  data-checked={groupGender === g}
                   className="flex-1 text-center py-2 rounded-lg cursor-pointer 
                              text-gray-500 transition-all hover:scale-105
                              data-[checked=true]:bg-[#FF725E] data-[checked=true]:text-black"
@@ -342,13 +347,8 @@ export default function CreateGroupPage() {
                     name="groupGender"
                     value={g}
                     className="hidden peer"
-                    defaultChecked={g === "ANY"}
-                    onChange={(e) => {
-                      e.target.parentElement?.setAttribute(
-                        "data-checked",
-                        "true",
-                      );
-                    }}
+                    checked={groupGender === g}
+                    onChange={() => setGroupGender(g)}
                   />
                   <span className="text-[11px] font-semibold tracking-wide">
                     {t(g)}
@@ -367,14 +367,37 @@ export default function CreateGroupPage() {
               </span>
             </div>
 
-            <input
-              type="range"
-              min="18"
-              max="50"
-              value={ageMax}
-              onChange={(e) => setAgeMax(parseInt(e.target.value))}
-              className="w-full accent-[#FF725E] h-1 bg-[#333] rounded-lg appearance-none"
-            />
+            {/* Custom Dual-Thumb Slider */}
+            <div className="relative h-8 flex items-center pt-2">
+              <div className="absolute w-full h-1 bg-[#333] rounded-lg"></div>
+              <div 
+                className="absolute h-1 bg-[#FF725E] rounded-lg"
+                style={{ 
+                  left: `${((ageMin - 18) / 32) * 100}%`, 
+                  right: `${100 - ((ageMax - 18) / 32) * 100}%` 
+                }}
+              ></div>
+              
+              <input
+                type="range"
+                name="ageMin"
+                min="18"
+                max="50"
+                value={ageMin}
+                onChange={(e) => setAgeMin(Math.min(Number(e.target.value), ageMax - 1))}
+                className="absolute w-full appearance-none bg-transparent pointer-events-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[#FF725E] [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-[#FF725E] [&::-moz-range-thumb]:border-none"
+              />
+              
+              <input
+                type="range"
+                name="ageMax"
+                min="18"
+                max="50"
+                value={ageMax}
+                onChange={(e) => setAgeMax(Math.max(Number(e.target.value), ageMin + 1))}
+                className="absolute w-full appearance-none bg-transparent pointer-events-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[#FF725E] [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-[#FF725E] [&::-moz-range-thumb]:border-none"
+              />
+            </div>
           </div>
         </div>
 
@@ -394,7 +417,7 @@ export default function CreateGroupPage() {
             </span>
 
             <div className="flex bg-black/40 p-1 rounded-xl gap-1">
-              {["ANY", "MALE", "FEMALE", "OTHER"].map((g) => (
+              {["MIXED", "MALE", "FEMALE", "DIVERSE"].map((g) => (
                 <label
                   key={g}
                   data-checked={searchGender === g}
@@ -427,41 +450,39 @@ export default function CreateGroupPage() {
               </span>
             </div>
 
-            <div className="space-y-3">
-              <div className="flex justify-between items-center text-[11px] text-gray-400">
-                <span>{t("minAge")}</span>
-                <span>{searchAgeMin}</span>
-              </div>
+            {/* Custom Dual-Thumb Slider */}
+            <div className="relative h-8 flex items-center pt-2">
+              {/* Background track */}
+              <div className="absolute w-full h-1 bg-[#333] rounded-lg"></div>
+              {/* Active track (Highlighted in Orange) */}
+              <div 
+                className="absolute h-1 bg-[#FF725E] rounded-lg"
+                style={{ 
+                  left: `${((searchAgeMin - 18) / 32) * 100}%`, 
+                  right: `${100 - ((searchAgeMax - 18) / 32) * 100}%` 
+                }}
+              ></div>
+              
+              {/* Min Range Slider */}
               <input
                 type="range"
                 name="searchAgeMin"
                 min="18"
-                max="49"
+                max="50"
                 value={searchAgeMin}
-                onChange={(e) => {
-                  const value = Number(e.target.value);
-                  setSearchAgeMin(Math.min(value, searchAgeMax - 1));
-                }}
-                className="w-full accent-[#FF725E] h-1 bg-[#333] rounded-lg appearance-none"
+                onChange={(e) => setSearchAgeMin(Math.min(Number(e.target.value), searchAgeMax - 1))}
+                className="absolute w-full appearance-none bg-transparent pointer-events-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[#FF725E] [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-[#FF725E] [&::-moz-range-thumb]:border-none"
               />
-            </div>
-
-            <div className="space-y-3">
-              <div className="flex justify-between items-center text-[11px] text-gray-400">
-                <span>{t("maxAge")}</span>
-                <span>{searchAgeMax}</span>
-              </div>
+              
+              {/* Max Range Slider */}
               <input
                 type="range"
                 name="searchAgeMax"
-                min="19"
+                min="18"
                 max="50"
                 value={searchAgeMax}
-                onChange={(e) => {
-                  const value = Number(e.target.value);
-                  setSearchAgeMax(Math.max(value, searchAgeMin + 1));
-                }}
-                className="w-full accent-[#FF725E] h-1 bg-[#333] rounded-lg appearance-none"
+                onChange={(e) => setSearchAgeMax(Math.max(Number(e.target.value), searchAgeMin + 1))}
+                className="absolute w-full appearance-none bg-transparent pointer-events-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[#FF725E] [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-[#FF725E] [&::-moz-range-thumb]:border-none"
               />
             </div>
           </div>

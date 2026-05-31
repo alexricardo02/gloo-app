@@ -151,7 +151,7 @@ export async function logOutAction(locale: string) {
     sameSite: "lax",
   });
 
-  redirect(`/${locale}/login`);
+  redirect(`/${locale}/search-groups`);
 }
 
 

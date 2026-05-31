@@ -97,10 +97,10 @@ describe('Group Server Actions (Unit Tests)', () => {
           where: { userId: 'user-123' },
           update: expect.objectContaining({
             membersCount: 1,
-            gender: 'ANY',
+            gender: 'MIXED',
             ageMin: 18,
             ageMax: 30,
-            searchGender: 'ANY',
+            searchGender: 'MIXED',
             searchAgeMin: 18,
             searchAgeMax: 35,
             maxDistance: 10,

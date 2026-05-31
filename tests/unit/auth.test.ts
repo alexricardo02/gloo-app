@@ -247,7 +247,7 @@ describe('Auth Server Actions (Unit Tests)', () => {
       expect(mockDelete).toHaveBeenCalledWith('gloo_user_id');
       expect(mockSet).toHaveBeenCalledWith('gloo_is_guest', 'true', expect.any(Object));
       expect(mockSet).toHaveBeenCalledWith('gloo_guest_id', expect.any(String), expect.any(Object));
-      expect(redirect).toHaveBeenCalledWith('/en/login');
+      expect(redirect).toHaveBeenCalledWith('/en/search-groups');
     });
   });
 

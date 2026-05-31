@@ -23,12 +23,11 @@ export async function createGroupAction(formData: FormData, locale: string) {
   if (!userId) throw new Error("User not found or unauthorized");
 
   const membersCount = Number(formData.get("membersCount")) || 1;
-  const groupGender = (formData.get("groupGender") as Gender) || "ANY";
-
+  const groupGender = (formData.get("groupGender") as Gender) || "MIXED";
   const ageMin = Number(formData.get("ageMin")) || 18;
   const ageMax = Number(formData.get("ageMax")) || 30;
 
-  const searchGender = (formData.get("searchGender") as Gender) || "ANY";
+  const searchGender = (formData.get("searchGender") as Gender) || "MIXED";
   const searchAgeMin = Number(formData.get("searchAgeMin")) || 18;
   const searchAgeMax = Number(formData.get("searchAgeMax")) || 35;
   const maxDistance = Number(formData.get("maxDistance")) || 10;

@@ -10,7 +10,7 @@ export default function PreferencesPage() {
   const router = useRouter();
   const locale = useLocale();
 
-  const [searchGender, setSearchGender] = useState("ANY");
+  const [searchGender, setSearchGender] = useState("MIXED");
   const [searchAgeMin, setSearchAgeMin] = useState(18);
   const [searchAgeMax, setSearchAgeMax] = useState(35);
   const [maxDistance, setMaxDistance] = useState(10);
@@ -22,7 +22,7 @@ export default function PreferencesPage() {
     async function loadPreferences() {
       const group = await getGroupByUser();
       if (group) {
-        setSearchGender((group.searchGender as string) || "ANY");
+        setSearchGender((group.searchGender as string) || "MIXED");
         setSearchAgeMin((group.searchAgeMin as number) ?? 18);
         setSearchAgeMax((group.searchAgeMax as number) ?? 35);
         setMaxDistance((group.maxDistance as number) ?? 10);
@@ -113,10 +113,10 @@ export default function PreferencesPage() {
   }
 
   const genderOptions = [
-    { value: "ANY", label: "Any" },
+    { value: "MIXED", label: "Mixed" },
     { value: "MALE", label: "Male" },
     { value: "FEMALE", label: "Female" },
-    { value: "OTHER", label: "Other" },
+    { value: "DIVERSE", label: "Diverse" },
   ];
 
   return (
@@ -185,41 +185,37 @@ export default function PreferencesPage() {
             </span>
           </div>
 
-          {/* Min Age */}
-          <div className="space-y-2">
-            <div className="flex justify-between text-[11px] text-gray-400">
-              <span>Min age</span>
-              <span className="text-white font-bold">{searchAgeMin}</span>
-            </div>
+          {/* Custom Dual-Thumb Slider */}
+          <div className="relative h-8 flex items-center pt-2">
+            {/* Background track */}
+            <div className="absolute w-full h-1 bg-[#333] rounded-lg"></div>
+            {/* Active track (Highlighted in Orange) */}
+            <div 
+              className="absolute h-1 bg-[#FF725E] rounded-lg"
+              style={{ 
+                left: `${((searchAgeMin - 18) / 32) * 100}%`, 
+                right: `${100 - ((searchAgeMax - 18) / 32) * 100}%` 
+              }}
+            ></div>
+            
+            {/* Min Range Slider */}
             <input
               type="range"
               min="18"
-              max="49"
+              max="50"
               value={searchAgeMin}
-              onChange={(e) => {
-                const v = Number(e.target.value);
-                setSearchAgeMin(Math.min(v, searchAgeMax - 1));
-              }}
-              className="w-full accent-[#FF725E] h-1 bg-[#333] rounded-lg appearance-none"
+              onChange={(e) => setSearchAgeMin(Math.min(Number(e.target.value), searchAgeMax - 1))}
+              className="absolute w-full appearance-none bg-transparent pointer-events-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[#FF725E] [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-[#FF725E] [&::-moz-range-thumb]:border-none"
             />
-          </div>
-
-          {/* Max Age */}
-          <div className="space-y-2">
-            <div className="flex justify-between text-[11px] text-gray-400">
-              <span>Max age</span>
-              <span className="text-white font-bold">{searchAgeMax}</span>
-            </div>
+            
+            {/* Max Range Slider */}
             <input
               type="range"
-              min="19"
+              min="18"
               max="50"
               value={searchAgeMax}
-              onChange={(e) => {
-                const v = Number(e.target.value);
-                setSearchAgeMax(Math.max(v, searchAgeMin + 1));
-              }}
-              className="w-full accent-[#FF725E] h-1 bg-[#333] rounded-lg appearance-none"
+              onChange={(e) => setSearchAgeMax(Math.max(Number(e.target.value), searchAgeMin + 1))}
+              className="absolute w-full appearance-none bg-transparent pointer-events-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[#FF725E] [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-[#FF725E] [&::-moz-range-thumb]:border-none"
             />
           </div>
         </div>
