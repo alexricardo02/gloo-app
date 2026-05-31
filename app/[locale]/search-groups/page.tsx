@@ -136,26 +136,29 @@ export default function PrePartyPage() {
   };
 
   return (
-    <div className="bg-black min-h-screen text-white font-sans selection:bg-[#FF725E] selection:text-black">
+    <div className="flex flex-col h-screen bg-black overflow-hidden relative bg-black min-h-screen text-white font-sans selection:bg-[#FF725E] selection:text-black">
       
       {/* Top Header */}
-      <header className="fixed top-0 left-0 right-0 bg-gradient-to-b from-black/80 via-black/50 to-transparent backdrop-blur-sm z-30 px-6 py-6 pt-12 flex justify-between items-center">
+      <div className="relative z-50 bg-black px-6 pt-6 pb-3 flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-black italic uppercase tracking-tight leading-none">
-            {t("title") || "DISCOVER"}
+          <h1 className="text-xs font-black uppercase tracking-[0.25em] text-gray-400">
+            {t("title") || "Discover"}
           </h1>
-          <p className="text-[#FF725E] text-[10px] font-bold uppercase tracking-widest mt-1">
-            {distance} KM {t("radius") || "RADIUS"}
+          <p className="text-[11px] text-gray-500 font-bold mt-0.5">
+            {distance} km around you
           </p>
         </div>
-        
-        <button 
+
+        <button
           onClick={() => setIsDistanceModalOpen(true)}
-          className="bg-[#FF725E] text-black text-[10px] font-black uppercase tracking-wider px-4 py-2 rounded-full hover:bg-[#ff8573] active:scale-95 transition-all shadow-lg shadow-[#FF725E]/20"
+          className="flex items-center gap-2 bg-[#121212] border border-white/5 px-4 py-2 rounded-full hover:bg-[#1a1a1a] transition-colors"
         >
-          Change Radius
+          <SlidersHorizontal size={14} className="text-[#FF725E]" />
+          <span className="text-[10px] font-black uppercase tracking-wider text-white">
+            Radius
+          </span>
         </button>
-      </header>
+      </div>
 
       {/* Main Carousel Feed */}
       <main className="h-screen w-full overflow-y-auto snap-y snap-mandatory scroll-smooth pb-24 relative">
@@ -174,7 +177,7 @@ export default function PrePartyPage() {
             <div 
               key={group.id} 
               ref={isLastElement ? lastGroupElementRef : null}
-              className={`h-screen w-full snap-center snap-always ${isGuest ? "blur-xl select-none" : ""}`}
+              className={`h-full w-full snap-center snap-always relative ${isGuest ? "blur-xl select-none" : ""}`}
             >
               <GroupCard group={group} />
             </div>
