@@ -64,7 +64,7 @@ export async function getDiscoveryGroups({
     where: {
       userId: { not: userId }, // Exclude own group
       isPartyMode: isPartyMode,
-      gender: userGroup.searchGender === 'ANY' ? undefined : userGroup.searchGender,
+      gender: userGroup.searchGender === 'MIXED' ? undefined : userGroup.searchGender,
       // Basic coordinates filter (approximate range)
       latitude: {
         gte: userGroup.latitude - (distance / 111),
