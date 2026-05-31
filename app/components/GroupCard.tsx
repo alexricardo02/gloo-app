@@ -56,7 +56,6 @@ export default function GroupCard({ group }: GroupCardProps) {
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
- 
       {/* ── 1. CAROUSEL: use transform instead of overflow-x-auto ────────────────
            Moving photos with translateX completely avoids the conflict between
            the carousel's horizontal scroll and the parent's vertical snap.    */}
@@ -75,10 +74,8 @@ export default function GroupCard({ group }: GroupCardProps) {
           </div>
         ))}
       </div>
- 
+
       {/* ── 2. GRADIENT ───────────────────────────────────────────────────── */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent pointer-events-none z-10" />
- 
       {/* ── 3. TOP INDICATORS (bars, Instagram Stories style) ────────────────
            Always visible. They expand/contract to indicate the active photo. */}
       <div className="absolute top-4 left-4 right-4 flex gap-1 z-30 pointer-events-none">
@@ -92,60 +89,58 @@ export default function GroupCard({ group }: GroupCardProps) {
                 index === currentIndex
                   ? "bg-white w-full"
                   : index < currentIndex
-                  ? "bg-white w-full"
-                  : "bg-transparent w-0"
+                    ? "bg-white w-full"
+                    : "bg-transparent w-0"
               }`}
             />
           </div>
         ))}
       </div>
- 
+
       {photos.length > 1 && (
         <div className="absolute inset-0 z-20 flex">
-          <div
-            className="w-1/3 h-full cursor-pointer"
-            onClick={goPrev}
-          />
-          <div
-            className="w-2/3 h-full cursor-pointer"
-            onClick={goNext}
-          />
+          <div className="w-1/3 h-full cursor-pointer" onClick={goPrev} />
+          <div className="w-2/3 h-full cursor-pointer" onClick={goNext} />
         </div>
       )}
- 
+
       {/* ── 5. Content and interface ─────────────────────────────────────────── */}
-      <div className="absolute inset-0 flex flex-col justify-end p-6 pointer-events-none z-40">
-        <div className="flex justify-between items-end">
-          {/* Info */}
-          <div className="flex-1 pr-4 space-y-2">
-            <h2 className="text-3xl font-black text-white italic uppercase tracking-tight drop-shadow-md">
-              {group.user?.name ? `${group.user.name}'s Group` : "Group"}
-            </h2>
-            <p className="text-sm text-gray-200 line-clamp-2 drop-shadow">
-              {group.description || "Looking for a fun night out!"}
-            </p>
-            <div className="flex gap-2 mt-3 pt-2">
-              <span className="bg-black/40 backdrop-blur-md border border-white/10 px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest text-white">
-                {group.membersCount} Members
-              </span>
-              <span className="bg-[#FF725E]/20 backdrop-blur-md border border-[#FF725E]/30 text-[#FF725E] px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest">
-                {group.gender}
-              </span>
-            </div>
-          </div>
- 
-          <div className="flex flex-col gap-4 pointer-events-auto">
-            <button
-              onClick={() => handleLike(group.id)}
-              className="p-4 bg-white/10 backdrop-blur-lg rounded-full border border-white/20 hover:scale-110 hover:bg-white/20 transition-all shadow-xl"
-            >
-              <Heart className="text-white" size={24} />
-            </button>
-            <button className="p-4 bg-[#FF725E] rounded-full shadow-[0_0_20px_rgba(255,114,94,0.4)] hover:scale-110 transition-all">
-              <MessageCircle className="text-black" fill="black" size={24} />
-            </button>
-          </div>
+      <div className="absolute top-0 left-0 p-6 pt-8 flex flex-col items-start text-left max-w-[85%] space-y-2 z-40 pointer-events-none">
+        {" "}
+        <h2 className="text-3xl font-extrabold text-white tracking-tighter drop-shadow-lg">
+          {group.user?.username || group.user?.name || "Group"}
+        </h2>
+        <div className="flex flex-wrap gap-2">
+          <span className="bg-[#FF725E]/20 backdrop-blur-md border border-[#FF725E]/30 text-[#FF725E] px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest">
+            {group.gender}
+          </span>
+          <span className="bg-black/40 backdrop-blur-md border border-white/10 px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest text-white">
+            {group.membersCount} Members
+          </span>
+          <span className="bg-black/40 backdrop-blur-md border border-white/10 px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest text-white">
+            {group.ageMin}-{group.ageMax}
+          </span>
         </div>
+        <p className="text-sm text-gray-100 line-clamp-3 drop-shadow-md font-medium mt-1">
+          {group.description || "Looking for a fun night out!"}
+        </p>
+      </div>
+
+      {/* 5b. BOTONES DE ACCIÓN (Anclados ABAJO a la DERECHA, uno arriba del otro) */}
+      {/* right-4 y pb-8 los pega al borde derecho y los levanta un poco */}
+      <div className="absolute bottom-0 right-0 p-4 pb-8 flex flex-col gap-4 items-end z-40 pointer-events-auto">
+        {/* Corazón (Like) */}
+        <button
+          onClick={() => handleLike(group.id)}
+          className="p-4 bg-white/10 backdrop-blur-lg rounded-full border border-white/20 hover:scale-110 hover:bg-white/30 transition-all shadow-[0_0_15px_rgba(0,0,0,0.5)]"
+        >
+          <Heart className="text-white" size={26} />
+        </button>
+
+        {/* Mensaje (Naranja) */}
+        <button className="p-4 bg-[#FF725E] rounded-full shadow-[0_0_20px_rgba(255,114,94,0.5)] hover:scale-110 transition-all">
+          <MessageCircle className="text-black" fill="black" size={26} />
+        </button>
       </div>
     </div>
   );
