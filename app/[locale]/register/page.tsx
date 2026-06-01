@@ -19,9 +19,13 @@ export default function RegisterPage() {
 
   const [isSuccess, setIsSuccess] = useState(false);
 
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+
   const [dob, setDob] = useState("");
 
   const [username, setUsername] = useState("");
+
   const [isUsernameAvailable, setIsUsernameAvailable] = useState<boolean | null>(null);
   const [isCheckingUsername, setIsCheckingUsername] = useState(false);
 
@@ -32,6 +36,38 @@ export default function RegisterPage() {
     number: false,
     special: false
   });
+
+
+  useEffect(() => {
+    const savedData = sessionStorage.getItem("gloo_register_data");
+    if (savedData) {
+      try {
+        const parsed = JSON.parse(savedData);
+        if (parsed.name) setName(parsed.name);
+        if (parsed.email) setEmail(parsed.email);
+        if (parsed.dob) setDob(parsed.dob);
+        if (parsed.username) setUsername(parsed.username);
+        if (parsed.password) {
+          setPassword(parsed.password);
+          setPwdCriteria({
+            length: parsed.password.length >= 8,
+            uppercase: /[A-Z]/.test(parsed.password),
+            number: /\d/.test(parsed.password),
+            special: /[@$!%*?&.]/.test(parsed.password)
+          });
+        }
+        if (parsed.agreed) setAgreed(parsed.agreed);
+      } catch (e) {
+        console.error("Error parseando los datos guardados");
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    sessionStorage.setItem("gloo_register_data", JSON.stringify({
+      name, email, dob, username, password, agreed
+    }));
+  }, [name, email, dob, username, password, agreed]);
 
   useEffect(() => {
     // Only query DB if username has at least 3 characters
@@ -71,6 +107,7 @@ export default function RegisterPage() {
     if (result?.error) {
       setError(result.error);
     } else if (result?.success && result?.needsVerification) {
+      sessionStorage.removeItem("gloo_register_data");
       setIsSuccess(true);
     }
   }
@@ -108,10 +145,13 @@ export default function RegisterPage() {
         
         <div className="flex items-center mb-6">
           <button 
-            onClick={() => router.push(`/${locale}/login`)} 
+            onClick={() => {
+              sessionStorage.removeItem("gloo_register_data"); // delete data
+              router.push(`/${locale}/login`);
+            }} 
             className="p-2 -ml-2 rounded-full hover:bg-gray-100 transition-colors text-gray-600"
             aria-label="Go to Dashboard"
-          >
+          > 
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-6 h-6">
               <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
             </svg>
@@ -122,7 +162,14 @@ export default function RegisterPage() {
         <div className="mb-8 relative z-0">
           <h1 className="text-3xl font-extrabold text-black mb-2">{t('title')}</h1>
           <p className="text-sm text-gray-600">
-            {t('alreadyHaveAccount')}<Link href="/login" className="text-black font-bold hover:underline">{t('signIn')}</Link>
+            {t('alreadyHaveAccount')}
+            <Link 
+              href={`/${locale}/login`} 
+              onClick={() => sessionStorage.removeItem("gloo_register_data")} // delete data
+              className="text-black font-bold hover:underline ml-1"
+            >
+              {t('signIn')}
+            </Link>
           </p>
         </div>
 
@@ -147,6 +194,8 @@ export default function RegisterPage() {
               <input 
                 name="name"
                 type="text" 
+                value={name}
+                onChange={(e) => setName(e.target.value)}
                 placeholder={t('namePlaceholder')}
                 required
                 className="bg-transparent outline-none w-full ml-3 text-gray-800 placeholder-gray-400 font-medium"
@@ -192,6 +241,8 @@ export default function RegisterPage() {
             <input
               name="email" 
               type="email" 
+              value={email} 
+              onChange={(e) => setEmail(e.target.value)} 
               placeholder={t('emailPlaceholder')}
               required
               className="bg-transparent outline-none w-full ml-3 text-gray-800 placeholder-gray-400 font-medium"
