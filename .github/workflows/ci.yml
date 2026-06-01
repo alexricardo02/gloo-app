@@ -13,6 +13,16 @@ jobs:
         with:
           node-version: 24
       - run: npm install
+      - name: Block Copyleft Licenses (GPL/AGPL)
+        run: npx --yes license-checker --failOn "GPL;GPL-1.0;GPL-2.0;GPL-3.0;AGPL;AGPL-1.0;AGPL-3.0"
+
+      - name: Data Privacy & Security Scan (Bearer)
+        uses: bearer/bearer-action@v2
+        with:
+          severity: high,critical
+
+      - name: Strict Dependency Security Audit
+        run: npm audit --audit-level=high
       - run: npx prisma validate
       - run: npx prisma generate
       - run: npm run test:ci
