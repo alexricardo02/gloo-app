@@ -1,6 +1,6 @@
 "use client";
  
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { Heart, MessageCircle } from "lucide-react";
 import { toggleLike } from "@/app/actions/discoverGroups";
  
@@ -10,6 +10,8 @@ interface GroupCardProps {
  
 export default function GroupCard({ group }: GroupCardProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [liked, setLiked] = useState(Boolean(group.likedByCurrentUser));
+  const [isAnimating, setIsAnimating] = useState(false);
   const touchStartX = useRef(0);
   const touchStartY = useRef(0);
  
@@ -22,10 +24,17 @@ export default function GroupCard({ group }: GroupCardProps) {
   const goPrev = () => setCurrentIndex((i) => Math.max(i - 1, 0));
  
   const handleLike = async (id: string) => {
+    const nextLiked = !liked;
+    setLiked(nextLiked);
+    setIsAnimating(true);
+
     try {
       await toggleLike(id);
     } catch (error) {
       console.error("Error liking group:", error);
+      setLiked(!nextLiked);
+    } finally {
+      window.setTimeout(() => setIsAnimating(false), 180);
     }
   };
  
@@ -130,12 +139,23 @@ export default function GroupCard({ group }: GroupCardProps) {
       <div className="absolute bottom-0 right-0 p-4 pb-8 flex flex-col gap-4 items-end z-40 pointer-events-auto">
         {/* (Like) */}
         <button
+          type="button"
           onClick={() => handleLike(group.id)}
-          className="p-4 bg-white/10 backdrop-blur-lg rounded-full border border-white/20 hover:scale-110 hover:bg-white/30 transition-all shadow-[0_0_15px_rgba(0,0,0,0.5)]"
+          aria-pressed={liked}
+          className={`p-4 rounded-full border border-white/20 bg-white/10 shadow-[0_0_15px_rgba(0,0,0,0.5)] hover:bg-white/20 transition-all duration-200 ${
+            isAnimating ? "scale-95" : ""
+          }`}
         >
-          <Heart className="text-white" size={26} />
+          <Heart
+            size={26}
+            fill={liked ? "#FF725E" : "none"}
+            className={liked ? "text-[#FF725E]" : "text-white"}
+          />
         </button>
-        <button className="p-4 bg-[#FF725E] rounded-full shadow-[0_0_20px_rgba(255,114,94,0.5)] hover:scale-110 transition-all">
+        <button
+          type="button"
+          className="p-4 bg-[#FF725E] rounded-full shadow-[0_0_20px_rgba(255,114,94,0.5)] hover:scale-110 transition-all"
+        >
           <MessageCircle className="text-black" fill="black" size={26} />
         </button>
       </div>

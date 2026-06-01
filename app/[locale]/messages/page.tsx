@@ -15,6 +15,7 @@ type ChatPreview = {
   time: Date | string;
   unread: number;
   image: string;
+  isMatch?: boolean;
 };
 
 export default function MessagesPage() {
@@ -163,9 +164,16 @@ export default function MessagesPage() {
               <div className="flex-1 min-w-0 border-b border-white/5 pb-3 group-last:border-0">
                 <div className="flex justify-between items-center mb-1 pr-2">
                   {/* CONDITIONAL BOLD TEXT: If there are unread messages, highlight the name */}
-                  <h3 className={`text-base truncate ${chat.unread > 0 ? "font-black text-white" : "font-bold text-gray-200"}`}>
-                    {chat.name}
-                  </h3>
+                  <div className="flex items-center gap-2">
+                    <h3 className={`text-base truncate ${chat.unread > 0 ? "font-black text-white" : "font-bold text-gray-200"}`}>
+                      {chat.name}
+                    </h3>
+                    {chat.isMatch && (
+                      <span className="text-[10px] uppercase tracking-[0.18em] bg-[#FF725E]/15 text-[#FF725E] px-2 py-0.5 rounded-full font-black">
+                        Match
+                      </span>
+                    )}
+                  </div>
                   <span className={`text-[10px] shrink-0 ml-2 ${chat.unread > 0 ? "text-[#FF725E] font-bold" : "text-gray-500 font-medium"}`}>
                     {formatMessageTime(chat.time)}
                   </span>
