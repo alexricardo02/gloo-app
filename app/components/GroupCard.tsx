@@ -126,18 +126,15 @@ export default function GroupCard({ group }: GroupCardProps) {
         </p>
       </div>
 
-      {/* 5b. BOTONES DE ACCIÓN (Anclados ABAJO a la DERECHA, uno arriba del otro) */}
-      {/* right-4 y pb-8 los pega al borde derecho y los levanta un poco */}
+      {/* 5b. Action buttons*/}
       <div className="absolute bottom-0 right-0 p-4 pb-8 flex flex-col gap-4 items-end z-40 pointer-events-auto">
-        {/* Corazón (Like) */}
+        {/* (Like) */}
         <button
           onClick={() => handleLike(group.id)}
           className="p-4 bg-white/10 backdrop-blur-lg rounded-full border border-white/20 hover:scale-110 hover:bg-white/30 transition-all shadow-[0_0_15px_rgba(0,0,0,0.5)]"
         >
           <Heart className="text-white" size={26} />
         </button>
-
-        {/* Mensaje (Naranja) */}
         <button className="p-4 bg-[#FF725E] rounded-full shadow-[0_0_20px_rgba(255,114,94,0.5)] hover:scale-110 transition-all">
           <MessageCircle className="text-black" fill="black" size={26} />
         </button>
