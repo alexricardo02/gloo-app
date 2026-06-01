@@ -3,6 +3,11 @@
 import { prisma } from "@/lib/prisma";
 import { cookies } from "next/headers";
 
+const RATE_LIMIT_WINDOW_MS = 60_000; // 1 minute
+const MAX_LIKES_PER_WINDOW = 10;
+
+const likeRateLimit = (globalThis as any).__GLOO_LIKE_RATE_LIMITER ||= new Map<string, { count: number; windowStart: number }>();
+
 /**
  * Fetches groups in packs of 10 for the discovery carousel.
  * Filters by distance, gender preferences, and party mode.
@@ -101,7 +106,28 @@ export async function getDiscoveryGroups({
         : group.ageMax >= userGroup.searchAgeMin && group.ageMin <= userGroup.searchAgeMax)
     );
 
-  const groups = filteredGroups.slice(skip, skip + limit);
+  const likedGroupRecords = await prisma.groupLike.findMany({
+    where: { fromGroupId: userGroup.id },
+    select: { toGroupId: true },
+  });
+  const likedGroupIds = new Set(likedGroupRecords.map((like) => like.toGroupId));
+
+  const mutualLikeRecords = await prisma.groupLike.findMany({
+    where: {
+      fromGroupId: { in: filteredGroups.map((group) => group.id) },
+      toGroupId: userGroup.id,
+    },
+    select: { fromGroupId: true },
+  });
+  const mutualLikeGroupIds = new Set(mutualLikeRecords.map((like) => like.fromGroupId));
+
+  const groups = filteredGroups
+    .slice(skip, skip + limit)
+    .map((group) => ({
+      ...group,
+      likedByCurrentUser: likedGroupIds.has(group.id),
+      isMutualLike: mutualLikeGroupIds.has(group.id),
+    }));
 
   return { groups };
 }
@@ -113,6 +139,18 @@ export async function toggleLike(toGroupId: string) {
   const cookieStore = await cookies();
   const userId = cookieStore.get("gloo_user_id")?.value;
   if (!userId) return { error: "Unauthorized" };
+
+  const now = Date.now();
+  const existingRate = likeRateLimit.get(userId);
+  if (existingRate && now - existingRate.windowStart < RATE_LIMIT_WINDOW_MS) {
+    if (existingRate.count >= MAX_LIKES_PER_WINDOW) {
+      return { error: "Rate limit exceeded. Please wait a moment before liking again." };
+    }
+    existingRate.count += 1;
+    likeRateLimit.set(userId, existingRate);
+  } else {
+    likeRateLimit.set(userId, { count: 1, windowStart: now });
+  }
 
   const fromGroup = await prisma.group.findUnique({ where: { userId } });
   if (!fromGroup) return { error: "Group not found" };
@@ -129,10 +167,60 @@ export async function toggleLike(toGroupId: string) {
   if (existingLike) {
     await prisma.groupLike.delete({ where: { id: existingLike.id } });
     return { liked: false };
-  } else {
-    await prisma.groupLike.create({
-      data: { fromGroupId: fromGroup.id, toGroupId },
-    });
-    return { liked: true };
   }
+
+  const toGroup = await prisma.group.findUnique({
+    where: { id: toGroupId },
+    select: { id: true, userId: true },
+  });
+
+  if (!toGroup) {
+    return { error: "Target group not found" };
+  }
+
+  const createdLike = await prisma.groupLike.create({
+    data: { fromGroupId: fromGroup.id, toGroupId },
+  });
+
+  const reciprocalLike = await prisma.groupLike.findUnique({
+    where: {
+      fromGroupId_toGroupId: {
+        fromGroupId: toGroupId,
+        toGroupId: fromGroup.id,
+      },
+    },
+  });
+
+  let matched = false;
+  if (reciprocalLike) {
+    matched = true;
+
+    const existingChat = await prisma.chat.findFirst({
+      where: {
+        OR: [
+          { hostAId: userId, hostBId: toGroup.userId },
+          { hostAId: toGroup.userId, hostBId: userId },
+        ],
+      },
+    });
+
+    if (!existingChat) {
+      const newChat = await prisma.chat.create({
+        data: {
+          hostAId: userId,
+          hostBId: toGroup.userId,
+        },
+      });
+
+      await prisma.message.create({
+        data: {
+          chatId: newChat.id,
+          senderId: userId,
+          text: "Your groups matched! Start chatting now.",
+        },
+      });
+    }
+  }
+
+  return { liked: true, matched };
 }

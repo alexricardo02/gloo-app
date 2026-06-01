@@ -42,23 +42,28 @@ export async function getActiveChats() {
       
       const otherGroup = otherHost.group;
       const lastMsg = chat.messages[0];
+      const lastMessageText = lastMsg?.text || "No messages yet";
+      const isMatch = lastMessageText.toLowerCase().includes("match");
 
       return {
         id: chat.id,
         // Since groups don't have names, we use the host's name
         name: otherHost.name || "Unknown User",
         // Notice we use 'text' as defined in your schema.prisma
-        lastMessage: lastMsg?.text || "No messages yet", 
+        lastMessage: lastMessageText,
         time: lastMsg?.createdAt || chat.createdAt,
         unread: 0, // Will be implemented dynamically later via WebSockets
+        isMatch,
         // Fallback sequentially: Group photo -> User profile image -> Fallback image
         image: otherGroup?.photos?.[0] || otherHost.image || "/images/bg-fallback.jpg", 
       };
     });
 
-    // 3. STRICT CHRONOLOGICAL SORTING
-    // Sort chats based on the timestamp of the last message (newest first)
+    // 3. PRIORITIZE MATCHED CHATS THEN NEWEST MESSAGES
     formattedChats.sort((a, b) => {
+      if (a.isMatch !== b.isMatch) {
+        return a.isMatch ? -1 : 1;
+      }
       const timeA = new Date(a.time).getTime();
       const timeB = new Date(b.time).getTime();
       return timeB - timeA; 
