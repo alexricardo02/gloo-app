@@ -1,7 +1,6 @@
 import { Gender } from '@prisma/client'
 import { prisma } from '../lib/prisma'
 
-// Datos de los grupos de prueba
 const GROUPS = [
   {
     email: 'party1@test.com',
@@ -77,7 +76,6 @@ async function main() {
   console.log('🌱 Iniciando el seeding...');
 
   for (const data of GROUPS) {
-    // 1. Upsert del usuario — ahora el update SÍ actualiza los campos
     const user = await prisma.user.upsert({
       where: { email: data.email },
       update: {
@@ -88,18 +86,18 @@ async function main() {
         email: data.email,
         username: data.username,
         name: data.name,
+        // Tell Bearer SAST scanner to ignore this dummy seed password
+        // bearer:disable javascript_lang_hardcoded_secret
         password: 'hashedpassword123',
         birthDate: data.birthDate,
         isGuest: false,
       },
     });
 
-    // 2. Upsert del grupo por separado — así las fotos SIEMPRE se actualizan
-    // aunque el usuario ya existiera de un seed anterior.
+
     await prisma.group.upsert({
       where: { userId: user.id },
       update: {
-        // Todo lo que queremos que se actualice en re-seeds
         photos: data.group.photos,
         description: data.group.description,
         membersCount: data.group.membersCount,
@@ -117,10 +115,10 @@ async function main() {
       },
     });
 
-    console.log(`  ✅ ${data.name} — ${data.group.photos.length} fotos`);
+    console.log(`${data.name} — ${data.group.photos.length} photos`);
   }
 
-  console.log('🎉 Seeding completado.');
+  console.log('Seeding completed.');
 }
 
 main()
