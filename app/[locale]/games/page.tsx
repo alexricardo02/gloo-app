@@ -84,6 +84,7 @@ export default function GamesPage() {
             return (
               <button
                 key={game.id}
+                onClick={() => router.push(`/${locale}/games/${game.id}`)}
                 className="relative w-full bg-[#111111] rounded-2xl overflow-hidden border border-white/5 hover:border-[#FF725E]/30 transition-all duration-300 p-5 text-left flex items-start gap-4 group hover:scale-[1.01]"
               >
                 {/* Visual Icon Container */}

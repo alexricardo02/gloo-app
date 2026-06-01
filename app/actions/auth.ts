@@ -31,6 +31,10 @@ export async function registerUser(formData: FormData, locale: string) {
     return { error: "You must be at least 18 years old to register." };
   }
 
+  if (username && /\s/.test(username)) {
+    return { error: "usernameSpaceError" };
+  }
+
   // Requires: Min 8 chars, 1 uppercase, 1 number, 1 special character
   const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&.])[A-Za-z\d@$!%*?&.]{8,}$/;
   if (!passwordRegex.test(password)) {
@@ -157,7 +161,7 @@ export async function logOutAction(locale: string) {
 
 export async function checkUsernameAvailability(username: string) {
   // Return false instantly if the string is too short to avoid unnecessary DB calls
-  if (!username || username.length < 3) return { available: false };
+  if (!username || username.length < 3 || /\s/.test(username)) return { available: false };
   
   try {
     // Optimize the query by only selecting the ID (faster than fetching the whole row)
