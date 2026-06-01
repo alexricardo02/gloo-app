@@ -177,3 +177,31 @@ export async function checkUsernameAvailability(username: string) {
     return { available: false };
   }
 }
+
+export async function updateProfileImage(formData: FormData) {
+  const cookieStore = await cookies();
+  const userId = cookieStore.get("gloo_user_id")?.value;
+  
+  if (!userId) return { error: "Unauthorized" };
+
+  const file = formData.get("image") as File;
+  if (!file || file.size === 0) return { error: "No image provided" };
+
+  try {
+    // Convert file to Base64 string for database storage
+    const bytes = await file.arrayBuffer();
+    const buffer = Buffer.from(bytes);
+    const base64Image = `data:${file.type};base64,${buffer.toString("base64")}`;
+
+    // Update user record in the database
+    await prisma.user.update({
+      where: { id: userId },
+      data: { image: base64Image },
+    });
+
+    return { success: true, image: base64Image };
+  } catch (error) {
+    console.error("Error updating profile image:", error);
+    return { error: "Internal server error" };
+  }
+}
