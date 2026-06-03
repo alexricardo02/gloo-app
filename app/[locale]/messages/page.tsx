@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import Navigation from "@/app/components/Navigation";
 import { Search, MoreVertical, CheckCheck, Loader2 } from "lucide-react";
@@ -19,6 +20,7 @@ type ChatPreview = {
 };
 
 export default function MessagesPage() {
+  const router = useRouter();
   const locale = useLocale();
   const t = useTranslations("Messages"); 
   const [searchQuery, setSearchQuery] = useState("");
@@ -40,7 +42,13 @@ export default function MessagesPage() {
     // 1. Initial load from the database (Prisma)
     loadChats();
 
-    // 2. Subscription to Supabase WebSockets (Realtime)
+    // 2. Polling fallback: refetch every 5s so new chats appear
+    //    even if Supabase Realtime isn't delivering postgres_changes
+    const pollInterval = setInterval(() => {
+      loadChats();
+    }, 5000);
+
+    // 3. Subscription to Supabase WebSockets (Realtime)
     const channel = supabase
       .channel("realtime_messages")
       .on(
@@ -82,8 +90,9 @@ export default function MessagesPage() {
       )
       .subscribe();
 
-    // 3. Cleanup: Disconnect from the WebSocket when the user leaves the screen
+    // 4. Cleanup: Disconnect WebSocket + clear polling when leaving the screen
     return () => {
+      clearInterval(pollInterval);
       supabase.removeChannel(channel);
     };
   }, [loadChats]);
@@ -145,6 +154,7 @@ export default function MessagesPage() {
           {!isLoading && filteredChats.map((chat) => (
             <button 
               key={chat.id}
+              onClick={() => router.push(`/${locale}/messages/${chat.id}`)}
               className="w-full flex items-center gap-4 p-3 rounded-2xl hover:bg-white/5 transition-colors text-left group"
             >
               <div className="relative shrink-0">

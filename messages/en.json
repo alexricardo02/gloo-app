@@ -156,6 +156,11 @@
   "title": "Messages",
   "searchPlaceholder": "Search"
   },
+  "Chat": {
+    "backToMessages": "Back to Messages",
+    "emptyChat": "No messages yet. Say hello!",
+    "typeMessage": "Type a message..."
+  },
   "SearchGroups": {
     "modalButton": "Set Radius",
     "endOfList": "You've seen all the groups near Mainz.",
