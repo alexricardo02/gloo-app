@@ -59,15 +59,18 @@ export async function toggleVenueAttendance(venueId: string) {
 
     if (existingAttendance) {
       await prisma.venueAttendance.delete({
-        where: { id: existingAttendance.id }
+        where: { id: existingAttendance.id },
       });
       return { success: true, isAttending: false };
     } else {
+      await prisma.venueAttendance.deleteMany({
+        where: { groupId: group.id },
+      });
       await prisma.venueAttendance.create({
         data: {
           groupId: group.id,
-          venueId: venueId
-        }
+          venueId: venueId,
+        },
       });
       return { success: true, isAttending: true };
     }

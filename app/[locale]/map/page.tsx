@@ -13,11 +13,15 @@ const MapDisplay = dynamic(() => import("@/app/components/MapDisplay"), {
 
 
 export default function MapPage() {
+  const t = useTranslations("Map");
+
   return (
     <div className="flex flex-col h-screen bg-black text-white font-sans">
       {/* Header / Filter-Leiste */}
       <div className="p-4 bg-[#111] border-b border-white/5">
-        <h1 className="text-xs font-black tracking-widest uppercase text-gray-400">Gloo Map</h1>
+        <h1 className="text-xs font-black tracking-widest uppercase text-gray-400">
+          {t("title")}
+        </h1>
       </div>
 
       {/* Main Map Container */}

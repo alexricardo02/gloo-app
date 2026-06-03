@@ -1,20 +1,14 @@
 "use client";
 
-// WICHTIG: Leaflet CSS Styles importieren
-import "leaflet/dist/leaflet.css";
+
+import { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import L from "leaflet";
-import { useEffect, useState } from "react";
+import "leaflet/dist/leaflet.css";
+import { useTranslations } from "next-intl";
 import { getVenues, toggleVenueAttendance } from "../actions/map";
 import { Check, Users } from "lucide-react";
 
-// Fix für die Standard-Marker-Icons in Next.js
-const customIcon = new L.Icon({
-  iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
-  shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-});
 
 interface GroupUser {
   name: string;
@@ -46,6 +40,7 @@ interface Venue {
 
 export default function MapDisplay() {
   // Koordinaten-Zentrum für Mainz
+  const t = useTranslations("Map");
   const centerPosition: [number, number] = [49.9929, 8.2473]; // Mainz Central Coordinates
   const [venues, setVenues] = useState<Venue[]>([]);
   const [loadingActionId, setLoadingActionId] = useState<string | null>(null);
@@ -108,7 +103,7 @@ export default function MapDisplay() {
         <Marker position={centerPosition} icon={createMarkerIcon("USER")}>
           <Popup className="custom-dark-popup">
             <div className="p-1 text-black font-sans">
-              <p className="font-black text-xs uppercase tracking-wider text-blue-600">Your Location</p>
+              <p className="font-black text-xs uppercase tracking-wider text-blue-600">{t("yourLocation")}</p>
               <h3 className="font-bold text-sm mt-0.5">Mainz Neustadt</h3>
             </div>
           </Popup>
@@ -139,14 +134,18 @@ export default function MapDisplay() {
                     <h3 className="font-black text-base mt-1 tracking-tight text-gray-900">{venue.name}</h3>
                     <div className="flex items-center gap-1 text-xs text-gray-500 mt-0.5">
                       <Users size={12} />
-                      <span>{totalGroups} {totalGroups === 1 ? "group attending" : "groups attending"}</span>
+                      <span>
+                        {totalGroups === 1 
+                          ? t("groupAttending", { count: totalGroups }) 
+                          : t("groupsAttending", { count: totalGroups })}
+                      </span>
                     </div>
                   </div>
 
                   {/* Scrollable Attending Groups List */}
                   <div className="flex-1 overflow-y-auto space-y-2 pr-1 my-1 max-h-32 scrollbar-thin">
                     {totalGroups === 0 ? (
-                      <p className="text-xs text-gray-400 italic py-2 text-center">No groups registered yet. Be the first!</p>
+                      <p className="text-xs text-gray-400 italic py-2 text-center">{t("noGroups")}</p>
                     ) : (
                       venue.attendees.map((attendance) => (
                         <div 
@@ -187,11 +186,11 @@ export default function MapDisplay() {
                     className="w-full mt-3 bg-black text-white text-xs font-black uppercase tracking-widest py-2.5 rounded-xl transition-all active:scale-95 hover:bg-gray-900 flex items-center justify-center gap-1.5 shadow-md disabled:opacity-50"
                   >
                     {loadingActionId === venue.id ? (
-                      <span className="animate-pulse">Processing...</span>
+                      <span className="animate-pulse">{t("processing")}</span>
                     ) : (
                       <>
                         <Check size={14} />
-                        Anmelden / Abmelden
+                        {t("toggleRsvp")}
                       </>
                     )}
                   </button>
