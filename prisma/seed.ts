@@ -1,7 +1,7 @@
 import { Gender } from '@prisma/client'
 import { prisma } from '../lib/prisma'
 
-// Datos de los grupos de prueba
+// Test groups data
 const GROUPS = [
   {
     email: 'party1@test.com',
@@ -14,7 +14,7 @@ const GROUPS = [
       ageMin: 20,
       ageMax: 26,
       searchGender: Gender.MIXED,
-      description: "We are 4 friends looking for a cool pre-party in Mainz! Bring your own beer 🍻",
+      description: "We are 4 friends looking for a cool pre-party in Mainz! Bring your own beer.",
       latitude: 49.9920,
       longitude: 8.9400,
       photos: [
@@ -38,7 +38,7 @@ const GROUPS = [
       ageMin: 21,
       ageMax: 24,
       searchGender: Gender.MALE,
-      description: "Wiesbaden girls ready to hit the clubs later. Looking for a fun pre-party to start the night ✨",
+      description: "Wiesbaden girls ready to hit the clubs later. Looking for a fun pre-party to start the night.",
       latitude: 50.0825,
       longitude: 8.2400,
       photos: [
@@ -60,7 +60,7 @@ const GROUPS = [
       ageMin: 23,
       ageMax: 29,
       searchGender: Gender.MIXED,
-      description: "Frankfurt massive! Heading to a techno rave later, who wants to join us for drinks before? 🎵🔊",
+      description: "Frankfurt massive! Heading to a techno rave later, who wants to join us for drinks before?",
       latitude: 50.1109,
       longitude: 8.6821,
       photos: [
@@ -71,35 +71,70 @@ const GROUPS = [
       instagram: ["techno_bros"],
     }
   },
-]
+];
+
+// Static data for bars and clubs in Mainz
+const VENUES = [
+  {
+    name: "Schon Schon",
+    type: "CLUB",
+    latitude: 50.0015,
+    longitude: 8.2587
+  },
+  {
+    name: "KUZ",
+    type: "CLUB",
+    latitude: 49.9947,
+    longitude: 8.2787
+  },
+  {
+    name: "Alexander the Great",
+    type: "BAR",
+    latitude: 49.9984,
+    longitude: 8.2713
+  },
+  {
+    name: "Irish Pub Mainz",
+    type: "BAR",
+    latitude: 49.9986,
+    longitude: 8.2700
+  },
+  {
+    name: "Eisgrub-Brau",
+    type: "BAR",
+    latitude: 49.9953,
+    longitude: 8.2709
+  }
+];
 
 async function main() {
-  console.log('🌱 Iniciando el seeding...');
+  console.log('Starting Groups seeding...');
 
   for (const data of GROUPS) {
-    // 1. Upsert del usuario — ahora el update SÍ actualiza los campos
+    // 1. Upsert user
     const user = await prisma.user.upsert({
       where: { email: data.email },
       update: {
         username: data.username,
         name: data.name,
+        isVerified: true,
       },
       create: {
         email: data.email,
         username: data.username,
         name: data.name,
+        // bearer:disable javascript_lang_hardcoded_secret
         password: 'hashedpassword123',
         birthDate: data.birthDate,
         isGuest: false,
+        isVerified: true, 
       },
     });
 
-    // 2. Upsert del grupo por separado — así las fotos SIEMPRE se actualizan
-    // aunque el usuario ya existiera de un seed anterior.
+    // 2. Upsert group
     await prisma.group.upsert({
       where: { userId: user.id },
       update: {
-        // Todo lo que queremos que se actualice en re-seeds
         photos: data.group.photos,
         description: data.group.description,
         membersCount: data.group.membersCount,
@@ -117,10 +152,29 @@ async function main() {
       },
     });
 
-    console.log(`  ✅ ${data.name} — ${data.group.photos.length} fotos`);
+    console.log(`  Saved: ${data.name} - ${data.group.photos.length} photos`);
   }
 
-  console.log('🎉 Seeding completado.');
+  console.log('Starting Venues seeding (Bars & Clubs)...');
+  for (const venue of VENUES) {
+    const existingVenue = await prisma.venue.findFirst({
+      where: { name: venue.name }
+    });
+    
+    if (existingVenue) {
+      await prisma.venue.update({
+        where: { id: existingVenue.id },
+        data: venue
+      });
+    } else {
+      await prisma.venue.create({
+        data: venue
+      });
+    }
+    console.log(`  Saved venue: ${venue.name}`);
+  }
+
+  console.log('Seeding completed successfully.');
 }
 
 main()
