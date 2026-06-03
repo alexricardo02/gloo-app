@@ -3,6 +3,142 @@
 import { prisma } from "@/lib/prisma";
 import { cookies } from "next/headers";
 
+/**
+ * Sends a message to an existing chat. Validates that the sender
+ * is a participant, the text is non-empty, and persists to the DB.
+ * Returns the created message so the client can optimistically render.
+ */
+export async function sendMessage(chatId: string, text: string) {
+  const cookieStore = await cookies();
+  const userId = cookieStore.get("gloo_user_id")?.value;
+
+  if (!userId) return { error: "Unauthorized" };
+
+  const trimmed = text.trim();
+  if (!trimmed) return { error: "Message cannot be empty" };
+
+  try {
+    // Verify that the caller is a participant of this chat
+    const chat = await prisma.chat.findUnique({
+      where: { id: chatId },
+      select: { hostAId: true, hostBId: true },
+    });
+
+    if (!chat) return { error: "Chat not found" };
+    if (chat.hostAId !== userId && chat.hostBId !== userId) {
+      return { error: "Forbidden" };
+    }
+
+    const message = await prisma.message.create({
+      data: {
+        chatId,
+        senderId: userId,
+        text: trimmed,
+      },
+      include: {
+        sender: { select: { id: true, name: true, image: true } },
+      },
+    });
+
+    return { success: true, message };
+  } catch (error) {
+    console.error("Error sending message:", error);
+    return { error: "Failed to send message. Please check your connection and try again." };
+  }
+}
+
+/**
+ * Loads all messages for a specific chat, ordered chronologically,
+ * along with the chat partner's info.
+ * Only returns data if the current user is a participant.
+ */
+export async function getChatMessages(chatId: string) {
+  const cookieStore = await cookies();
+  const userId = cookieStore.get("gloo_user_id")?.value;
+
+  if (!userId) return { error: "Unauthorized" };
+
+  try {
+    const chat = await prisma.chat.findUnique({
+      where: { id: chatId },
+      include: {
+        hostA: { include: { group: true } },
+        hostB: { include: { group: true } },
+      },
+    });
+
+    if (!chat) return { error: "Chat not found" };
+    if (chat.hostAId !== userId && chat.hostBId !== userId) {
+      return { error: "Forbidden" };
+    }
+
+    const messages = await prisma.message.findMany({
+      where: { chatId },
+      orderBy: { createdAt: "asc" },
+      include: {
+        sender: { select: { id: true, name: true, image: true } },
+      },
+    });
+
+    // Determine the chat partner
+    const partner = chat.hostAId === userId ? chat.hostB : chat.hostA;
+    const partnerGroup = partner.group;
+
+    return {
+      success: true,
+      messages,
+      userId,
+      partner: {
+        id: partner.id,
+        name: partner.name || "Unknown User",
+        image: partnerGroup?.photos?.[0] || partner.image || "/images/bg-fallback.jpg",
+      },
+    };
+  } catch (error) {
+    console.error("Error fetching messages:", error);
+    return { error: "Failed to load messages" };
+  }
+}
+
+/**
+ * Finds an existing chat between the current user and the target group's
+ * host, or creates a new one. Returns the chatId for navigation.
+ */
+export async function getOrCreateChat(targetUserId: string) {
+  const cookieStore = await cookies();
+  const userId = cookieStore.get("gloo_user_id")?.value;
+
+  if (!userId) return { error: "Unauthorized" };
+
+  if (targetUserId === userId) return { error: "Cannot chat with yourself" };
+
+  try {
+    // Look for an existing chat between these two users
+    const existing = await prisma.chat.findFirst({
+      where: {
+        OR: [
+          { hostAId: userId, hostBId: targetUserId },
+          { hostAId: targetUserId, hostBId: userId },
+        ],
+      },
+      select: { id: true },
+    });
+
+    if (existing) return { success: true, chatId: existing.id };
+
+    // Create a new chat
+    const chat = await prisma.chat.create({
+      data: { hostAId: userId, hostBId: targetUserId },
+      select: { id: true },
+    });
+
+    return { success: true, chatId: chat.id };
+  } catch (error) {
+    console.error("Error getting or creating chat:", error);
+    return { error: "Failed to open chat" };
+  }
+}
+
 export async function getActiveChats() {
   const cookieStore = await cookies();
   const userId = cookieStore.get("gloo_user_id")?.value;

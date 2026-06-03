@@ -1,17 +1,24 @@
 "use client";
  
 import { useState, useRef } from "react";
-import { Heart, MessageCircle } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useLocale } from "next-intl";
+import { Heart, MessageCircle, Loader2 } from "lucide-react";
 import { toggleLike } from "@/app/actions/discoverGroups";
+import { getOrCreateChat } from "@/app/actions/chat";
  
 interface GroupCardProps {
   group: any;
 }
  
 export default function GroupCard({ group }: GroupCardProps) {
+  const router = useRouter();
+  const locale = useLocale();
+
   const [currentIndex, setCurrentIndex] = useState(0);
   const [liked, setLiked] = useState(Boolean(group.likedByCurrentUser));
   const [isAnimating, setIsAnimating] = useState(false);
+  const [isOpeningChat, setIsOpeningChat] = useState(false);
   const touchStartX = useRef(0);
   const touchStartY = useRef(0);
  
@@ -154,9 +161,30 @@ export default function GroupCard({ group }: GroupCardProps) {
         </button>
         <button
           type="button"
-          className="p-4 bg-[#FF725E] rounded-full shadow-[0_0_20px_rgba(255,114,94,0.5)] hover:scale-110 transition-all"
+          onClick={async () => {
+            if (isOpeningChat) return;
+            setIsOpeningChat(true);
+            try {
+              const targetUserId = group.user?.id;
+              if (!targetUserId) return;
+              const result = await getOrCreateChat(targetUserId);
+              if (result.success && result.chatId) {
+                router.push(`/${locale}/messages/${result.chatId}`);
+              }
+            } catch (err) {
+              console.error("Failed to open chat:", err);
+            } finally {
+              setIsOpeningChat(false);
+            }
+          }}
+          disabled={isOpeningChat}
+          className="p-4 bg-[#FF725E] rounded-full shadow-[0_0_20px_rgba(255,114,94,0.5)] hover:scale-110 transition-all disabled:opacity-70 disabled:scale-100"
         >
-          <MessageCircle className="text-black" fill="black" size={26} />
+          {isOpeningChat ? (
+            <Loader2 className="text-black animate-spin" size={26} />
+          ) : (
+            <MessageCircle className="text-black" fill="black" size={26} />
+          )}
         </button>
       </div>
     </div>

@@ -153,7 +153,12 @@
     "emptyTitle": "Pas encore de messages",
     "title": "Messages"
   },
-  "Pre-party": {
+  "Chat": {
+    "backToMessages": "Retour aux messages",
+    "emptyChat": "Pas encore de messages. Dites bonjour !",
+    "typeMessage": "Écrivez un message..."
+  },
+  "SearchGroups": {
     "modalButton": "Définir le rayon",
     "endOfList": "Vous avez vu tous les before près de Mayence.",
     "emptyDesc": "Essayez d'augmenter votre distance de recherche ou revenez plus tard.",
@@ -161,7 +166,9 @@
     "preferences": "Préférences",
     "groupRequiredTitle": "Groupe requis",
     "groupRequiredDesc": "Pour matcher, liker, envoyer des messages ou débloquer plus de groupes près de chez vous, vous devez d'abord créer un profil pour votre propre groupe.",
-    "createGroupButton": "Créer un Profil de Groupe"
+    "createGroupButton": "Créer un Profil de Groupe",
+    "title": "Découvrir",
+    "radius": "Rayon"
   },
   "ForgotPassword": {
     "title": "Réinitialiser le mot de passe",

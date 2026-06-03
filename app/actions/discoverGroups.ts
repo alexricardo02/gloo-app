@@ -84,7 +84,7 @@ export async function getDiscoveryGroups({
     orderBy: { createdAt: "desc" },
     include: {
       user: {
-        select: { name: true, image: true }
+        select: { id: true, name: true, image: true }
       }
     }
   });

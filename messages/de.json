@@ -153,7 +153,12 @@
     "emptyTitle": "Noch keine Nachrichten",
     "title": "Nachrichten"
   },
-  "Pre-party": {
+  "Chat": {
+    "backToMessages": "Zurück zu Nachrichten",
+    "emptyChat": "Noch keine Nachrichten. Sag Hallo!",
+    "typeMessage": "Nachricht schreiben..."
+  },
+  "SearchGroups": {
     "modalButton": "Radius einstellen",
     "endOfList": "Du hast alle Vorglühen-Gruppen in der Nähe von Mainz gesehen.",
     "emptyDesc": "Versuche deinen Suchradius zu erweitern oder schau später wieder vorbei.",
@@ -161,7 +166,9 @@
     "preferences": "Einstellungen",
     "groupRequiredTitle": "Gruppe erforderlich",
     "groupRequiredDesc": "Um zu matchen, zu liken, Nachrichten zu senden oder weitere Gruppen in deiner Nähe freizuschalten, musst du zuerst ein Profil für deine eigene Gruppe erstellen.",
-    "createGroupButton": "Gruppenprofil erstellen"
+    "createGroupButton": "Gruppenprofil erstellen",
+    "title": "Entdecken",
+    "radius": "Radius"
   },
   "ForgotPassword": {
     "title": "Passwort zurücksetzen",

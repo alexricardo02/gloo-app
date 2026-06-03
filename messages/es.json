@@ -153,7 +153,12 @@
     "emptyTitle": "Aún no hay mensajes",
     "title": "Mensajes"
   },
-  "Pre-party": {
+  "Chat": {
+    "backToMessages": "Volver a Mensajes",
+    "emptyChat": "Aún no hay mensajes. ¡Saluda!",
+    "typeMessage": "Escribe un mensaje..."
+  },
+  "SearchGroups": {
     "modalButton": "Establecer Radio",
     "endOfList": "Has visto todas las pre-fiestas cerca de Mainz.",
     "emptyDesc": "Intenta ampliar tu distancia de búsqueda o vuelve más tarde para ver grupos nuevos.",
@@ -161,7 +166,9 @@
     "preferences": "Preferencias",
     "groupRequiredTitle": "Grupo Requerido",
     "groupRequiredDesc": "Para hacer match, dar like, enviar mensajes o desbloquear más grupos cerca de ti, primero debes crear un perfil para tu propio grupo.",
-    "createGroupButton": "Crear Perfil de Grupo"
+    "createGroupButton": "Crear Perfil de Grupo",
+    "title": "Descubrir",
+    "radius": "Radio"
   },
   "ForgotPassword": {
     "title": "Restablecer Contraseña",

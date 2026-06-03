@@ -153,7 +153,12 @@
     "emptyTitle": "Nessun messaggio",
     "title": "Messaggi"
   },
-  "Pre-party": {
+  "Chat": {
+    "backToMessages": "Torna ai messaggi",
+    "emptyChat": "Nessun messaggio. Saluta!",
+    "typeMessage": "Scrivi un messaggio..."
+  },
+  "SearchGroups": {
     "modalButton": "Imposta Raggio",
     "endOfList": "Hai visto tutte le pre-serate vicino a Magonza.",
     "emptyDesc": "Prova ad aumentare la distanza di ricerca o torna più tardi per vedere nuovi gruppi.",
@@ -161,7 +166,9 @@
     "preferences": "Preferenze",
     "groupRequiredTitle": "Gruppo Richiesto",
     "groupRequiredDesc": "Per fare match, mettere mi piace, inviare messaggi o sbloccare più gruppi vicino a te, devi prima creare un profilo per il tuo gruppo.",
-    "createGroupButton": "Crea Profilo di Gruppo"
+    "createGroupButton": "Crea Profilo di Gruppo",
+    "title": "Scopri",
+    "radius": "Raggio"
   },
   "ForgotPassword": {
     "title": "Reimposta Password",
