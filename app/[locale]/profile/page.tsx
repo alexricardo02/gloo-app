@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { checkIsGuest } from "@/app/actions/guest";
 import { getGroupByUser } from "@/app/actions/group";
-import { getCurrentUser, logOutAction } from "@/app/actions/auth";
+import { getCurrentUser, logOutAction, updateProfileImage } from "@/app/actions/auth";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import Navigation from "@/app/components/Navigation";
@@ -19,6 +19,10 @@ export default function ProfilePage() {
   const [group, setGroup] = useState<any | null>(null);
   const [user, setUser] = useState<any | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
 
   const router = useRouter();
   const locale = useLocale();
@@ -44,6 +48,38 @@ export default function ProfilePage() {
     { name: t("myScores"), icon: <BarChart3 size={16} />, path: `/${locale}/game-center` },
     { name: t("dataPolicy"), icon: <ChevronRight size={16} />, path: `/${locale}/privacy` },
   ];
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+      setPreviewUrl(URL.createObjectURL(file));
+    }
+  };
+
+  const handleUpload = async () => {
+    if (!selectedFile) return;
+    
+    setIsUploading(true);
+    const formData = new FormData();
+    formData.append("image", selectedFile);
+
+    const result = await updateProfileImage(formData);
+    
+    if (result?.success && result.image) {
+      // Update local user state immediately so UI reflects the new image
+      setUser((prev: any) => ({ ...prev, image: result.image }));
+      
+      // Clean up and close modal
+      setSelectedFile(null);
+      setPreviewUrl(null);
+      setIsModalOpen(false);
+    } else {
+      console.error("Upload failed:", result?.error);
+    }
+    
+    setIsUploading(false);
+  };
 
   return (
     <div className="min-h-screen bg-black text-white font-sans pb-32">
@@ -207,40 +243,55 @@ export default function ProfilePage() {
             </h3>
 
             <label 
-              htmlFor="profile-upload"
-              className="w-40 h-40 rounded-full border-2 border-dashed border-[#FF725E] flex flex-col items-center justify-center bg-white/5 mb-8 cursor-pointer hover:bg-[#FF725E]/5 transition-colors group"
+              htmlFor="profile-upload" 
+              className="w-40 h-40 rounded-full border-2 border-dashed border-[#FF725E] flex flex-col items-center justify-center bg-white/5 mb-8 cursor-pointer hover:bg-[#FF725E]/5 transition-colors group overflow-hidden relative"
             >
-              <Camera size={40} className="text-[#FF725E] mb-2 group-hover:scale-110 transition-transform" />
-              <span className="text-[10px] font-bold uppercase text-gray-500">{t("tapToSelect")}</span>
+              {previewUrl ? (
+                /* Show image preview if a file is selected */
+                <img src={previewUrl} alt="Preview" className="w-full h-full object-cover" />
+              ) : (
+                /* Show default camera icon if no file is selected */
+                <>
+                  <Camera size={40} className="text-[#FF725E] mb-2 group-hover:scale-110 transition-transform" />
+                  <span className="text-[10px] font-bold uppercase text-gray-500">{t("tapToSelect")}</span>
+                </>
+              )}
+              
               <input 
                 type="file" 
                 id="profile-upload" 
                 className="hidden" 
                 accept="image/*"
-                onChange={(e) => {
-                  console.log(e.target.files?.[0]);
-                }}
+                onChange={handleFileSelect}
               />
             </label>
 
             <button 
-              className="w-full bg-[#FF725E] text-black font-black py-4 rounded-full uppercase tracking-widest text-sm hover:scale-[1.02] transition-transform mb-4 flex items-center justify-center gap-2"
+              onClick={handleUpload}
+              disabled={!selectedFile || isUploading}
+              className={`w-full font-black py-4 rounded-full uppercase tracking-widest text-sm transition-transform mb-4 flex items-center justify-center gap-2 ${
+                !selectedFile || isUploading
+                  ? "bg-[#333333] text-gray-500 opacity-50 cursor-not-allowed"
+                  : "bg-[#FF725E] text-black hover:scale-[1.02]"
+              }`}
             >
               <Upload size={18} />
-              {t("uploadNow")}
+              {isUploading ? "Uploading..." : t("uploadNow")}
             </button>
 
             <button 
-              onClick={() => setIsModalOpen(false)}
+              onClick={() => {
+                /* Reset states when modal closes */
+                setIsModalOpen(false);
+                setSelectedFile(null);
+                setPreviewUrl(null);
+              }}
               className="text-gray-500 font-bold uppercase text-xs tracking-widest hover:text-white transition-colors"
-            >
-              {t("cancel")}
-            </button>
+            ></button>
           </div>
         </div>
       )}
 
-      {/* Your Original Navigation */}
       <Navigation/>
       
     </div>

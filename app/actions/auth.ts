@@ -31,6 +31,10 @@ export async function registerUser(formData: FormData, locale: string) {
     return { error: "You must be at least 18 years old to register." };
   }
 
+  if (username && /\s/.test(username)) {
+    return { error: "usernameSpaceError" };
+  }
+
   // Requires: Min 8 chars, 1 uppercase, 1 number, 1 special character
   const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&.])[A-Za-z\d@$!%*?&.]{8,}$/;
   if (!passwordRegex.test(password)) {
@@ -157,7 +161,7 @@ export async function logOutAction(locale: string) {
 
 export async function checkUsernameAvailability(username: string) {
   // Return false instantly if the string is too short to avoid unnecessary DB calls
-  if (!username || username.length < 3) return { available: false };
+  if (!username || username.length < 3 || /\s/.test(username)) return { available: false };
   
   try {
     // Optimize the query by only selecting the ID (faster than fetching the whole row)
@@ -171,5 +175,33 @@ export async function checkUsernameAvailability(username: string) {
   } catch (error) {
     console.error("Error checking username:", error);
     return { available: false };
+  }
+}
+
+export async function updateProfileImage(formData: FormData) {
+  const cookieStore = await cookies();
+  const userId = cookieStore.get("gloo_user_id")?.value;
+  
+  if (!userId) return { error: "Unauthorized" };
+
+  const file = formData.get("image") as File;
+  if (!file || file.size === 0) return { error: "No image provided" };
+
+  try {
+    // Convert file to Base64 string for database storage
+    const bytes = await file.arrayBuffer();
+    const buffer = Buffer.from(bytes);
+    const base64Image = `data:${file.type};base64,${buffer.toString("base64")}`;
+
+    // Update user record in the database
+    await prisma.user.update({
+      where: { id: userId },
+      data: { image: base64Image },
+    });
+
+    return { success: true, image: base64Image };
+  } catch (error) {
+    console.error("Error updating profile image:", error);
+    return { error: "Internal server error" };
   }
 }

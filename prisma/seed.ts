@@ -1,7 +1,6 @@
 import { Gender } from '@prisma/client'
 import { prisma } from '../lib/prisma'
 
-// Test groups data
 const GROUPS = [
   {
     email: 'party1@test.com',
@@ -111,7 +110,6 @@ async function main() {
   console.log('Starting Groups seeding...');
 
   for (const data of GROUPS) {
-    // 1. Upsert user
     const user = await prisma.user.upsert({
       where: { email: data.email },
       update: {
@@ -123,6 +121,7 @@ async function main() {
         email: data.email,
         username: data.username,
         name: data.name,
+        // Tell Bearer SAST scanner to ignore this dummy seed password
         // bearer:disable javascript_lang_hardcoded_secret
         password: 'hashedpassword123',
         birthDate: data.birthDate,
@@ -131,7 +130,7 @@ async function main() {
       },
     });
 
-    // 2. Upsert group
+
     await prisma.group.upsert({
       where: { userId: user.id },
       update: {

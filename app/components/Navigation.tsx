@@ -80,18 +80,20 @@ export default function Navigation({ isGuest, onSecureClick }: NavigationProps) 
   ];
 
   const handleNavigation = (e: React.MouseEvent, item: any) => {
-    e.preventDefault(); // Prevent default behavior just in case
-
-    // If the user is a guest, and the click handler is provided, 
-    // AND they are trying to access restricted areas (messages, profile)
-    if (isGuest && onSecureClick && (item.id === "messages" || item.id === "profile")) {
-      onSecureClick(e);
+    e.preventDefault();
+    if (isGuest && (item.id === "messages" || item.id === "profile")) {
+      if (onSecureClick) {
+        onSecureClick(e);
+      } else {
+        router.push(`/${locale}/search-groups?showPaywall=true`);
+      }
       return;
     }
 
-    // Otherwise (including for 'games', 'discover', and 'map'), navigate normally
     router.push(item.href);
   };
+
+  
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 bg-black/90 backdrop-blur-lg border-t border-white/10 z-40 px-4 pb-5 pt-3 safe-bottom">

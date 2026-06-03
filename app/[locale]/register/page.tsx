@@ -259,7 +259,7 @@ export default function RegisterPage() {
                 name="username"
                 type="text" 
                 value={username}
-                onChange={(e) => setUsername(e.target.value.toLowerCase())} // Usernames are usually lowercase
+                onChange={(e) => setUsername(e.target.value.replace(/\s/g, ""))} // Usernames are usually lowercase
                 placeholder={t('usernamePlaceholder')}
                 required
                 className="bg-transparent outline-none w-full ml-2 text-gray-800 placeholder-gray-400 font-medium pr-8"
