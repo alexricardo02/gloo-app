@@ -201,5 +201,17 @@
     "section2Content": "Your data is used solely to provide and improve our services, match you with relevant groups, and ensure a safe environment for our community.",
     "section3Title": "3. Data Sharing",
     "section3Content": "We do not sell your personal data. We only share information with third parties when necessary to provide our services or comply with legal obligations."
+  },
+  "Map": {
+    "title": "Gloo Map",
+    "loadingMap": "Loading map...",
+    "yourLocation": "Your Location",
+    "groupAttending": "{count} group attending",
+    "groupsAttending": "{count} groups attending",
+    "noGroups": "No groups registered yet. Be the first!",
+    "members": "members",
+    "glooCrewFallback": "Gloo Group",
+    "processing": "Processing...",
+    "toggleRsvp": "Join / Leave"
   }
 }

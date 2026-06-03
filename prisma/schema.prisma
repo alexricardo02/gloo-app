@@ -87,6 +87,9 @@ model Group {
   likesSent        GroupLike[] @relation("LikesSent")
   likesReceived    GroupLike[] @relation("LikesReceived")
 
+  eventAttendances EventAttendance[]
+  venueAttendances VenueAttendance[]
+
   createdAt        DateTime    @default(now())
   updatedAt        DateTime    @updatedAt
 }
@@ -103,9 +106,9 @@ model GroupLike {
   @@unique([fromGroupId, toGroupId]) // One like per pair of groups
 }
 
-
+// Erweiterung des bestehenden Event-Modells (Privatpartys / Vorglühen)
 model Event {
-  id            String    @id @default(cuid())
+  id            String            @id @default(cuid())
   title         String    
   description   String?
   locationName  String    
@@ -113,11 +116,12 @@ model Event {
   longitude     Float
   startTime     DateTime
   endTime       DateTime?
-  
   ownerId       String
-  owner         User      @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  owner         User              @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  createdAt     DateTime          @default(now())
 
-  createdAt     DateTime  @default(now())
+  // NEU: Verknüpfung zu den angemeldeten Gruppen
+  attendees     EventAttendance[]
 }
 
 model Chat {
@@ -152,4 +156,45 @@ model GameScore {
   createdAt DateTime @default(now())
 
   @@index([gameName, score(sort: Desc)])
+}
+
+
+
+// Neues Modell: Anmeldung von Gruppen an privaten Partys (Vorglühen)
+model EventAttendance {
+  id        String   @id @default(cuid())
+  groupId   String
+  group     Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  eventId   String
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  // Eine Gruppe kann sich nur einmal pro Event anmelden
+  @@unique([groupId, eventId])
+}
+
+// Neues Modell: Feste Locations (Bars/Clubs), die ihr per Seed ladet
+model Venue {
+  id           String            @id @default(cuid())
+  name         String
+  type         String            // "BAR" oder "CLUB"
+  latitude     Float
+  longitude    Float
+  createdAt    DateTime          @default(now())
+
+  // Verknüpfung zu den angemeldeten Gruppen an diesem Ort
+  attendees    VenueAttendance[]
+}
+
+// Neues Modell: Anmeldung von Gruppen an öffentlichen Locations (Bars/Clubs)
+model VenueAttendance {
+  id        String   @id @default(cuid())
+  groupId   String
+  group     Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  venueId   String
+  venue     Venue    @relation(fields: [venueId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  // Eine Gruppe kann sich nur einmal pro Bar/Club anmelden
+  @@unique([groupId, venueId])
 }
