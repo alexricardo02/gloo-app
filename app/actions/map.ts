@@ -184,7 +184,7 @@ export async function getActiveEvents() {
         attendees: {
           include: {
             group: {
-              select: { id: true, membersCount: true, photos: true, user: { select: { name: true } } }
+              select: { id: true, membersCount: true, photos: true, gender: true, user: { select: { name: true, username: true } }}
             }
           }
         }
