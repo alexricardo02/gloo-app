@@ -159,14 +159,13 @@ model GameScore {
 }
 
 
-
-// Neues Modell: Anmeldung von Gruppen an privaten Partys (Vorglühen)
 model EventAttendance {
   id        String   @id @default(cuid())
   groupId   String
   group     Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
   eventId   String
   event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  status    String   @default("Pending")
   createdAt DateTime @default(now())
 
   // Eine Gruppe kann sich nur einmal pro Event anmelden
