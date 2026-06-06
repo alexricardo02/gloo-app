@@ -12,6 +12,7 @@ import {
   respondToEventRequest, getOrCreateChatWithUser
 } from "../actions/map";
 import { Check, Users, Flame, X, Clock, MessageCircle } from "lucide-react";
+import { supabase } from "@/lib/supabase";
 
 interface EventAttendance {
   id: string;
@@ -99,6 +100,41 @@ export default function MapDisplay() {
 
   useEffect(() => {
     loadMapData();
+  }, []);
+
+  useEffect(() => {
+    // We listen to ANY changes on the EventAttendance table.
+    // When someone requests access (INSERT), gets accepted (UPDATE), or rejected (DELETE),
+    // we trigger a silent background reload of the map data.
+    const attendanceChannel = supabase
+      .channel("map_event_attendance_changes")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "EventAttendance" },
+        () => {
+          console.log("Realtime update: EventAttendance changed. Reloading map data...");
+          loadMapData();
+        }
+      )
+      .subscribe();
+
+    // Also listen to new Events being created or deleted
+    const eventChannel = supabase
+      .channel("map_event_changes")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "Event" },
+        () => {
+          console.log("Realtime update: Events changed. Reloading map data...");
+          loadMapData();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(attendanceChannel);
+      supabase.removeChannel(eventChannel);
+    };
   }, []);
 
   useEffect(() => {
@@ -265,7 +301,6 @@ export default function MapDisplay() {
                     <div className="bg-gray-100 text-[10px] font-bold text-gray-500 px-2 py-1 rounded mb-1 flex items-center gap-1">📍 {party.locationName}</div>
                   </div>
 
-                  {/* VISTA DE LISTA DE ACEPTADOS (Para el Host o los invitados ya aceptados) */}
                   {(isHost || isAccepted) && acceptedAttendees.length > 0 && (
                     <div className="mb-2">
                       <p className="text-[10px] font-bold uppercase text-gray-500 mb-1">Confirmed Guests</p>
@@ -280,7 +315,6 @@ export default function MapDisplay() {
                     </div>
                   )}
 
-                  {/* VISTA DE HOST: Panel de Solicitudes Pendientes */}
                   {isHost && pendingAttendees.length > 0 && (
                      <div className="mt-2 border-t border-pink-100 pt-2">
                         <p className="text-[10px] font-bold uppercase text-pink-500 mb-1 animate-pulse">Pending Requests ({pendingAttendees.length})</p>
@@ -301,7 +335,6 @@ export default function MapDisplay() {
                      </div>
                   )}
 
-                  {/* VISTA DE INVITADOS: Botones de Acción */}
                   {!isHost && (
                     <div className="mt-2">
                       {isAccepted ? (
@@ -326,7 +359,7 @@ export default function MapDisplay() {
         })}
       </MapContainer>
 
-      {/* FAB & Bottom Sheet (mismo código sin alterar) */}
+      {/* FAB & Bottom Sheet*/}
       <div className="absolute bottom-20 right-4 z-[1000]">
         <button onClick={() => setIsSheetOpen(true)} className={`w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300 shadow-2xl ${ myEvent ? "bg-pink-500 border-2 border-white text-white animate-pulse" : "bg-[#111] border border-[#FF725E] text-[#FF725E] hover:scale-105" }`}>
           {myEvent ? <Clock size={24} /> : <Flame size={24} strokeWidth={2.5} />}
