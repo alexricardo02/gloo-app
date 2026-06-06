@@ -3,6 +3,36 @@
 import { prisma } from "@/lib/prisma";
 import { cookies } from "next/headers";
 
+export async function getMapSession() {
+  const cookieStore = await cookies();
+  const userId = cookieStore.get("gloo_user_id")?.value;
+  if (!userId) return null;
+
+  const group = await prisma.group.findUnique({ where: { userId } });
+  return { userId, groupId: group?.id || null };
+}
+
+export async function getOrCreateChatWithUser(targetUserId: string) {
+  const cookieStore = await cookies();
+  const userId = cookieStore.get("gloo_user_id")?.value;
+  if (!userId) return { error: "Not authorized" };
+
+  let chat = await prisma.chat.findFirst({
+    where: {
+      OR: [
+        { hostAId: userId, hostBId: targetUserId },
+        { hostAId: targetUserId, hostBId: userId }
+      ]
+    }
+  });
+
+  if (!chat) {
+    chat = await prisma.chat.create({
+      data: { hostAId: userId, hostBId: targetUserId }
+    });
+  }
+  return { success: true, chatId: chat.id };
+}
 
 export async function getVenues() {
   try {
@@ -87,11 +117,11 @@ export async function toggleVenueAttendance(venueId: string) {
 export async function startPreParty(latitude: number, longitude: number, description: string) {
   const cookieStore = await cookies();
   const userId = cookieStore.get("gloo_user_id")?.value;
-  if (!userId) return { error: "Nicht autorisiert" };
+  if (!userId) return { error: "Not authorized" };
 
   try {
     const group = await prisma.group.findUnique({ where: { userId } });
-    if (!group) return { error: "Du musst zuerst eine Gruppe erstellen, um hosten zu können." };
+    if (!group) return { error: "You must create a group first to be able to host." };
 
     const startTime = new Date();
     const endTime = new Date(startTime.getTime() + 4 * 60 * 60 * 1000);
@@ -115,7 +145,7 @@ export async function startPreParty(latitude: number, longitude: number, descrip
     return { success: true, event: newEvent };
   } catch (error) {
     console.error("Error starting pre-party:", error);
-    return { error: "Fehler beim Starten der Party" };
+    return { error: "Error starting pre-party" };
   }
 }
 
@@ -125,14 +155,14 @@ export async function startPreParty(latitude: number, longitude: number, descrip
 export async function stopPreParty() {
   const cookieStore = await cookies();
   const userId = cookieStore.get("gloo_user_id")?.value;
-  if (!userId) return { error: "Nicht autorisiert" };
+  if (!userId) return { error: "Not authorized" };
 
   try {
     await prisma.event.deleteMany({ where: { ownerId: userId } });
     return { success: true };
   } catch (error) {
     console.error("Error stopping pre-party:", error);
-    return { error: "Fehler beim Beenden der Party" };
+    return { error: "Error stopping pre-party" };
   }
 }
 
@@ -143,27 +173,24 @@ export async function stopPreParty() {
 export async function getActiveEvents() {
   const cookieStore = await cookies();
   const isGuest = cookieStore.get("gloo_is_guest")?.value === "true";
-
-  // Gastnutzer sehen keine Privat-Marker
   if (isGuest) return [];
 
   const now = new Date();
   try {
     return await prisma.event.findMany({
-      where: { 
-        endTime: { gt: now }
-      },
+      where: { endTime: { gt: now } },
       include: {
-        owner: {
-          select: {
-            name: true,
-            group: true
+        owner: { select: { name: true, group: true } },
+        attendees: {
+          include: {
+            group: {
+              select: { id: true, membersCount: true, photos: true, user: { select: { name: true } } }
+            }
           }
         }
       }
     });
   } catch (error) {
-    console.error("Error fetching active events:", error);
     return [];
   }
 }
@@ -177,12 +204,56 @@ export async function getMyActiveEvent() {
   const now = new Date();
   try {
     return await prisma.event.findFirst({
-      where: { 
-        ownerId: userId,
-        endTime: { gt: now }
-      }
+      where: { ownerId: userId, endTime: { gt: now } }
     });
   } catch (error) {
     return null;
+  }
+}
+
+export async function requestEventAttendance(eventId: string) {
+  const cookieStore = await cookies();
+  const userId = cookieStore.get("gloo_user_id")?.value;
+  if (!userId) return { error: "Nicht autorisiert" };
+
+  try {
+    const group = await prisma.group.findUnique({ where: { userId } });
+    if (!group) return { error: "Gruppe erforderlich" };
+
+    await prisma.eventAttendance.deleteMany({ where: { groupId: group.id } });
+
+    await prisma.eventAttendance.create({
+      data: { groupId: group.id, eventId: eventId, status: "PENDING" }
+    });
+    return { success: true };
+  } catch (error) {
+    return { error: "Fehler" };
+  }
+}
+
+export async function respondToEventRequest(attendanceId: string, accept: boolean) {
+  const cookieStore = await cookies();
+  const userId = cookieStore.get("gloo_user_id")?.value;
+  if (!userId) return { error: "Nicht autorisiert" };
+
+  try {
+    const attendance = await prisma.eventAttendance.findUnique({
+      where: { id: attendanceId },
+      include: { event: true }
+    });
+
+    if (!attendance || attendance.event.ownerId !== userId) return { error: "Forbidden" };
+
+    if (accept) {
+      await prisma.eventAttendance.update({
+        where: { id: attendanceId },
+        data: { status: "ACCEPTED" }
+      });
+    } else {
+      await prisma.eventAttendance.delete({ where: { id: attendanceId } });
+    }
+    return { success: true };
+  } catch (error) {
+    return { error: "Fehler" };
   }
 }
