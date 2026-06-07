@@ -19,12 +19,6 @@ export default function PrePartyPage() {
   const [groups, setGroups] = useState<DiscoveryGroup[]>([]);
   const [distance, setDistance] = useState(10);
 
-  useEffect(() => {
-    const savedDistance = localStorage.getItem('gloo_search_radius');
-    if (savedDistance) {
-      setDistance(Number(savedDistance));
-    }
-  }, []);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(0);
@@ -38,18 +32,31 @@ export default function PrePartyPage() {
   const [isGuest, setIsGuest] = useState(false);
   const [showPaywall, setShowPaywall] = useState(false);
 
+  const [isReady, setIsReady] = useState(false);
+
   useEffect(() => {
     async function init() {
       const guestStatus = await checkIsGuest();
       setIsGuest(guestStatus);
 
+      const savedDistance = localStorage.getItem('gloo_search_radius');
+
       if (!guestStatus) {
         const userGroup = await getGroupByUser();
-        if (userGroup?.maxDistance) {
+        if (savedDistance) {
+          setDistance(Number(savedDistance));
+          setTempDistance(Number(savedDistance));
+        } else if (userGroup?.maxDistance) {
           setDistance(userGroup.maxDistance);
           setTempDistance(userGroup.maxDistance);
         }
+      } else {
+        if (savedDistance) {
+          setDistance(Number(savedDistance));
+          setTempDistance(Number(savedDistance));
+        }
       }
+      setIsReady(true);
     }
     init();
   }, []);
@@ -95,25 +102,22 @@ export default function PrePartyPage() {
 
     try {
       const currentPage = reset ? 0 : page;
-      
+
       const response = await getDiscoveryGroups({
         page: currentPage,
         distance,
       });
 
-      if (response.hasNoGroup) {
+      if (response.groups && response.groups.length === 0) {
         setHasNoGroup(true);
         setGroups(response.groups as DiscoveryGroup[]);
         setHasMore(false);
       } else if (response.groups) {
-        if (response.groups.length === 0) {
-          setHasMore(false);
-        } else {
-          setGroups((prev) => 
-            reset ? (response.groups as DiscoveryGroup[]) : [...prev, ...response.groups as DiscoveryGroup[]]
-          );
-          setPage(currentPage + 1);
-        }
+        setHasNoGroup(false);
+        setGroups(response.groups as DiscoveryGroup[]);
+        setHasMore(response.groups.length === 10); 
+      } else {
+        console.error(response.error);
       }
     } catch (error) {
       console.error("Failed to load groups:", error);
@@ -133,6 +137,7 @@ export default function PrePartyPage() {
     
     setIsDistanceModalOpen(false);
     setPage(0); // Reset pagination on new search
+    setHasMore(true);
   };
 
   return (
@@ -145,7 +150,7 @@ export default function PrePartyPage() {
             {t("title") || "Discover"}
           </h1>
           <p className="text-[11px] text-gray-500 font-bold mt-0.5">
-            {distance} km around you
+            {isReady ? `${distance} km` : "— km"} km around you
           </p>
         </div>
 
@@ -244,10 +249,7 @@ export default function PrePartyPage() {
             </div>
             
             <button
-              onClick={() => {
-                setDistance(tempDistance);
-                setIsDistanceModalOpen(false);
-              }}
+              onClick={applyDistance}
               className="w-full bg-[#FF725E] text-black font-black py-4 rounded-full uppercase tracking-widest text-sm hover:scale-[1.02] active:scale-[0.98] transition-transform"
             >
               {t("modalButton")}
