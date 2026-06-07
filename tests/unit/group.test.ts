@@ -52,14 +52,26 @@ describe('Group Server Actions (Unit Tests)', () => {
 
     it('should return the group object if the user has a group', async () => {
       vi.mocked(cookies).mockResolvedValue({ get: vi.fn().mockReturnValue({ value: 'user-123' }) } as any);
+
+      const mockDate = new Date('2026-01-01T12:00:00Z');
       
-      const mockGroup = { id: 'group-1', userId: 'user-123', membersCount: 4 };
+      const mockGroup = { 
+        id: 'group-1', 
+        userId: 'user-123', 
+        membersCount: 4,
+        createdAt: mockDate,
+        updatedAt: mockDate
+      };
       vi.mocked(prisma.group.findUnique).mockResolvedValueOnce(mockGroup as any);
 
       const result = await getGroupByUser();
 
       expect(prisma.group.findUnique).toHaveBeenCalledWith({ where: { userId: 'user-123' } });
-      expect(result).toEqual(mockGroup);
+      expect(result).toEqual({
+        ...mockGroup,
+        createdAt: mockDate.toISOString(),
+        updatedAt: mockDate.toISOString()
+      });
     });
 
     it('should return null if the user does not have a group yet', async () => {
