@@ -102,25 +102,22 @@ export default function PrePartyPage() {
 
     try {
       const currentPage = reset ? 0 : page;
-      
+
       const response = await getDiscoveryGroups({
         page: currentPage,
         distance,
       });
 
-      if (response.hasNoGroup) {
+      if (response.groups && response.groups.length === 0) {
         setHasNoGroup(true);
         setGroups(response.groups as DiscoveryGroup[]);
         setHasMore(false);
       } else if (response.groups) {
-        if (response.groups.length === 0) {
-          setHasMore(false);
-        } else {
-          setGroups((prev) => 
-            reset ? (response.groups as DiscoveryGroup[]) : [...prev, ...response.groups as DiscoveryGroup[]]
-          );
-          setPage(currentPage + 1);
-        }
+        setHasNoGroup(false);
+        setGroups(response.groups as DiscoveryGroup[]);
+        setHasMore(response.groups.length === 10); 
+      } else {
+        console.error(response.error);
       }
     } catch (error) {
       console.error("Failed to load groups:", error);
