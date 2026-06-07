@@ -36,7 +36,7 @@ export async function getOrCreateChatWithUser(targetUserId: string) {
 
 export async function getVenues() {
   try {
-    return await prisma.venue.findMany({
+    const venues = await prisma.venue.findMany({
       include: {
         attendees: {
           include: {
@@ -58,6 +58,15 @@ export async function getVenues() {
         }
       }
     });
+
+    return venues.map(venue => ({
+      ...venue,
+      createdAt: venue.createdAt.toISOString(),
+      attendees: venue.attendees.map(a => ({
+        ...a,
+        createdAt: a.createdAt.toISOString()
+      }))
+    }));
   } catch (error) {
     console.error("Error fetching venues:", error);
     return [];
