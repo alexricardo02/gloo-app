@@ -11,9 +11,17 @@ export async function getGroupByUser() {
   
   if (!userId) return null;
 
-  return await prisma.group.findUnique({
+  const group = await prisma.group.findUnique({
     where: { userId: userId },
   });
+
+  if (!group) return null;
+
+  return {
+    ...group,
+    createdAt: group.createdAt.toISOString(),
+    updatedAt: group.updatedAt.toISOString(),
+  };
 }
 
 export async function createGroupAction(formData: FormData, locale: string) {
