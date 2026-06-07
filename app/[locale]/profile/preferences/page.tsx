@@ -5,9 +5,11 @@ import { useRouter } from "next/navigation";
 import { useLocale } from "next-intl";
 import { getGroupByUser, createGroupAction } from "@/app/actions/group";
 import { ArrowLeft, SlidersHorizontal } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 export default function PreferencesPage() {
   const router = useRouter();
+  const t = useTranslations("Preferences");
   const locale = useLocale();
 
   const [searchGender, setSearchGender] = useState("MIXED");
@@ -113,11 +115,11 @@ export default function PreferencesPage() {
   }
 
   const genderOptions = [
-    { value: "MIXED", label: "Mixed" },
-    { value: "MALE", label: "Male" },
-    { value: "FEMALE", label: "Female" },
-    { value: "DIVERSE", label: "Diverse" },
-  ];
+  { value: "MIXED", label: t("genderMixed") },
+  { value: "MALE",  label: t("genderMale") },
+  { value: "FEMALE", label: t("genderFemale") },
+  { value: "DIVERSE", label: t("genderDiverse") },
+]
 
   return (
     <div className="min-h-screen bg-black text-white font-sans pb-24">
@@ -132,7 +134,7 @@ export default function PreferencesPage() {
         </button>
         <div className="flex items-center gap-2">
           <SlidersHorizontal size={20} className="text-[#FF725E]" />
-          <h1 className="text-xl font-black uppercase tracking-tight">Search Preferences</h1>
+          <h1 className="text-xl font-black uppercase tracking-tight">{t("title")}</h1>
         </div>
       </div>
 
@@ -140,9 +142,9 @@ export default function PreferencesPage() {
 
         {/* Info banner */}
         <div className="bg-[#FF725E]/10 border border-[#FF725E]/20 rounded-2xl px-5 py-4">
-          <p className="text-[11px] text-[#FF725E] font-bold uppercase tracking-widest mb-1">How it works</p>
+          <p className="text-[11px] text-[#FF725E] font-bold uppercase tracking-widest mb-1">{t("howItWorksTitle")}</p>
           <p className="text-xs text-gray-400 leading-relaxed">
-            These filters control which groups you see in the discovery feed. Changes apply immediately after saving.
+            {t("howItWorksDesc")}
           </p>
         </div>
 
@@ -150,7 +152,7 @@ export default function PreferencesPage() {
         <div className="bg-[#121212] rounded-[2rem] p-6 space-y-4 shadow-[0_0_20px_rgba(0,0,0,0.4)]">
           <div className="flex items-center gap-2 mb-2">
             <div className="w-1 h-4 bg-[#FF725E]/40 rounded-full" />
-            <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-white">Looking for</h3>
+            <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-white">{t("lookingFor")}</h3>
           </div>
 
           <div className="flex bg-black/40 p-1 rounded-xl gap-1">
@@ -179,7 +181,7 @@ export default function PreferencesPage() {
         <div className="bg-[#121212] rounded-[2rem] p-6 space-y-6 shadow-[0_0_20px_rgba(0,0,0,0.4)]">
           <div className="flex items-center gap-2">
             <div className="w-1 h-4 bg-[#FFD54F] rounded-full" />
-            <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-white">Age Range</h3>
+            <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-white">{t("ageRange")}</h3>
             <span className="ml-auto text-white bg-[#222] px-3 py-1 rounded-full border border-[#333] text-[11px] font-bold">
               {searchAgeMin} — {searchAgeMax}
             </span>
@@ -224,7 +226,7 @@ export default function PreferencesPage() {
         <div className="bg-[#121212] rounded-[2rem] p-6 space-y-4 shadow-[0_0_20px_rgba(0,0,0,0.4)]">
           <div className="flex items-center gap-2">
             <div className="w-1 h-4 bg-[#4FC3F7] rounded-full" />
-            <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-white">Max Distance</h3>
+            <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-white">{t("maxDistance")}</h3>
             <span className="ml-auto text-white bg-[#222] px-3 py-1 rounded-full border border-[#333] text-[11px] font-bold">
               {maxDistance} km
             </span>
@@ -257,7 +259,7 @@ export default function PreferencesPage() {
               : "bg-[#FF725E] text-black hover:bg-[#ff8575]"
           }`}
         >
-          {saved ? "✓ Saved!" : loading ? "Saving..." : "Apply Preferences"}
+          {saved ? t("saved") : loading ? t("saving") : t("applyPreferences")}
         </button>
       </div>
     </div>

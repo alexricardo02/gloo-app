@@ -66,7 +66,6 @@ export default function PrePartyPage() {
 
   useEffect(() => {
     fetchGroups(true);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [distance, isGuest]);
 
   useEffect(() => {
@@ -87,7 +86,6 @@ export default function PrePartyPage() {
     return () => observerRef.current?.disconnect();
   }, [loading, hasMore, groups, hasNoGroup]);
 
-  // Intercept interactions if user is guest or has no group
   const handleInteractionAttempt = () => {
     if (isGuest) {
       setShowPaywall(true);
@@ -136,7 +134,7 @@ export default function PrePartyPage() {
     localStorage.setItem('gloo_search_radius', tempDistance.toString());
     
     setIsDistanceModalOpen(false);
-    setPage(0); // Reset pagination on new search
+    setPage(0); 
     setHasMore(true);
   };
 
@@ -216,7 +214,7 @@ export default function PrePartyPage() {
         onSecureClick={() => setShowPaywall(true)} 
       />
 
-      {/* --- MODALS --- */}
+      {/* MODALS*/}
 
       {/* 1. Distance Adjust Modal */}
       {isDistanceModalOpen && (

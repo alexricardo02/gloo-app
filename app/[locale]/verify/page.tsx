@@ -2,12 +2,13 @@
 
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { verifyAccountAction } from "@/app/actions/verify";
 
 export default function VerifyPage() {
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
+  const t = useTranslations("Verify");
   const locale = useLocale();
   
   const [loading, setLoading] = useState(false);
@@ -15,14 +16,14 @@ export default function VerifyPage() {
 
   async function handleVerify() {
     if (!token) {
-      setError("No token provided.");
+      setError(t("noToken"));
       return;
     }
     setLoading(true);
     const result = await verifyAccountAction(token, locale);
     
     if (result?.error) {
-      setError("This verification link is invalid or has already been used.");
+      setError(t("invalidToken"));
       setLoading(false);
     }
   }
@@ -34,9 +35,9 @@ export default function VerifyPage() {
           <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
         </div>
         
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">Verify your Account</h2>
+        <h2 className="text-2xl font-bold text-gray-900 mb-4">{t("title")}</h2>
         <p className="text-gray-600 mb-8">
-          You are just one click away from joining the best pre-parties in your area.
+          {t("subtitle")}
         </p>
 
         {error && (
@@ -50,7 +51,7 @@ export default function VerifyPage() {
           disabled={loading || !token}
           className="w-full bg-[#FF725E] text-white rounded-full py-4 font-semibold hover:bg-[#ff5f49] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {loading ? "Verifying..." : "Click here to Verify"}
+          {loading ? t("verifying") : t("button")}
         </button>
       </div>
     </div>

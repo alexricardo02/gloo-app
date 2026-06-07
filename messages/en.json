@@ -37,7 +37,176 @@
     "title": "Games",
     "subtitle": "Play with your group and set the highscore!",
     "neverhaveiever": "Never have I ever",
-    "truthordare": "Truth or Dare"
+    "truthordare": "Truth or Dare",
+    "game1Title": "Never Have I Ever",
+    "game1Desc": "The ultimate classic to break the ice and trigger laughs with your group.",
+    "game1Tag": "Popular",
+    "game2Title": "Truth or Dare",
+    "game2Desc": "Spice up the pre-party with wild challenges and revelations.",
+    "game2Tag": "Hot",
+    "game3Title": "Most Likely To",
+    "game3Desc": "Find out what your friends really think about each other.",
+    "game3Tag": "Party",
+    "game4Title": "Busdriver",
+    "game4Desc": "A fast-paced card game where strategy matters, and losers drink up.",
+    "game4Tag": "Classic"
+  },
+  "NeverHaveIEver": {
+    "title": "Never Have I Ever",
+    "prefix": "Never have I ever...",
+    "tapForNext": "Tap for next",
+    "questions": [
+      "ghosted someone after a first date.",
+      "sent a risky text to the wrong person.",
+      "stolen a drink at a party.",
+      "used a fake name at a bar.",
+      "kissed someone in this room.",
+      "lied about my age to get into a club.",
+      "fallen asleep in a public place after partying.",
+      "crashed a VIP section.",
+      "drunk-texted an ex at 3am.",
+      "pretended to be sick to avoid a date.",
+      "made out with a stranger on a dance floor.",
+      "woken up with no idea where I was.",
+      "spent my rent money on a night out.",
+      "been kicked out of a bar or club.",
+      "gone skinny dipping.",
+      "lied to a partner about where I was.",
+      "done a walk of shame.",
+      "danced on a table or bar.",
+      "lost my phone on a night out.",
+      "thrown up in a taxi."
+    ]
+  },
+  "MostLikelyTo": {
+    "title": "Most Likely To",
+    "header": "Who is most likely to...",
+    "nextQuestion": "Next Question",
+    "questions": [
+      "get arrested for something stupid?",
+      "become a millionaire?",
+      "survive a zombie apocalypse?",
+      "ghost everyone and move to another country?",
+      "end up on a reality TV show?",
+      "accidentally start a fire while cooking?",
+      "get back with their toxic ex?",
+      "spend all their money on a night out?",
+      "marry someone they met on a night out?",
+      "be the last one standing at a party?",
+      "fall asleep on the bus home?",
+      "go viral on social media for something embarrassing?",
+      "date someone 10 years older?",
+      "quit their job to travel the world?",
+      "become famous?",
+      "cry at a wedding they barely know anyone at?",
+      "win a drinking competition?",
+      "start a cult by accident?",
+      "text their boss something they shouldn't?",
+      "be on a true crime podcast as a suspect?"
+    ]
+  },
+  "TruthOrDare": {
+    "title": "Truth or Dare",
+    "truth": "Truth",
+    "dare": "Dare",
+    "prompts": [
+      {
+        "type": "truth",
+        "text": "What is your biggest regret from a past relationship?"
+      },
+      {
+        "type": "truth",
+        "text": "Who in this room do you think is the most attractive?"
+      },
+      {
+        "type": "truth",
+        "text": "What's the most embarrassing thing you've ever done drunk?"
+      },
+      {
+        "type": "truth",
+        "text": "Have you ever lied to get out of a date?"
+      },
+      {
+        "type": "truth",
+        "text": "What's the most embarrassing thing on your phone right now?"
+      },
+      {
+        "type": "truth",
+        "text": "Have you ever faked being sick to avoid someone?"
+      },
+      {
+        "type": "truth",
+        "text": "What's the worst thing you've ever done at a party?"
+      },
+      {
+        "type": "truth",
+        "text": "Have you ever had a crush on someone in this room?"
+      },
+      {
+        "type": "truth",
+        "text": "What's a secret you've never told anyone here?"
+      },
+      {
+        "type": "truth",
+        "text": "Have you ever stolen something?"
+      },
+      {
+        "type": "dare",
+        "text": "Let the group look through your phone's photo gallery for 1 minute."
+      },
+      {
+        "type": "dare",
+        "text": "Send a risky text to the 5th person in your contacts."
+      },
+      {
+        "type": "dare",
+        "text": "Do your best imitation of someone in this room."
+      },
+      {
+        "type": "dare",
+        "text": "Take a shot or finish your drink right now."
+      },
+      {
+        "type": "dare",
+        "text": "Call someone and sing them happy birthday — regardless of whether it's their birthday."
+      },
+      {
+        "type": "dare",
+        "text": "Let the group post anything on your Instagram story."
+      },
+      {
+        "type": "dare",
+        "text": "Do 20 push-ups right now."
+      },
+      {
+        "type": "dare",
+        "text": "Give a 60-second compliment to each person in the room."
+      },
+      {
+        "type": "dare",
+        "text": "Let someone in the group send a DM to your last Tinder match."
+      },
+      {
+        "type": "dare",
+        "text": "Wear something embarrassing for the next 3 rounds."
+      }
+    ]
+  },
+  "BusDriver": {
+    "title": "Bus Driver",
+    "step1": "Red or Black?",
+    "step2": "Higher or Lower?",
+    "step3": "Inside or Outside?",
+    "step4": "Guess the Suit!",
+    "won": "You Survived the Bus!",
+    "lost": "DRINK! Start Over.",
+    "btnRed": "Red",
+    "btnBlack": "Black",
+    "btnHigher": "Higher",
+    "btnLower": "Lower",
+    "btnInside": "Inside",
+    "btnOutside": "Outside",
+    "restart": "Next Player"
   },
   "Login": {
     "title": "Sign in",
@@ -206,12 +375,53 @@
     "title": "Gloo Map",
     "loadingMap": "Loading map...",
     "yourLocation": "Your Location",
-    "groupAttending": "{count} group attending",
+    "mainzLocation": "Mainz Neustadt",
     "groupsAttending": "{count} groups attending",
-    "noGroups": "No groups registered yet. Be the first!",
-    "members": "members",
-    "glooCrewFallback": "Gloo Group",
+    "noGroups": "No groups yet. Be the first!",
+    "toggleRsvp": "Join / Leave",
     "processing": "Processing...",
-    "toggleRsvp": "Join / Leave"
+    "partyLabel": "Pre-Party",
+    "activeParty": "Active Party",
+    "createParty": "Create Party",
+    "timeRemaining": "Time Remaining",
+    "privacyNote": "Your marker is visible on the map. Exact address is hidden and only shared in chat.",
+    "stopParty": "Stop Pre-Party",
+    "descriptionLabel": "Description (Optional)",
+    "descriptionPlaceholder": "E.g. We bought 2 crates of beer! Join us!",
+    "privacySafeLabel": "Privacy safe:",
+    "privacySafeDesc": "We will mark the current center of your map, but your exact street/house number will be hidden until you chat with a match.",
+    "shareLocation": "Share Location",
+    "confirmedGuests": "Confirmed Guests",
+    "pendingRequests": "Pending Requests ({count})",
+    "requestAccess": "Request Access",
+    "requestPending": "Request Pending...",
+    "opening": "Opening...",
+    "chatInfo": "Chat / Info",
+    "sending": "Sending..."
+  },
+  "Preferences": {
+    "title": "Search Preferences",
+    "howItWorksTitle": "How it works",
+    "howItWorksDesc": "These filters control which groups you see in the discovery feed. Changes apply immediately after saving.",
+    "lookingFor": "Looking for",
+    "ageRange": "Age Range",
+    "minAge": "Min age",
+    "maxAge": "Max age",
+    "maxDistance": "Max Distance",
+    "apply": "Apply Preferences",
+    "saving": "Saving...",
+    "saved": "✓ Saved!",
+    "genderMixed": "Mixed",
+    "genderMale": "Male",
+    "genderFemale": "Female",
+    "genderDiverse": "Diverse"
+  },
+  "Verify": {
+    "title": "Verify your Account",
+    "subtitle": "You are just one click away from joining the best pre-parties in your area.",
+    "noToken": "No token provided.",
+    "invalidToken": "This verification link is invalid or has already been used.",
+    "verifying": "Verifying...",
+    "button": "Click here to Verify"
   }
 }

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { Compass, Map, MessageSquare, User, LogIn, Gamepad2 } from "lucide-react";
@@ -21,19 +20,16 @@ export default function Navigation({ isGuest, onSecureClick }: NavigationProps) 
   const [unreadCount, setUnreadCount] = useState(0);
 
   useEffect(() => {
-    // 1. Reset the notification badge when the user enters the messages tab
     if (pathname.includes(`/${locale}/messages`)) {
       setUnreadCount(0);
     }
 
-    // 2. Global Subscription to listen for new incoming messages anywhere in the app
     const channel = supabase
       .channel("global_navigation_notifications")
       .on(
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "Message" },
         () => {
-          // If a new message is inserted and the user is NOT on the messages page, increment badge
           if (!pathname.includes(`/${locale}/messages`)) {
             setUnreadCount((prev) => prev + 1);
           }

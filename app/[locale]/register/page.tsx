@@ -58,7 +58,7 @@ export default function RegisterPage() {
         }
         if (parsed.agreed) setAgreed(parsed.agreed);
       } catch (e) {
-        console.error("Error parseando los datos guardados");
+        console.error("Error parsing saved registration data:", e);
       }
     }
   }, []);
@@ -70,13 +70,11 @@ export default function RegisterPage() {
   }, [name, email, dob, username, password, agreed]);
 
   useEffect(() => {
-    // Only query DB if username has at least 3 characters
     if (username.trim().length < 3) {
       setIsUsernameAvailable(null);
       return;
     }
 
-    // Add a 500ms delay to avoid spamming the database while the user is typing
     const timer = setTimeout(async () => {
       setIsCheckingUsername(true);
       const result = await checkUsernameAvailability(username.trim());
@@ -84,7 +82,6 @@ export default function RegisterPage() {
       setIsCheckingUsername(false);
     }, 500);
 
-    // Clean up timer if the user types again before 500ms
     return () => clearTimeout(timer);
   }, [username]);
 
@@ -92,7 +89,6 @@ export default function RegisterPage() {
     const val = e.target.value;
     setPassword(val);
     
-    // Evaluate OWASP regex conditions individually for UI feedback
     setPwdCriteria({
       length: val.length >= 8,
       uppercase: /[A-Z]/.test(val),
@@ -112,7 +108,6 @@ export default function RegisterPage() {
     }
   }
 
-  // calculate max date for date input (today - 18 years)
   const today = new Date();
   const maxDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate())
     .toISOString()
@@ -146,7 +141,7 @@ export default function RegisterPage() {
         <div className="flex items-center mb-6">
           <button 
             onClick={() => {
-              sessionStorage.removeItem("gloo_register_data"); // delete data
+              sessionStorage.removeItem("gloo_register_data");
               router.push(`/${locale}/login`);
             }} 
             className="p-2 -ml-2 rounded-full hover:bg-gray-100 transition-colors text-gray-600"
@@ -165,7 +160,7 @@ export default function RegisterPage() {
             {t('alreadyHaveAccount')}
             <Link 
               href={`/${locale}/login`} 
-              onClick={() => sessionStorage.removeItem("gloo_register_data")} // delete data
+              onClick={() => sessionStorage.removeItem("gloo_register_data")}
               className="text-black font-bold hover:underline ml-1"
             >
               {t('signIn')}
@@ -204,8 +199,6 @@ export default function RegisterPage() {
           </div>
 
           {/* Row 2: Date of Birth (Below names) */}
-          {/* --- MODERNIZED DATE OF BIRTH SELECTOR --- */}
-          {/* Why: We transform the native picker into a premium custom UI block using specialized Tailwind utility spacing and color focus overrides. */}
           <div className="relative flex items-center bg-[#F7F7F7] rounded-2xl px-4 py-4 focus-within:ring-2 focus-within:ring-black/20 transition-all w-full overflow-hidden">
             
             {/* Calendar Icon */}
@@ -259,7 +252,7 @@ export default function RegisterPage() {
                 name="username"
                 type="text" 
                 value={username}
-                onChange={(e) => setUsername(e.target.value.replace(/\s/g, ""))} // Usernames are usually lowercase
+                onChange={(e) => setUsername(e.target.value.replace(/\s/g, ""))}
                 placeholder={t('usernamePlaceholder')}
                 required
                 className="bg-transparent outline-none w-full ml-2 text-gray-800 placeholder-gray-400 font-medium pr-8"
@@ -358,8 +351,6 @@ export default function RegisterPage() {
             <input 
               type="checkbox" 
               id="terms" 
-              // --- FIX: Bind the checkbox state to React ---
-              // Why: Without 'checked' and 'onChange', React doesn't know the user clicked the box, so 'agreed' remains false.
               checked={agreed}
               onChange={(e) => setAgreed(e.target.checked)}
               className="mt-1 w-5 h-5 rounded border-gray-300 text-black accent-black focus:ring-black cursor-pointer"
