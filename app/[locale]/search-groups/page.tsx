@@ -99,12 +99,13 @@ export default function PrePartyPage() {
     setLoading(true);
 
     try {
-      const currentPage = reset ? 0 : page;
+      const response = await getDiscoveryGroups({ page: page, distance: tempDistance });
 
-      const response = await getDiscoveryGroups({
-        page: currentPage,
-        distance,
-      });
+      if (response.error === "Unauthorized") {
+        setGroups([]);
+        setLoading(false);
+        return;
+      }
 
       if (response.groups && response.groups.length === 0) {
         setHasNoGroup(true);
