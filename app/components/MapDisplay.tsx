@@ -298,7 +298,7 @@ export default function MapDisplay() {
                     <span className="bg-pink-500 text-white text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full mb-1 inline-block">Vorglühen</span>
                     <h3 className="font-black text-lg leading-tight mt-1">Host: {party.owner.name}</h3>
                     {party.owner.group && <p className="text-xs font-bold text-gray-600 mb-2">{party.owner.group.membersCount} members</p>}
-                    <div className="bg-gray-100 text-[10px] font-bold text-gray-500 px-2 py-1 rounded mb-1 flex items-center gap-1">📍 {party.locationName}</div>
+                    <div className="bg-gray-100 text-[10px] font-bold text-gray-500 px-2 py-1 rounded mb-1 flex items-center gap-1">{party.locationName}</div>
                   </div>
 
                   {(isHost || isAccepted) && acceptedAttendees.length > 0 && (
@@ -361,8 +361,25 @@ export default function MapDisplay() {
 
       {/* FAB & Bottom Sheet*/}
       <div className="absolute bottom-20 right-4 z-[1000]">
-        <button onClick={() => setIsSheetOpen(true)} className={`w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300 shadow-2xl ${ myEvent ? "bg-pink-500 border-2 border-white text-white animate-pulse" : "bg-[#111] border border-[#FF725E] text-[#FF725E] hover:scale-105" }`}>
-          {myEvent ? <Clock size={24} /> : <Flame size={24} strokeWidth={2.5} />}
+        <button
+          onClick={() => setIsSheetOpen(true)}
+          className={`h-12 px-5 rounded-full flex items-center gap-2 transition-all duration-300 shadow-2xl font-sans text-xs font-black uppercase tracking-wider ${
+            myEvent 
+            ? "bg-pink-500 border border-white text-white animate-pulse" 
+            : "bg-[#111] border border-[#FF725E] text-[#FF725E] hover:scale-105 active:scale-95"
+          }`}
+        >
+          {myEvent ? (
+            <>
+              <Clock size={16} />
+              <span>Active Party</span>
+            </>
+          ) : (
+            <>
+              <Flame size={16} strokeWidth={2.5} />
+              <span>Create Party</span>
+            </>
+          )}
         </button>
       </div>
 
@@ -394,7 +411,6 @@ export default function MapDisplay() {
                   <input type="text" value={partyDescription} onChange={(e) => setPartyDescription(e.target.value)} placeholder="E.g. We bought 2 crates of beer! Join us 🍻" className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-pink-500 transition-colors placeholder:text-gray-700"/>
                 </div>
                 <div className="bg-[#1a1a1a] p-3 rounded-xl border border-white/5 flex items-start gap-3 mt-4">
-                  <div className="mt-0.5">📍</div>
                   <p className="text-xs text-gray-400 leading-tight"><strong className="text-white">Privacy safe:</strong> We will mark the current center of your map, but your exact street/house number will be <span className="text-pink-400 font-bold">hidden</span> until you chat with a match.</p>
                 </div>
                 <button onClick={handleStartParty} disabled={isProcessingParty} className="w-full bg-pink-500 hover:bg-pink-600 text-white font-black py-4 rounded-xl uppercase tracking-widest mt-6 shadow-[0_0_20px_rgba(236,72,153,0.3)] active:scale-95 transition-all flex justify-center items-center">
