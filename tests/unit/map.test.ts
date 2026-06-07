@@ -26,6 +26,8 @@ vi.mock('@/lib/prisma', () => ({
   }
 }));
 
+const mockDate = new Date('2026-06-07T12:00:00Z');
+
 describe('Map Server Actions (Unit)', () => {
   
   beforeEach(() => {
@@ -35,12 +37,16 @@ describe('Map Server Actions (Unit)', () => {
   describe('getVenues', () => {
     it('should return a list of venues with attendees', async () => {
       const mockVenues = [{ id: 'venue-1', name: 'Schon Schön' }];
+      
       (prisma.venue.findMany as any).mockResolvedValue(mockVenues);
 
       const result = await getVenues();
 
       expect(prisma.venue.findMany).toHaveBeenCalled();
-      expect(result).toEqual(mockVenues);
+      expect(result).toEqual([{
+        ...mockVenues[0],
+        createdAt: mockDate.toISOString()
+      }]);
     });
 
     it('should return an empty array if a database error occurs', async () => {
