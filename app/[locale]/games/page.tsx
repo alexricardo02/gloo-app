@@ -5,6 +5,7 @@ import { useTranslations, useLocale } from "next-intl";
 import { useRouter } from "next/navigation";
 import Navigation from "@/app/components/Navigation";
 import { Gamepad2, Sparkles, Trophy, Flame } from "lucide-react";
+import Link from "next/link";
 
 export default function GamesPage() {
   const t = useTranslations("Games");
@@ -82,10 +83,10 @@ export default function GamesPage() {
         <div className="flex flex-col gap-3">
           {gamesList.map((game) => {
             return (
-              <button
+              <Link
+                href={`/${locale}/games/${game.id}`}
                 key={game.id}
-                onClick={() => router.push(`/${locale}/games/${game.id}`)}
-                className="relative w-full bg-[#111111] rounded-2xl overflow-hidden border border-white/5 hover:border-[#FF725E]/30 transition-all duration-300 p-5 text-left flex items-start gap-4 group hover:scale-[1.01]"
+                className="relative w-full bg-[#111111] rounded-2xl overflow-hidden border border-white/5 hover:border-[#FF725E]/30 transition-all duration-300 p-5 text-left flex items-start gap-4 group hover:scale-[1.01] block" // Añadí 'block'
               >
                 {/* Visual Icon Container */}
                 <div className="w-14 h-14 rounded-xl bg-white/5 flex items-center justify-center text-3xl shrink-0 group-hover:bg-[#FF725E]/10 transition-colors duration-300">
@@ -106,7 +107,7 @@ export default function GamesPage() {
                     {game.description}
                   </p>
                 </div>
-              </button>
+              </Link>
             );
           })}
         </div>
