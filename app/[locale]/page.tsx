@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { useState, useRef, useEffect, useTransition } from 'react';
 import { useTranslations, useLocale } from "next-intl";
 import { useRouter, usePathname } from "next/navigation";
@@ -62,7 +61,6 @@ export default function Home() {
 
   const activeLanguage = languages.find(lang => lang.code === currentLocale) || languages[0];
 
-  // handle click 
   const handleGuestEntry = () => {
     startTransition(async () => {
       await loginAsGuest(currentLocale);
@@ -88,9 +86,7 @@ export default function Home() {
     }
   }, []);
 
-  /**
-   * Function to change the language of the application using the dropdown menu
-   */
+
   const handleLanguageChange = (lang: { code: string; label: string; flag: string }) => {
     setIsOpen(false);
 

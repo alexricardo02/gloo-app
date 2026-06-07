@@ -37,7 +37,201 @@
     "title": "Juegos",
     "subtitle": "¡Juega con tu grupo y establece un récord!",
     "neverhaveiever": "Yo Nunca",
-    "truthordare": "Verdad o Reto"
+    "truthordare": "Verdad o Reto",
+    "game1Title": "Yo Nunca",
+    "game1Desc": "El clásico definitivo para romper el hielo y hacer reír a tu grupo.",
+    "game1Tag": "Popular",
+    "game2Title": "Verdad o Reto",
+    "game2Desc": "Dale sabor a la previa con retos locos y revelaciones inesperadas.",
+    "game2Tag": "Picante",
+    "game3Title": "¿Quién Es Más Probable?",
+    "game3Desc": "Descubre lo que tus amigos realmente piensan el uno del otro.",
+    "game3Tag": "Fiesta",
+    "game4Title": "El Conductor",
+    "game4Desc": "Un juego de cartas rápido donde la estrategia importa y los perdedores beben.",
+    "game4Tag": "Clásico"
+  },
+  "NeverHaveIEver": {
+    "title": "Yo Nunca",
+    "prefix": "Yo nunca...",
+    "tapForNext": "Toca para cambiar",
+    "questions": [
+      "le hice ghosting a alguien después de una primera cita.",
+      "envié un mensaje comprometedor a la persona equivocada.",
+      "robé un trago en una fiesta.",
+      "usé un nombre falso en un bar.",
+      "besé a alguien en esta habitación.",
+      "mentí sobre mi edad para entrar a un club.",
+      "me quedé dormido en un lugar público después de salir.",
+      "me colé en una zona VIP.",
+      "le escribí a mi ex borracho a las 3am.",
+      "fingí estar enfermo para evitar una cita.",
+      "me besé con un desconocido en la pista de baile.",
+      "desperté sin saber dónde estaba.",
+      "gasté el dinero del alquiler en una noche de fiesta.",
+      "me echaron de un bar o un club.",
+      "me bañé desnudo en el mar o una piscina.",
+      "le mentí a mi pareja sobre dónde estaba.",
+      "hice el paseo de la vergüenza.",
+      "bailé encima de una mesa o una barra.",
+      "perdí el móvil en una noche de fiesta.",
+      "vomité en un taxi."
+    ]
+  },
+  "MostLikelyTo": {
+    "title": "¿Quién Es Más Probable?",
+    "header": "¿Quién es más probable que...",
+    "nextQuestion": "Siguiente Pregunta",
+    "questions": [
+      "ser arrestado por algo estúpido?",
+      "hacerse millonario?",
+      "sobrevivir a un apocalipsis zombi?",
+      "hacer ghosting a todos y mudarse a otro país?",
+      "acabar en un reality show?",
+      "provocar un incendio cocinando por accidente?",
+      "volver con su ex tóxico?",
+      "gastarse todo el dinero en una noche de fiesta?",
+      "casarse con alguien que conoció de fiesta?",
+      "ser el último en pie en una fiesta?",
+      "quedarse dormido en el autobús de vuelta?",
+      "hacerse viral por algo vergonzoso?",
+      "salir con alguien 10 años mayor?",
+      "dejar su trabajo para viajar por el mundo?",
+      "hacerse famoso?",
+      "llorar en una boda donde casi no conoce a nadie?",
+      "ganar un concurso de bebida?",
+      "fundar una secta sin querer?",
+      "enviarle un mensaje inapropiado a su jefe?",
+      "aparecer en un podcast de crimen verdadero como sospechoso?"
+    ]
+  },
+  "TruthOrDare": {
+    "title": "Verdad o Reto",
+    "truth": "Verdad",
+    "dare": "Reto",
+    "prompts": [
+      {
+        "type": "truth",
+        "text": "¿Cuál es tu mayor arrepentimiento de una relación pasada?"
+      },
+      {
+        "type": "truth",
+        "text": "¿Quién de esta habitación te parece más atractivo/a?"
+      },
+      {
+        "type": "truth",
+        "text": "¿Qué es lo más vergonzoso que has hecho estando borracho/a?"
+      },
+      {
+        "type": "truth",
+        "text": "¿Alguna vez has mentido para cancelar una cita?"
+      },
+      {
+        "type": "truth",
+        "text": "¿Qué es lo más comprometedor que tienes en el móvil ahora mismo?"
+      },
+      {
+        "type": "truth",
+        "text": "¿Alguna vez has fingido estar enfermo para evitar a alguien?"
+      },
+      {
+        "type": "truth",
+        "text": "¿Qué es lo peor que has hecho en una fiesta?"
+      },
+      {
+        "type": "truth",
+        "text": "¿Alguna vez has tenido un crush con alguien de esta habitación?"
+      },
+      {
+        "type": "truth",
+        "text": "¿Cuál es un secreto que nunca le has contado a nadie aquí?"
+      },
+      {
+        "type": "truth",
+        "text": "¿Alguna vez has robado algo?"
+      },
+      {
+        "type": "dare",
+        "text": "Deja que el grupo mire la galería de tu móvil durante 1 minuto."
+      },
+      {
+        "type": "dare",
+        "text": "Envía un mensaje arriesgado a la quinta persona en tus contactos."
+      },
+      {
+        "type": "dare",
+        "text": "Haz tu mejor imitación de alguien de esta habitación."
+      },
+      {
+        "type": "dare",
+        "text": "Tómate un chupito o termínate la bebida ahora mismo."
+      },
+      {
+        "type": "dare",
+        "text": "Llama a alguien y cántale el cumpleaños feliz sin importar si es su cumpleaños."
+      },
+      {
+        "type": "dare",
+        "text": "Deja que el grupo publique lo que quiera en tu historia de Instagram."
+      },
+      {
+        "type": "dare",
+        "text": "Haz 20 flexiones ahora mismo."
+      },
+      {
+        "type": "dare",
+        "text": "Dale un cumplido de 60 segundos a cada persona de la sala."
+      },
+      {
+        "type": "dare",
+        "text": "Deja que alguien le envíe un DM a tu último match en Tinder."
+      },
+      {
+        "type": "dare",
+        "text": "Lleva algo ridículo puesto durante las próximas 3 rondas."
+      }
+    ]
+  },
+  "BusDriver": {
+    "title": "El Conductor",
+    "step1": "¿Rojo o Negro?",
+    "step2": "¿Mayor o Menor?",
+    "step3": "¿Dentro o Fuera?",
+    "step4": "¡Adivina el Palo!",
+    "won": "¡Sobreviviste al Autobús!",
+    "lost": "¡BEBE! Vuelve a empezar.",
+    "btnRed": "Rojo",
+    "btnBlack": "Negro",
+    "btnHigher": "Mayor",
+    "btnLower": "Menor",
+    "btnInside": "Dentro",
+    "btnOutside": "Fuera",
+    "restart": "Siguiente Jugador"
+  },
+  "Preferences": {
+    "title": "Preferencias de Búsqueda",
+    "howItWorksTitle": "Cómo funciona",
+    "howItWorksDesc": "Estos filtros controlan qué grupos ves en el feed de descubrimiento. Los cambios se aplican inmediatamente al guardar.",
+    "lookingFor": "Busco",
+    "ageRange": "Rango de Edad",
+    "minAge": "Edad mínima",
+    "maxAge": "Edad máxima",
+    "maxDistance": "Distancia Máxima",
+    "apply": "Aplicar Preferencias",
+    "saving": "Guardando...",
+    "saved": "✓ ¡Guardado!",
+    "genderMixed": "Mixto",
+    "genderMale": "Hombres",
+    "genderFemale": "Mujeres",
+    "genderDiverse": "Diverso"
+  },
+  "Verify": {
+    "title": "Verifica tu Cuenta",
+    "subtitle": "Estás a un clic de unirte a las mejores previas de tu área.",
+    "noToken": "No se encontró el token.",
+    "invalidToken": "Este enlace de verificación no es válido o ya fue utilizado.",
+    "verifying": "Verificando...",
+    "button": "Haz clic aquí para verificar"
   },
   "Login": {
     "title": "Iniciar sesión",
@@ -198,5 +392,33 @@
     "section2Content": "Tus datos se utilizan exclusivamente para proporcionar y mejorar nuestros servicios, emparejarte con grupos relevantes y garantizar un entorno seguro para nuestra comunidad.",
     "section3Title": "3. Intercambio de Datos",
     "section3Content": "No vendemos tus datos personales. Solo compartimos información con terceros cuando es necesario para proporcionar nuestros servicios o cumplir con obligaciones legales."
+  },
+  "Map": {
+    "title": "Mapa Gloo",
+    "loadingMap": "Cargando mapa...",
+    "yourLocation": "Tu Ubicación",
+    "mainzLocation": "Mainz Neustadt",
+    "groupsAttending": "{count} grupos asistiendo",
+    "noGroups": "Sin grupos todavía. ¡Sé el primero!",
+    "toggleRsvp": "Unirse / Salir",
+    "processing": "Procesando...",
+    "partyLabel": "Pre-fiesta",
+    "activeParty": "Previa Activa",
+    "createParty": "Crear Previa",
+    "timeRemaining": "Tiempo Restante",
+    "privacyNote": "Tu marcador es visible en el mapa. La dirección exacta está oculta y solo se comparte en el chat.",
+    "stopParty": "Detener Pre-fiesta",
+    "descriptionLabel": "Descripción (Opcional)",
+    "descriptionPlaceholder": "Ej. ¡Compramos 2 cajas de cerveza! Únete 🍻",
+    "privacySafeLabel": "Privacidad segura:",
+    "privacySafeDesc": "Marcaremos el centro actual de tu mapa, pero tu dirección exacta estará oculta hasta que hagas match.",
+    "shareLocation": "Compartir Ubicación",
+    "confirmedGuests": "Invitados Confirmados",
+    "pendingRequests": "Solicitudes Pendientes ({count})",
+    "requestAccess": "Solicitar Acceso",
+    "requestPending": "Solicitud Enviada...",
+    "opening": "Abriendo...",
+    "chatInfo": "Chat / Info",
+    "sending": "Enviando..."
   }
 }

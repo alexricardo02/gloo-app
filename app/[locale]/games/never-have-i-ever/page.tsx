@@ -2,47 +2,14 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { ChevronLeft, RefreshCw } from "lucide-react";
-
-const gameData: Record<string, string[]> = {
-  en: [
-    "Never have I ever ghosted someone after a first date.",
-    "Never have I ever sent a risky text to the wrong person.",
-    "Never have I ever stolen a drink at a party.",
-    "Never have I ever used a fake name at a bar.",
-    "Never have I ever kissed someone in this room.",
-    "Never have I ever lied about my age to get into a club.",
-    "Never have I ever fallen asleep in a public place after partying.",
-    "Never have I ever crashed a VIP section."
-  ],
-  es: [
-    "Yo nunca he hecho ghosting después de una primera cita.",
-    "Yo nunca he enviado un mensaje arriesgado a la persona equivocada.",
-    "Yo nunca he robado un trago en una fiesta.",
-    "Yo nunca he usado un nombre falso en un bar.",
-    "Yo nunca he besado a alguien en esta habitación.",
-    "Yo nunca he mentido sobre mi edad para entrar a un club.",
-    "Yo nunca he quedado dormido en un lugar público después de salir.",
-    "Yo nunca me he colado en una zona VIP."
-  ],
-  de: [
-    "Ich habe noch nie jemanden nach einem ersten Date geghostet.",
-    "Ich habe noch nie eine riskante Nachricht an die falsche Person gesendet.",
-    "Ich habe noch nie ein Getränk auf einer Party gestohlen.",
-    "Ich habe noch nie einen falschen Namen in einer Bar benutzt.",
-    "Ich habe noch nie jemanden in diesem Raum geküsst.",
-    "Ich habe noch nie bei meinem Alter gelogen, um in einen Club zu kommen.",
-    "Ich bin noch nie nach einer Party an einem öffentlichen Ort eingeschlafen.",
-    "Ich habe mich noch nie in einen VIP-Bereich geschlichen."
-  ]
-};
 
 export default function NeverHaveIEverPage() {
   const router = useRouter();
+  const t = useTranslations("NeverHaveIEver");
+  const questions = t.raw("questions") as string[];
   const locale = useLocale();
-  
-  const questions = gameData[locale] || gameData["en"];
   
   const [currentQuestion, setCurrentQuestion] = useState("");
   const [isAnimating, setIsAnimating] = useState(false);
@@ -98,17 +65,17 @@ export default function NeverHaveIEverPage() {
           }`}
         >
           <span className="absolute top-8 text-[#FF725E] font-black uppercase tracking-widest text-[10px]">
-            {locale === "es" ? "Yo nunca..." : locale === "de" ? "Ich habe noch nie..." : "Never have I ever..."}
+            {t("prefix")}
           </span>
           
           <h2 className="text-2xl sm:text-3xl font-bold leading-tight">
-            {currentQuestion.replace(/Yo nunca he |Ich habe noch nie |Never have I ever /i, "")}
+            {currentQuestion}
           </h2>
 
           <div className="absolute bottom-8 flex flex-col items-center gap-2 text-gray-500">
             <RefreshCw size={16} className="animate-pulse" />
             <span className="text-[10px] font-bold uppercase tracking-widest">
-              {locale === "es" ? "Toca para cambiar" : "Tap for next"}
+              {t("tapForNext")}
             </span>
           </div>
         </button>

@@ -2,67 +2,17 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { ChevronLeft, Beer, Trophy, RotateCcw } from "lucide-react";
 
 type Suit = "♥" | "♦" | "♠" | "♣";
 type Card = { suit: Suit; value: number; display: string };
 
-const dictionary: Record<string, Record<string, string>> = {
-  en: {
-    title: "Bus Driver",
-    step1: "Red or Black?",
-    step2: "Higher or Lower?",
-    step3: "Inside or Outside?",
-    step4: "Guess the Suit!",
-    won: "You Survived the Bus!",
-    lost: "DRINK! Start Over.",
-    btnRed: "Red",
-    btnBlack: "Black",
-    btnHigher: "Higher",
-    btnLower: "Lower",
-    btnInside: "Inside",
-    btnOutside: "Outside",
-    restart: "Next Player",
-  },
-  es: {
-    title: "El Conductor",
-    step1: "¿Rojo o Negro?",
-    step2: "¿Mayor o Menor?",
-    step3: "¿Dentro o Fuera?",
-    step4: "¡Adivina el Palo!",
-    won: "¡Sobreviviste al Autobús!",
-    lost: "¡BEBE! Vuelve a empezar.",
-    btnRed: "Rojo",
-    btnBlack: "Negro",
-    btnHigher: "Mayor",
-    btnLower: "Menor",
-    btnInside: "Dentro",
-    btnOutside: "Fuera",
-    restart: "Siguiente Jugador",
-  },
-  de: {
-    title: "Busfahrer",
-    step1: "Rot oder Schwarz?",
-    step2: "Höher oder Tiefer?",
-    step3: "Innerhalb oder Außerhalb?",
-    step4: "Rate das Symbol!",
-    won: "Du hast den Bus überlebt!",
-    lost: "TRINKEN! Von vorne.",
-    btnRed: "Rot",
-    btnBlack: "Schwarz",
-    btnHigher: "Höher",
-    btnLower: "Tiefer",
-    btnInside: "Innerhalb",
-    btnOutside: "Außerhalb",
-    restart: "Nächster Spieler",
-  }
-};
-
 export default function BusDriverPage() {
   const router = useRouter();
+  const t = useTranslations("BusDriver");
+
   const locale = useLocale();
-  const t = dictionary[locale] || dictionary["en"];
 
   const [step, setStep] = useState(1);
   const [cards, setCards] = useState<Card[]>([]);
@@ -158,7 +108,7 @@ export default function BusDriverPage() {
           <ChevronLeft size={28} />
         </button>
         <h1 className="text-sm font-black uppercase tracking-[0.2em] ml-2 text-gray-400">
-          {t.title}
+          {t("title")}
         </h1>
       </div>
 
@@ -185,20 +135,20 @@ export default function BusDriverPage() {
           {gameStatus === "playing" && (
             <>
               <h2 className="text-2xl font-black uppercase tracking-widest text-emerald-400 mb-8 text-center">
-                {step === 1 && t.step1}
-                {step === 2 && t.step2}
-                {step === 3 && t.step3}
-                {step === 4 && t.step4}
+                {step === 1 && t("step1")}
+                {step === 2 && t("step2")}
+                {step === 3 && t("step3")}
+                {step === 4 && t("step4")}
               </h2>
 
               <div className="w-full grid grid-cols-2 gap-4">
                 {step === 1 && (
                   <>
                     <button onClick={() => handleChoice("red")} className="bg-red-600 hover:bg-red-500 text-white font-black py-4 rounded-2xl uppercase shadow-lg shadow-red-600/20 active:scale-95 transition-all">
-                      {t.btnRed}
+                      {t("btnRed")}
                     </button>
                     <button onClick={() => handleChoice("black")} className="bg-[#1a1a1a] border border-white/10 hover:bg-[#222] text-white font-black py-4 rounded-2xl uppercase shadow-lg active:scale-95 transition-all">
-                      {t.btnBlack}
+                      {t("btnBlack")}
                     </button>
                   </>
                 )}
@@ -206,10 +156,10 @@ export default function BusDriverPage() {
                 {step === 2 && (
                   <>
                     <button onClick={() => handleChoice("higher")} className="bg-emerald-600 hover:bg-emerald-500 text-white font-black py-4 rounded-2xl uppercase shadow-lg shadow-emerald-600/20 active:scale-95 transition-all">
-                      ↑ {t.btnHigher}
+                      ↑ {t("btnHigher")}
                     </button>
                     <button onClick={() => handleChoice("lower")} className="bg-emerald-600 hover:bg-emerald-500 text-white font-black py-4 rounded-2xl uppercase shadow-lg shadow-emerald-600/20 active:scale-95 transition-all">
-                      ↓ {t.btnLower}
+                      ↓ {t("btnLower")}
                     </button>
                   </>
                 )}
@@ -217,10 +167,10 @@ export default function BusDriverPage() {
                 {step === 3 && (
                   <>
                     <button onClick={() => handleChoice("inside")} className="bg-blue-600 hover:bg-blue-500 text-white font-black py-4 rounded-2xl uppercase shadow-lg shadow-blue-600/20 active:scale-95 transition-all">
-                      {t.btnInside}
+                      {t("btnInside")}
                     </button>
                     <button onClick={() => handleChoice("outside")} className="bg-blue-600 hover:bg-blue-500 text-white font-black py-4 rounded-2xl uppercase shadow-lg shadow-blue-600/20 active:scale-95 transition-all">
-                      {t.btnOutside}
+                      {t("btnOutside")}
                     </button>
                   </>
                 )}
@@ -248,14 +198,14 @@ export default function BusDriverPage() {
                 {gameStatus === "won" ? <Trophy size={40} /> : <Beer size={40} />}
               </div>
               <h2 className="text-3xl font-black uppercase tracking-widest text-center mb-8">
-                {gameStatus === "won" ? t.won : t.lost}
+                {gameStatus === "won" ? t("won") : t("lost")}
               </h2>
               <button
                 onClick={restartGame}
                 className="flex items-center gap-2 bg-white text-black font-black uppercase tracking-wider py-4 px-8 rounded-full hover:scale-105 active:scale-95 transition-all"
               >
                 <RotateCcw size={20} />
-                {t.restart}
+                {t("restart")}
               </button>
             </div>
           )}
