@@ -16,8 +16,6 @@ vi.mock('next/headers', () => ({
   cookies: vi.fn(),
 }));
 
-const mockDate = new Date('2026-06-07T12:00:00Z');
-
 describe('Chat Server Actions (Unit Tests)', () => {
 
   beforeEach(() => {
