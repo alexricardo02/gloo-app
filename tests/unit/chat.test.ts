@@ -77,7 +77,6 @@ describe('Chat Server Actions (Unit Tests)', () => {
       expect(result.chats![0].id).toBe('chat-2');
       expect(result.chats![1].id).toBe('chat-1');
       expect(result.chats![2].id).toBe('chat-3');
-
       // Check formatting logic (Host identity and image fallback)
       // Chat 2 (Bob): Fallback to user image because group has no photos
       expect(result.chats![0].name).toBe('Bob');

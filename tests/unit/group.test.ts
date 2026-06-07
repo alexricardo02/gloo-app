@@ -31,6 +31,8 @@ const createFormData = (data: Record<string, string | Blob>) => {
   return formData;
 };
 
+const mockDate = new Date('2026-06-07T12:00:00Z');
+
 describe('Group Server Actions (Unit Tests)', () => {
 
   beforeEach(() => {
@@ -53,7 +55,6 @@ describe('Group Server Actions (Unit Tests)', () => {
     it('should return the group object if the user has a group', async () => {
       vi.mocked(cookies).mockResolvedValue({ get: vi.fn().mockReturnValue({ value: 'user-123' }) } as any);
 
-      const mockDate = new Date('2026-01-01T12:00:00Z');
       
       const mockGroup = { 
         id: 'group-1', 
