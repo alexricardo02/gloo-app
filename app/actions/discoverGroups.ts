@@ -26,46 +26,28 @@ export async function getDiscoveryGroups({
 
   if (!userId) return { error: "Unauthorized" };
 
-  // 1. Get current user's group to use their location and preferences
-  const userGroup = await prisma.group.findUnique({
-    where: { userId },
-  });
-
-  if (!userGroup || !userGroup.latitude || !userGroup.longitude) {
-    const teaserGroup = await prisma.group.findFirst({
-      where: {
-        userId: { not: userId } // Prevent showing the user themselves if a partial record exists
-      },
-      include: {
-        user: {
-          select: { name: true, image: true }
-        }
-      }
+  try {
+    const userGroup = await prisma.group.findUnique({
+      where: { userId },
     });
 
-    return {
-      groups: teaserGroup ? [teaserGroup] : [],
-      hasNoGroup: true // Flag passed to client to trigger the restriction modal
-    };
-  }
+    if (!userGroup || userGroup.latitude === null || userGroup.longitude === null) {
+      return { groups: [] }; 
+    }
 
-  const limit = 10;
-  const skip = page * limit;
+    function getDistanceKm(lat1: number, lon1: number, lat2: number, lon2: number) {
+      const toRad = (deg: number) => (deg * Math.PI) / 180;
+      const R = 6371; // Earth radius in km
+      const dLat = toRad(lat2 - lat1);
+      const dLon = toRad(lon2 - lon1);
+      const a =
+        Math.sin(dLat / 2) ** 2 +
+        Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      return R * c;
+    }
 
-  function getDistanceKm(lat1: number, lon1: number, lat2: number, lon2: number) {
-    const toRad = (deg: number) => (deg * Math.PI) / 180;
-    const R = 6371; // Earth radius in km
-    const dLat = toRad(lat2 - lat1);
-    const dLon = toRad(lon2 - lon1);
-    const a =
-      Math.sin(dLat / 2) ** 2 +
-      Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return R * c;
-  }
-
-  // 2. Fetch groups (Basic bounding box for proximity, then refine in JS)
-  const rawGroups = await prisma.group.findMany({
+    const rawGroups = await prisma.group.findMany({
     where: {
       userId: { not: userId }, // Exclude own group
       isPartyMode: isPartyMode,
@@ -106,7 +88,7 @@ export async function getDiscoveryGroups({
         : group.ageMax >= userGroup.searchAgeMin && group.ageMin <= userGroup.searchAgeMax)
     );
 
-  const likedGroupRecords = await prisma.groupLike.findMany({
+    const likedGroupRecords = await prisma.groupLike.findMany({
     where: { fromGroupId: userGroup.id },
     select: { toGroupId: true },
   });
@@ -121,15 +103,25 @@ export async function getDiscoveryGroups({
   });
   const mutualLikeGroupIds = new Set(mutualLikeRecords.map((like) => like.fromGroupId));
 
-  const groups = filteredGroups
-    .slice(skip, skip + limit)
-    .map((group) => ({
-      ...group,
-      likedByCurrentUser: likedGroupIds.has(group.id),
-      isMutualLike: mutualLikeGroupIds.has(group.id),
-    }));
+  const limit = 10;
+    const skip = page * limit;
 
-  return { groups };
+    const groups = filteredGroups
+      .slice(skip, skip + limit)
+      .map((group) => ({
+        ...group,
+        createdAt: group.createdAt.toISOString(),
+        updatedAt: group.updatedAt.toISOString(),
+        likedByCurrentUser: likedGroupIds.has(group.id),
+        isMutualLike: mutualLikeGroupIds.has(group.id),
+      }));
+
+    return { groups };
+
+    } catch (error) {
+    console.error("Critical error in getDiscoveryGroups:", error);
+    return { error: "Failed to fetch groups" }; 
+  }
 }
 
 /**
