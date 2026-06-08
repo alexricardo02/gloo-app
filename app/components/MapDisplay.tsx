@@ -13,6 +13,8 @@ import {
 } from "../actions/map";
 import { Check, Users, Flame, X, Clock, MessageCircle } from "lucide-react";
 import { supabase } from "@/lib/supabase";
+import GuestPaywall from "./GuestPaywall";
+import { Lock } from "lucide-react";
 
 interface EventAttendance {
   id: string;
@@ -76,6 +78,7 @@ export default function MapDisplay() {
   const mapRef = useRef<L.Map | null>(null);
   const centerPosition: [number, number] = [49.9929, 8.2473]; // Mainz Central Coordinates
   
+  const [showPaywall, setShowPaywall] = useState(false);
   const [userPosition, setUserPosition] = useState<[number, number]>(centerPosition);
   const [locationName, setLocationName] = useState<string>(t("mainzLocation"));
   const [session, setSession] = useState<{userId: string, groupId: string | null} | null>(null);
@@ -216,8 +219,15 @@ export default function MapDisplay() {
     
     if (result && 'success' in result && result.success) {
       await loadMapData();
-    } else if (result && 'error' in result) {
-      console.error("RSVP error:", result.error);
+    } else if (result && 'error' in result && result.error) {
+
+      const authErrors = ["Not authorized", "Group required", "Gruppe erforderlich", "Nicht autorisiert"];
+      
+      if (authErrors.includes(result.error)) {
+        setShowPaywall(true);
+      } else {
+        console.error("RSVP error:", result.error);
+      }
     }
     setLoadingActionId(null);
   };
@@ -229,13 +239,21 @@ export default function MapDisplay() {
     const center = mapRef.current.getCenter();
     
     const result = await startPreParty(center.lat, center.lng, partyDescription);
-    if (result.error) {
-      console.error(result.error);
+    
+    if (result && result.error) {
+      const authErrors = ["Not authorized", "Group required", "Gruppe erforderlich", "Nicht autorisiert"];
+      
+      if (authErrors.includes(result.error)) {
+        setShowPaywall(true);
+      } else {
+        console.error("Start party error:", result.error);
+      }
     } else {
       setPartyDescription("");
       setIsSheetOpen(false);
       await loadMapData();
     }
+    
     setIsProcessingParty(false);
   };
 
@@ -251,8 +269,20 @@ export default function MapDisplay() {
 
   const handleRequestAccess = async (eventId: string) => {
     setLoadingActionId(eventId);
-    await requestEventAttendance(eventId);
-    await loadMapData();
+    const result = await requestEventAttendance(eventId);
+    
+    if (result && 'error' in result && result.error) {
+      const authErrors = ["Not authorized", "Group required", "Gruppe erforderlich", "Nicht autorisiert"];
+      
+      if (authErrors.includes(result.error)) {
+        setShowPaywall(true);
+      } else {
+        console.error("Request access error:", result.error);
+      }
+    } else {
+      await loadMapData();
+    }
+    
     setLoadingActionId(null);
   };
 
@@ -264,9 +294,19 @@ export default function MapDisplay() {
   const handleOpenChat = async (targetUserId: string) => {
     setIsProcessingParty(true);
     const result = await getOrCreateChatWithUser(targetUserId);
-    if (result.success && result.chatId) {
+    
+    if (result && result.error) {
+      const authErrors = ["Not authorized", "Group required", "Gruppe erforderlich", "Nicht autorisiert"];
+      
+      if (authErrors.includes(result.error)) {
+        setShowPaywall(true);
+      } else {
+        console.error("Open chat error:", result.error);
+      }
+    } else if (result && result.success && result.chatId) {
       router.push(`/${locale}/messages/${result.chatId}`);
     }
+    
     setIsProcessingParty(false);
   };
 
@@ -463,6 +503,7 @@ export default function MapDisplay() {
           </div>
         </div>
       )}
+      {showPaywall && <GuestPaywall onClose={() => setShowPaywall(false)} />}
     </div>
   );
 }
