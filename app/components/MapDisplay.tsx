@@ -92,7 +92,13 @@ export default function MapDisplay() {
   const [isProcessingParty, setIsProcessingParty] = useState(false);
   const [timeLeft, setTimeLeft] = useState<string>("");
 
+  const [isGuest, setIsGuest] = useState(false);
+
+
   const loadMapData = async () => {
+    if (isGuest) {
+      setShowPaywall(true); 
+    }
     const sess = await getMapSession();
     setSession(sess);
     const venuesData = await getVenues();

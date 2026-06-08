@@ -15,14 +15,14 @@ export default function middleware(req: NextRequest) {
   const pathname = req.nextUrl.pathname;
 
   // 3. protected zones
-  const isProtectedRoute = /\/(messages|chat|profile)/.test(pathname);
+  const isProtectedRoute = /\/(messages|chat|profile|map)/.test(pathname);
 
   if (isGuest && isProtectedRoute) {
     const localeMatch = pathname.match(/^\/([a-z]{2})\//);
     const locale = localeMatch ? localeMatch[1] : 'en';
     
     // redirecto to dashboard if guest tries to access protected route
-    const redirectUrl = new URL(`/${locale}/dashboard`, req.url);
+    const redirectUrl = new URL(`/${locale}/search-groups?showPaywall=true`, req.url);
     return NextResponse.redirect(redirectUrl);
   }
 
