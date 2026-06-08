@@ -34,7 +34,7 @@ The app supports a **guest mode** that lets anyone browse content without an acc
 
 ## Features
 
-### 🔍 Group Discovery
+###  Group Discovery
 - Vertical snap-scroll carousel (TikTok-style) to browse nearby groups
 - Horizontal photo carousel per group card (Instagram Stories-style navigation)
   - Tap left third → previous photo
@@ -45,46 +45,46 @@ The app supports a **guest mode** that lets anyone browse content without an acc
 - Gender and age range preference filters
 - Infinite scroll with IntersectionObserver pagination
 
-### 👥 Group Profiles
+###  Group Profiles
 - Create and edit a group profile with up to 6 photos
 - Set group gender, age range, description, and search preferences
 - Add Instagram handles (displayed as clickable @links)
 - GPS-based location capture on profile save
 - Max distance preference saved and applied to discovery feed
 
-### 🎮 Games (Guest-accessible)
+###  Games (Guest-accessible)
 - Never Have I Ever
 - Truth or Dare
 - Accessible to all users, including guests
 
-### 💬 Messages
+###  Messages
 - Chat list with unread indicators
 - Search bar
 
-### 🗺️ Map
+###  Map
 - Location-based map view (placeholder, extendable)
 
-### 🌍 Internationalization (i18n)
+###  Internationalization (i18n)
 - Full multi-language support: **English, German, Spanish, French, Italian**
 - Language selector on the welcome screen with cookie-based persistence
 - All UI strings, modals, and action sheets translated
 - Dynamic locale routing via `next-intl`
 
-### 🔐 Authentication
+###  Authentication
 - Email/username + password login
 - Registration with age validation (18+)
 - bcrypt password hashing
 - Session managed via httpOnly cookies
 - Guest mode with temporary session cookies
 
-### 👤 Guest Mode
+###  Guest Mode
 - One-tap guest entry from the welcome screen
 - Full loading overlay (branded spinner) while session is created
 - Paywall shown on first visit — dismissed state persisted in `sessionStorage` so it doesn't repeat in the same tab
 - Contextual bottom sheet (instead of redirect) when a guest touches a restricted feature
 - Games remain accessible to guests
 
-### 📱 Mobile-First UX
+###  Mobile-First UX
 - `100dvh` layout, no browser chrome overflow
 - Touch-native carousel with transform-based animation (no CSS overflow-x conflicts)
 - Branded loading overlay on guest entry transition
