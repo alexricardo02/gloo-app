@@ -22,7 +22,8 @@ export default function middleware(req: NextRequest) {
     const locale = localeMatch ? localeMatch[1] : 'en';
     
     // redirecto to dashboard if guest tries to access protected route
-    const redirectUrl = new URL(`/${locale}/dashboard`, req.url);
+    const redirectUrl = new URL(`/${locale}/search-groups`, req.url);
+    redirectUrl.searchParams.set('showPaywall', 'true');
     return NextResponse.redirect(redirectUrl);
   }
 

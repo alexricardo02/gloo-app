@@ -92,7 +92,13 @@ export default function MapDisplay() {
   const [isProcessingParty, setIsProcessingParty] = useState(false);
   const [timeLeft, setTimeLeft] = useState<string>("");
 
+  const [isGuest, setIsGuest] = useState(false);
+
+
   const loadMapData = async () => {
+    if (isGuest) {
+      setShowPaywall(true); 
+    }
     const sess = await getMapSession();
     setSession(sess);
     const venuesData = await getVenues();
@@ -227,6 +233,7 @@ export default function MapDisplay() {
         setShowPaywall(true);
       } else {
         console.error("RSVP error:", result.error);
+        console.log("ERROR FROM SERVER:", result.error);
       }
     }
     setLoadingActionId(null);
@@ -247,6 +254,7 @@ export default function MapDisplay() {
         setShowPaywall(true);
       } else {
         console.error("Start party error:", result.error);
+        console.log("ERROR FROM SERVER:", result.error);
       }
     } else {
       setPartyDescription("");
@@ -278,6 +286,7 @@ export default function MapDisplay() {
         setShowPaywall(true);
       } else {
         console.error("Request access error:", result.error);
+        console.log("ERROR FROM SERVER:", result.error);
       }
     } else {
       await loadMapData();
@@ -302,6 +311,7 @@ export default function MapDisplay() {
         setShowPaywall(true);
       } else {
         console.error("Open chat error:", result.error);
+        console.log("ERROR FROM SERVER:", result.error);
       }
     } else if (result && result.success && result.chatId) {
       router.push(`/${locale}/messages/${result.chatId}`);
