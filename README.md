@@ -2,7 +2,17 @@
 
 > **The best nights of your life.**
 
-GLOO is a mobile-first social nightlife app that connects groups of people before and during a night out. Think of it as a Tinder-style discovery experience — but for groups, not individuals. Find other crews for a pre-party, discover events nearby, and match with people who share your vibe.
+GLOO is a mobile-first social nightlife app that connects groups of people before and during a night out. Think of it as a Tinder-style discovery experience — but for groups, not individuals. Find other crews for a pre-party, discover events nearby, match with people who share your vibe, and break the ice with interactive party games.
+
+---
+
+## Overview
+
+GLOO allows users to create a group profile (with photos, descriptions, age ranges, genders, and Instagram handles), then browse other nearby groups in a vertical snap-scroll carousel. Users can like groups, send messages upon a mutual match, and filter by distance using geobased queries.
+
+Beyond discovery, GLOO features a **Real-Time Interactive Map** where groups can broadcast their private "Pre-Parties" (Vorglühen) or RSVP to public venues (Bars/Clubs). It also includes a suite of integrated **Party Games** to play with your group or new matches.
+
+The app supports a **Guest Mode** that lets anyone browse content without an account, utilizing a contextual paywall for restricted features.
 
 ---
 
@@ -32,226 +42,80 @@ The app supports a **guest mode** that lets anyone browse content without an acc
 
 ---
 
-## Features
+## Core Features
 
-### 🔍 Group Discovery
-- Vertical snap-scroll carousel (TikTok-style) to browse nearby groups
-- Horizontal photo carousel per group card (Instagram Stories-style navigation)
-  - Tap left third → previous photo
-  - Tap right two-thirds → next photo
-  - Swipe horizontally to navigate
-- Progress bars at the top indicate current photo position
-- Distance-based filtering using the Haversine formula
-- Gender and age range preference filters
-- Infinite scroll with IntersectionObserver pagination
+###  Group Discovery & Matching
+- Vertical snap-scroll carousel (TikTok/Reels style) with horizontal photo swiping.
+- Mutual match system: A chat is only created when both groups like each other.
+- Advanced filtering: Filter nearby groups by maximum distance (Haversine formula), age, and gender preferences.
 
-### 👥 Group Profiles
-- Create and edit a group profile with up to 6 photos
-- Set group gender, age range, description, and search preferences
-- Add Instagram handles (displayed as clickable @links)
-- GPS-based location capture on profile save
-- Max distance preference saved and applied to discovery feed
+###  Real-Time Map & Pre-Parties
+- **Leaflet Integration:** Custom interactive map to explore the city's nightlife.
+- **Venues:** See public bars and clubs, and check how many groups are attending tonight.
+- **Live Pre-Parties:** Host a private pre-party. Other users can "Request Access".
+- **Supabase WebSockets:** Real-time updates for event requests and map markers without reloading the page.
 
-### 🎮 Games (Guest-accessible)
-- Never Have I Ever
-- Truth or Dare
-- Accessible to all users, including guests
+###  Party Games
+- Built-in interactive games to break the ice: *Never Have I Ever*, *Most Likely To*, *Truth or Dare*, and *Busdriver*.
+- Extensive, randomized content libraries for endless replayability.
 
-### 💬 Messages
-- Chat list with unread indicators
-- Search bar
+###  Authentication & Security
+- Custom Auth system (Bcrypt password hashing, secure HTTP-only cookies).
+- Email verification flow.
+- Guest Mode with limited access (Paywall integration).
 
-### 🗺️ Map
-- Location-based map view (placeholder, extendable)
-
-### 🌍 Internationalization (i18n)
-- Full multi-language support: **English, German, Spanish, French, Italian**
-- Language selector on the welcome screen with cookie-based persistence
-- All UI strings, modals, and action sheets translated
-- Dynamic locale routing via `next-intl`
-
-### 🔐 Authentication
-- Email/username + password login
-- Registration with age validation (18+)
-- bcrypt password hashing
-- Session managed via httpOnly cookies
-- Guest mode with temporary session cookies
-
-### 👤 Guest Mode
-- One-tap guest entry from the welcome screen
-- Full loading overlay (branded spinner) while session is created
-- Paywall shown on first visit — dismissed state persisted in `sessionStorage` so it doesn't repeat in the same tab
-- Contextual bottom sheet (instead of redirect) when a guest touches a restricted feature
-- Games remain accessible to guests
-
-### 📱 Mobile-First UX
-- `100dvh` layout, no browser chrome overflow
-- Touch-native carousel with transform-based animation (no CSS overflow-x conflicts)
-- Branded loading overlay on guest entry transition
-- Video background on welcome screen with fade-in (no poster flash)
-- Bottom navigation bar with active state indicators
+###  Internationalization (i18n)
+- Full multi-language support via `next-intl` (English, German, Spanish, French, Italian).
+- Implemented using Next.js `proxy` routing conventions for robust localization.
 
 ---
 
 ## Tech Stack
 
-| Layer | Technology |
-|---|---|
-| Framework | [Next.js 15](https://nextjs.org/) (App Router) |
-| Language | TypeScript |
-| Styling | [Tailwind CSS v4](https://tailwindcss.com/) |
-| Database | PostgreSQL |
-| ORM | [Prisma](https://www.prisma.io/) |
-| Auth | Custom cookie-based sessions + [bcryptjs](https://github.com/dcodeIO/bcrypt.js) |
-| i18n | [next-intl](https://next-intl-docs.vercel.app/) |
-| Testing | [Vitest](https://vitest.dev/) |
-| CI/CD | GitHub Actions |
-| Icons | [Lucide React](https://lucide.dev/) |
-| Fonts | Geist Sans & Geist Mono (via `next/font`) |
+- **Frontend:** Next.js (App Router), React, Tailwind CSS, Lucide Icons.
+- **Backend:** Next.js Server Actions.
+- **Database:** PostgreSQL hosted on Supabase.
+- **ORM:** Prisma.
+- **Real-time:** Supabase WebSockets (Postgres Changes).
+- **Mapping:** Leaflet & React-Leaflet.
+- **Testing:** Vitest (Unit & Integration tests).
+- **CI/CD:** GitHub Actions (Schema validation, automated testing, build checks).
 
 ---
 
 ## Project Structure
 
 ```
-gloo/
+gloo-app/
 ├── app/
-│   ├── [locale]/                    # Locale-scoped routes
-│   │   ├── page.tsx                 # Welcome / landing page
-│   │   ├── layout.tsx               # Root layout with next-intl provider
-│   │   ├── dashboard/page.tsx       # Main dashboard
-│   │   ├── pre-party/page.tsx       # Group discovery carousel
-│   │   ├── games/page.tsx           # Party games
-│   │   ├── messages/page.tsx        # Chat list
-│   │   ├── map/page.tsx             # Map view
-│   │   ├── login/page.tsx           # Login
-│   │   ├── register/page.tsx        # Registration
-│   │   ├── forgotPassword/page.tsx  # Password reset
-│   │   ├── termsOfService/page.tsx  # Terms of Service
-│   │   ├── privacyPolicy/page.tsx   # Privacy Policy
-│   │   └── profile/
-│   │       ├── page.tsx             # User profile
-│   │       ├── create-group/        # Create / edit group
-│   │       └── preferences/         # Search preferences
-│   ├── actions/                     # Next.js Server Actions
-│   │   ├── auth.ts                  # Login, register, logout, getCurrentUser
-│   │   ├── guest.ts                 # Guest session management
-│   │   ├── group.ts                 # Group CRUD
-│   │   └── discoverGroups.ts        # Discovery feed + like toggle
-│   ├── components/
-│   │   ├── GroupCard.tsx            # Photo carousel card component
-│   │   ├── Navigation.tsx           # Bottom navigation bar
-│   │   └── SocialLinks.tsx          # Instagram link component
-│   ├── global-error.tsx             # Global error boundary
-│   └── globals.css                  # Global styles + Tailwind config
-├── messages/                        # i18n translation files
-│   ├── en.json
-│   ├── de.json
-│   ├── es.json
-│   ├── fr.json
-│   └── it.json
-├── prisma/
-│   ├── schema.prisma                # Database schema
-│   ├── seed.ts                      # Test data seeder
-│   └── migrations/                  # Migration history
-├── public/
-│   ├── images/                      # Static images
-│   ├── videos/                      # Background video
-│   └── flags/                       # Locale flag SVGs
-├── i18n.ts                          # next-intl configuration
-├── middleware.ts                    # Locale routing middleware
-└── .github/workflows/ci.yml        # GitHub Actions CI pipeline
+│   ├── [locale]/           # i18n routing pages (UI)
+│   ├── actions/            # Next.js Server Actions (Backend logic)
+│   ├── components/         # Reusable React components (Map, Cards, Navigation)
+│   └── globals.css         # Tailwind directives & global styles
+├── lib/                    # Prisma and Supabase client instances
+├── messages/               # Translation JSON files (en, de, es, fr, it)
+├── prisma/                 # Database schema, migrations, and seed scripts
+├── public/                 # Static assets, images, icons
+├── tests/                  # Vitest suite (unit and integration tests)
+├── i18n.ts                 # Next-intl configuration
+├── middleware.ts           # Route protection and locale proxy
+└── .github/workflows/ci.yml# GitHub Actions CI pipeline
 ```
 
 ---
 
-## Getting Started
+## Incoming Features
 
-### Prerequisites
+- Account & Group Deletion: As a user, I want to be able to permanently delete my account, group, and associated data for privacy reasons. (Requires UI in preferences and a cascading delete Server Action).
 
-- Node.js 20+
-- PostgreSQL database
-- npm
+- Admin & Moderation Dashboard: As an administrator, I need to be able to view reports and delete inappropriate groups or events to keep the community safe.
 
-### Installation
+- Gamification UI: As a user, I want to see my party game scores and compare them on a leaderboard. (Backend schema GameScore exists, UI pending).
 
-```bash
-# 1. Clone the repo
-git clone https://github.com/your-org/gloo.git
-cd gloo
+- Push Notifications: As a user, I want to be notified on my phone when another group matches with me or accepts my pre-party request.
 
-# 2. Install dependencies
-npm install
-
-# 3. Set up environment variables (see below)
-cp .env.example .env
-
-# 4. Push the schema to your database
-npx prisma db push
-
-# 5. Generate the Prisma client
-npx prisma generate
-
-# 6. (Optional) Seed test data
-npx prisma db seed
-
-# 7. Start the development server
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) in your browser.
-
----
-
-## Environment Variables
-
-Create a `.env` file at the root of the project:
-
-```env
-# PostgreSQL connection string
-DATABASE_URL="postgresql://user:password@localhost:5432/gloo"
-```
-
-> **Note:** The app uses cookie-based sessions with no external auth provider, so no additional OAuth secrets are required for the base setup.
-
----
-
-## Database
-
-GLOO uses **PostgreSQL** with Prisma ORM. The schema includes:
-
-| Model | Description |
-|---|---|
-| `User` | Registered users and their profile data |
-| `Group` | Group profiles with photos, location, preferences |
-| `GroupLike` | Likes between groups (unique pair constraint) |
-| `Chat` | Direct chats between two group hosts |
-| `Message` | Individual messages within a chat |
-| `Event` | Nightlife events (extendable) |
-| `GameScore` | Scores from in-app games (supports guests via `guestId`) |
-
-### Key schema details
-
-- `Group.photos` — `String[]` array of URLs (Unsplash or base64 from upload)
-- `Group.latitude / longitude` — captured via browser Geolocation API at profile save
-- `Group.searchGender / searchAgeMin / searchAgeMax / maxDistance` — preference filters applied to the discovery feed
-- `GroupLike` has a `@@unique([fromGroupId, toGroupId])` constraint to prevent duplicate likes
-- `GameScore` can be attributed to a registered user (`userId`) or a guest (`guestId`)
-
-### Seeding test data
-
-```bash
-npx prisma db seed
-```
-
-This creates 3 test groups around Mainz/Frankfurt/Wiesbaden with multiple photos each. The seeder uses `upsert` for both user and group separately, so re-running it always updates photos and preferences without duplicating records.
-
-### Resetting the database
-
-```bash
-npx prisma db push --force-reset
-npx prisma db seed
-```
+### Technical Debt
+- Migrate Image Storage: Currently, profile photos are converted to Base64 strings and stored directly in the PostgreSQL database. This needs to be migrated to Supabase Storage Buckets to improve database performance and reduce payload sizes.
 
 ---
 
@@ -266,16 +130,6 @@ GLOO supports 5 languages out of the box, selectable from the welcome screen:
 | `es` | Español (Spanish) |
 | `fr` | Français (French) |
 | `it` | Italiano (Italian) |
-
-Language is stored in a `NEXT_LOCALE` cookie and applied via Next.js middleware. All route segments are prefixed with the locale: `/en/dashboard`, `/de/pre-party`, etc.
-
-Translation files live in `messages/[locale].json` and are organized by namespace:
-
-```
-Common, WelcomePage, Dashboard, Games, Login, Register,
-Profile, CreateGroup, Messages, Pre-party, ForgotPassword,
-Terms, Privacy, Map
-```
 
 ---
 
@@ -306,43 +160,7 @@ All cookies are `httpOnly` and `secure` in production. Session is read server-si
 
 When a guest taps a restricted feature, a **bottom sheet** slides up with "Create free account" and "Sign in" options — keeping the user in context rather than redirecting them away.
 
----
-
-## Key Pages & Routes
-
-### `/[locale]` — Welcome Page
-- Looping background video with fade-in (no poster flash)
-- Language selector dropdown
-- One-tap guest entry with branded loading overlay
-- Live group count indicator
-
-### `/[locale]/dashboard` — Main Dashboard
-- Entry points to Pre-party and Party modes
-- Games button (guest-accessible)
-- Guest paywall on first visit (sessionStorage-dismissed so it doesn't repeat in the same tab)
-- Contextual action sheet for restricted features
-
-### `/[locale]/pre-party` — Group Discovery
-- Vertical snap-scroll carousel (one group per full screen)
-- Each `GroupCard` has its own horizontal photo carousel
-- Tap zones (left ⅓ / right ⅔) for photo navigation — works reliably on mobile without scroll conflicts
-- Distance modal with range slider
-- "No group" teaser mode — shows a blurred preview and prompts group creation
-
-### `/[locale]/profile/create-group` — Group Editor
-- 6-slot photo gallery with add/remove
-- Members count stepper
-- Gender radio buttons for group and search preferences
-- Age range sliders (min + max independently controlled)
-- Distance slider
-- Instagram handle manager
-- GPS location captured on submit
-
-### `/[locale]/profile/preferences` — Quick Preference Editor
-- Standalone page to update search preferences without re-editing the full group profile
-- Saves and redirects to pre-party feed
-
----
+--- 
 
 ## Group Discovery
 
@@ -354,53 +172,6 @@ The discovery algorithm in `discoverGroups.ts`:
 4. Refines with the **Haversine formula** in JavaScript for accurate circular radius
 5. Applies age range filter (`group.ageMax >= searchAgeMin && group.ageMin <= searchAgeMax`)
 6. Paginates in sets of 10
-
----
-
-## Testing & CI
-
-Tests use **Vitest** and cover the guest action module:
-
-```bash
-npm run test        # run tests interactively
-npm run test:ci     # run tests in CI mode (no watch)
-```
-
-### Test coverage (`guest.test.ts`)
-
-- `loginAsGuest` sets correct cookies and redirects
-- `loginAsGuest` sets `secure: true` in production, `false` in development
-- `clearGuestSession` deletes both guest cookies
-- `checkIsGuest` returns `true` when cookie is present
-- `checkIsGuest` returns `false` when cookie is absent
-
-### GitHub Actions (`.github/workflows/ci.yml`)
-
-On every push and pull request:
-
-1. Checkout code
-2. Install Node 24
-3. `npm install`
-4. `npx prisma validate` — schema validation
-5. `npx prisma generate` — client generation
-6. `npm run test:ci` — run unit tests
-7. `npm run build` — production build check
-
----
-
-## Scripts
-
-```bash
-npm run dev          # Start development server (http://localhost:3000)
-npm run build        # Build for production
-npm run start        # Start production server
-npm run lint         # Run ESLint
-npm run test         # Run Vitest in watch mode
-npm run test:ci      # Run Vitest once (for CI)
-npx prisma studio    # Open Prisma visual DB browser
-npx prisma db seed   # Seed test data
-npx prisma db push   # Sync schema to database
-```
 
 ---
 

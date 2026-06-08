@@ -23,12 +23,12 @@ function LoadingOverlay({ visible }: { visible: boolean }) {
       }`}
     >
       {/* Logo */}
-      <div className="relative w-24 h-24 rounded-full border-4 border-[#FF5733] overflow-hidden shadow-[0_0_60px_rgba(255,87,51,0.5)] mb-10">
+      <div className="relative w-48 h-24 mb-10 flex items-center justify-center">
         <Image
-          src="/images/logo.png"
+          src="/images/logo2.png"
           alt="GLOO"
           fill
-          className="object-cover scale-110"
+          className="object-contain"
           priority
         />
       </div>
@@ -124,17 +124,16 @@ export default function Home() {
         <div className="flex-1 w-full relative z-10" />
  
         <div className="flex flex-col items-center justify-center flex-2 space-y-6 relative z-10">
-          <div className="relative w-32 h-32 rounded-full border-4 border-[#FF5733] flex items-center justify-center shadow-[0_0_40px_rgba(255,87,51,0.4)] overflow-hidden">
+          <div className="relative w-56 h-28 mb-10 flex items-center justify-center">
             <Image
-              src="/images/logo.png"
-              alt="GLOO Logo"
+              src="/images/logo2.png"
+              alt="GLOO"
               fill
-              sizes="(max-width: 128px) 100vw, 128px"
-              className="object-cover scale-110"
+              className="object-contain"
               priority
             />
           </div>
- 
+          
           <div className="text-center space-y-3">
             <h1 className="text-3xl font-extrabold tracking-tight drop-shadow-lg">
               {t("titleStart")}
@@ -188,16 +187,7 @@ export default function Home() {
           <div className="pt-4">
             <SocialLinks variant="dark" />
           </div>
- 
-          <div className="text-center space-y-3">
-            <p className="text-gray-300 text-base max-w-[280px] mx-auto leading-relaxed drop-shadow-md">
-              🔥
-              <span className="font-extrabold bg-[linear-gradient(110deg,#FF5733_35%,#FFFFFF_50%,#FF5733_65%)] bg-[length:200%_auto] bg-clip-text text-transparent animate-shine">
-                124
-              </span>{" "}
-              {t("matchingNow")}
-            </p>
-          </div>
+
         </div>
       </main>
     </>

@@ -76,6 +76,8 @@ export default function MapDisplay() {
   const mapRef = useRef<L.Map | null>(null);
   const centerPosition: [number, number] = [49.9929, 8.2473]; // Mainz Central Coordinates
   
+  const [userPosition, setUserPosition] = useState<[number, number]>(centerPosition);
+  const [locationName, setLocationName] = useState<string>(t("mainzLocation"));
   const [session, setSession] = useState<{userId: string, groupId: string | null} | null>(null);
   const [venues, setVenues] = useState<Venue[]>([]);
   const [preParties, setPreParties] = useState<PrePartyEvent[]>([]);
@@ -176,6 +178,38 @@ export default function MapDisplay() {
     });
   };
 
+  useEffect(() => {
+    if (typeof window !== "undefined" && "geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const lat = position.coords.latitude;
+          const lng = position.coords.longitude;
+          setUserPosition([lat, lng]);
+
+          if (mapRef.current) {
+            mapRef.current.flyTo([lat, lng], 14, { animate: true });
+          }
+
+          try {
+            const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
+            const data = await res.json();
+            
+            if (data && data.address) {
+              const name = data.address.suburb || data.address.city || data.address.town || data.address.village || "Actual Location";
+              setLocationName(name);
+            }
+          } catch (err) {
+            console.error("Error translating location:", err);
+          }
+        },
+        (error) => {
+          console.error("Geolocation error:", error);
+        },
+        { enableHighAccuracy: true }
+      );
+    }
+  }, []);
+
   const handleRsvpToggle = async (venueId: string) => {
     setLoadingActionId(venueId);
     const result = await toggleVenueAttendance(venueId);
@@ -241,8 +275,17 @@ export default function MapDisplay() {
       <MapContainer center={centerPosition} zoom={14} className="w-full h-full z-0" zoomControl={false} ref={mapRef}>
         <TileLayer url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png" attribution='&copy; CARTO' />
 
-        <Marker position={centerPosition} icon={createMarkerIcon("USER")} zIndexOffset={1000}>
-          <Popup><div className="p-1 text-black font-sans"><p className="font-black text-xs uppercase tracking-wider text-blue-600">{t("yourLocation")}</p><h3 className="font-bold text-sm mt-0.5">{t("mainzLocation")}</h3></div></Popup>
+        <Marker position={userPosition} icon={createMarkerIcon("USER")} zIndexOffset={1000}>
+          <Popup>
+            <div className="p-1 text-black font-sans">
+              <p className="font-black text-xs uppercase tracking-wider text-blue-600">
+                {t("yourLocation")}
+              </p>
+              <h3 className="font-bold text-sm mt-0.5 capitalize">
+                {locationName}
+              </h3>
+            </div>
+          </Popup>
         </Marker>
 
         {venues.map((venue) => {
