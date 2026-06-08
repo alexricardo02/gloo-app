@@ -75,7 +75,37 @@
       "done a walk of shame.",
       "danced on a table or bar.",
       "lost my phone on a night out.",
-      "thrown up in a taxi."
+      "thrown up in a taxi.",
+      "creeped on a date's ex on social media and accidentally liked an old photo.",
+      "pretended to know a stranger to get out of an uncomfortable conversation.",
+      "pretended to be the DJ to impress someone.",
+      "been caught sneaking out of someone's house.",
+      "hidden in a bathroom to avoid someone at a party.",
+      "lied during a drinking game like Never Have I Ever.",
+      "unbuttoned my pants at the dinner table because I ate too much.",
+      "flirted with a bartender to get free drinks.",
+      "cried in the bathroom of a club for absolutely no reason.",
+      "made out with someone whose name I didn't know.",
+      "taken a selfie on a stranger's phone during a night out.",
+      "lost a shoe while partying and didn't realize until later.",
+      "left a party without saying goodbye to anyone (the Irish goodbye).",
+      "fallen off a dance floor or stage.",
+      "lied about my job or college major to sound cooler at a bar.",
+      "ordered food at 4am, fallen asleep before it arrived, and found it on the porch next morning.",
+      "accidently broken something at a house party and hidden it.",
+      "swiped on Tinder just to find a group to pre-game with tonight.",
+      "pretended it was my birthday at a restaurant just to get a free dessert.",
+      "borrowed clothes from a friend and never returned them.",
+      "snuck snacks or drinks into a movie theater or festival inside my socks or jacket.",
+      "texted someone 'I'm on my way' when I hadn't even gotten out of bed.",
+      "bought a completely useless item online while drunk.",
+      "stalked someone on Instagram using a friend's fake account.",
+      "Google-searched myself to see what pops up.",
+      "walked into a glass door in public.",
+      "said 'you too' after a waiter told me to enjoy my food.",
+      "tried to open someone else's car thinking it was mine.",
+      "forgotten where I parked my car or bike after a festival.",
+      "been caught talking to myself in the mirror."
     ]
   },
   "MostLikelyTo": {
@@ -102,7 +132,37 @@
       "win a drinking competition?",
       "start a cult by accident?",
       "text their boss something they shouldn't?",
-      "be on a true crime podcast as a suspect?"
+      "be on a true crime podcast as a suspect?",
+      "lose their keys, phone, and wallet all in the same night?",
+      "get kicked out of a club for arguing with the bouncer?",
+      "steal the AUX cord in a taxi and play terrible music?",
+      "order 50 chicken nuggets at 4am and eat them all alone?",
+      "become best friends with the bathroom attendant or a stranger in the smoking area?",
+      "forget their friend's birthday even with Facebook notifications?",
+      "spend an hour trying to take the perfect Instagram photo of their drink?",
+      "get lost walking back from the bar to the table?",
+      "try to climb over a fence to get into a venue and get caught?",
+      "confess their love to a crush while drunk and regret it at 9am?",
+      "fall asleep in the middle of a pre-game on the couch?",
+      "show up to an event in the completely wrong dress code?",
+      "successfully fake an accent for an entire night to strangers?",
+      "get a matching tattoo with a stranger on vacation?",
+      "be the mom/dad of the group and carry water and ibuprofen everywhere?",
+      "accidentally leak a secret chat or screenshot to the group chat it was about?",
+      "spend their entire paycheck on festival tickets and skip groceries?",
+      "have a secret second Instagram account for stalking?",
+      "get banned from Uber for talking too much or being too dramatic?",
+      "agree to go to an after-party at 5am when everyone else wants to sleep?",
+      "block someone on WhatsApp and forget why they did it?",
+      "laugh at the worst possible, most inappropriate moment?",
+      "get a sunburn while inside an open-air club or beer garden?",
+      "spend 30 minutes looking for the phone that is currently in their hand?",
+      "win an argument against a brick wall because they are so stubborn?",
+      "marry for money instead of love?",
+      "become a professional meme creator?",
+      "buy drinks for the entire bar when they get a small bonus?",
+      "accidentally invite their ex to a party where their current crush is?",
+      "stay in bed for a full 48 hours binge-watching a show after one wild night out?"
     ]
   },
   "TruthOrDare": {
@@ -151,6 +211,66 @@
         "text": "Have you ever stolen something?"
       },
       {
+        "type": "truth",
+        "text": "What is the weirdest first impression you've ever had of someone in this room?"
+      },
+      {
+        "type": "truth",
+        "text": "What is the longest you've gone without showering after a long festival or weekend of partying?"
+      },
+      {
+        "type": "truth",
+        "text": "Have you ever snooped through a friend's bathroom cabinets or room when they left you alone?"
+      },
+      {
+        "type": "truth",
+        "text": "What's the most childish thing you still do regularly?"
+      },
+      {
+        "type": "truth",
+        "text": "If you had to ghost everyone in this room except for one person, who would you keep?"
+      },
+      {
+        "type": "truth",
+        "text": "What is the absolute worst pickup line you've ever actually used or had used on you?"
+      },
+      {
+        "type": "truth",
+        "text": "Have you ever pretended to look at your phone in public just to avoid talking to someone?"
+      },
+      {
+        "type": "truth",
+        "text": "Who is the last person you stalked on Instagram or TikTok?"
+      },
+      {
+        "type": "truth",
+        "text": "What is the most expensive thing you've accidentally broken while drunk?"
+      },
+      {
+        "type": "truth",
+        "text": "Have you ever been caught picking your nose in public?"
+      },
+      {
+        "type": "truth",
+        "text": "What's an unpopular opinion you hold that would make everyone in this room argue with you?"
+      },
+      {
+        "type": "truth",
+        "text": "What is the most ridiculous lie you've ever told on a dating app profile?"
+      },
+      {
+        "type": "truth",
+        "text": "Have you ever stayed in a relationship or gone on a date just for free food or drinks?"
+      },
+      {
+        "type": "truth",
+        "text": "What song is your ultimate guilty pleasure that you sing alone in the shower?"
+      },
+      {
+        "type": "truth",
+        "text": "What is the dumbest reason you've ever broken up with someone or gotten mad at them?"
+      },
+      {
         "type": "dare",
         "text": "Let the group look through your phone's photo gallery for 1 minute."
       },
@@ -189,6 +309,66 @@
       {
         "type": "dare",
         "text": "Wear something embarrassing for the next 3 rounds."
+      },
+      {
+        "type": "dare",
+        "text": "Hand over your phone to the person on your right and let them read your last 3 WhatsApp chats out loud."
+      },
+      {
+        "type": "dare",
+        "text": "Speak with a dramatic British or Spanish accent for the next 3 rounds of the game."
+      },
+      {
+        "type": "dare",
+        "text": "Give your phone to the person on your left and let them change your Instagram bio to anything they want for the next 24 hours."
+      },
+      {
+        "type": "dare",
+        "text": "Let the group choose a random contact on your phone and send them a text saying 'I know what you did last summer'."
+      },
+      {
+        "type": "dare",
+        "text": "Try to lick your elbow while dancing to whatever music is playing right now."
+      },
+      {
+        "type": "dare",
+        "text": "Let someone draw a funny mustache on your face with a washable marker or pen."
+      },
+      {
+        "type": "dare",
+        "text": "Open Spotify or Apple Music and show the group your 'On Repeat' or most recently played songs without hiding anything."
+      },
+      {
+        "type": "dare",
+        "text": "Put your hands on your knees and twerk or do a dramatic dance for 30 seconds."
+      },
+      {
+        "type": "dare",
+        "text": "Let the group mix 3 random liquids from the kitchen or bar together and take a sip of it."
+      },
+      {
+        "type": "dare",
+        "text": "Call a local pizza place or bar and try to order a completely fake item like a 'McFlurry' with a deadpan voice."
+      },
+      {
+        "type": "dare",
+        "text": "Trade a piece of clothing with the person sitting directly opposite you for the next 2 rounds."
+      },
+      {
+        "type": "dare",
+        "text": "Allow the group to blindfold you and guess 3 things from the room by smelling or touching them."
+      },
+      {
+        "type": "dare",
+        "text": "Empty out your pockets or the contents of your bag right now and explain every single item to the group."
+      },
+      {
+        "type": "dare",
+        "text": "Let someone on your left scroll through your liked posts on TikTok or Instagram for 30 seconds."
+      },
+      {
+        "type": "dare",
+        "text": "Do a dramatic, slow-motion walk across the room pretending you are on a high-fashion runway."
       }
     ]
   },
@@ -289,41 +469,41 @@
     "cancel": "Cancel"
   },
   "CreateGroup": {
-  "title": "Create Group",
-  "createGroupButton": "Create Group Profile",
-  "uploadPhotos": "Upload group photos",
-  "maxPhotos": "• Up to 6 photos allowed",
-  "groupDetails": "Group Details",
-  "members": "Members",
-  "memberGender": "Member Gender",
-  "MIXED": "Mixed",
-  "MALE": "Male",
-  "FEMALE": "Female",
-  "DIVERSE": "Diverse",
-  "ageRange": "Members Age Range",
-  "searchPreferences": "Search Preferences",
-  "searchGender": "Search Gender",
-  "preferredAgeRange": "Preferred Age Range",
-  "maxDistance": "Max Distance",
-  "publicProfile": "Public Profile",
-  "visibleToAll": "Visible to all nearby groups",
-  "instagramProfiles": "Instagram Profiles",
-  "instagramInfo": "Add Instagram usernames for yourself or your group members. These will appear as @links on your public profile.",
-  "addInstagram": "Add Instagram",
-  "shortDescription": "Short Description (Optional)",
-  "descriptionPlaceholder": "Tell others about your group, vibe, or plans...",
-  "termsText": "I agree to the <terms>Terms of Service</terms> and the <guidelines>Community Guidelines</guidelines>.",
-  "createProfile": "Create Profile",
-  "saving": "Saving...",
-  "error": "Something went wrong. Please try again.",
-  "minAge": "Minimum age must be at least 18.",
-  "maxAge": "Maximum age must be greater than minimum age."
+    "title": "Create Group",
+    "createGroupButton": "Create Group Profile",
+    "uploadPhotos": "Upload group photos",
+    "maxPhotos": "• Up to 6 photos allowed",
+    "groupDetails": "Group Details",
+    "members": "Members",
+    "memberGender": "Member Gender",
+    "MIXED": "Mixed",
+    "MALE": "Male",
+    "FEMALE": "Female",
+    "DIVERSE": "Diverse",
+    "ageRange": "Members Age Range",
+    "searchPreferences": "Search Preferences",
+    "searchGender": "Search Gender",
+    "preferredAgeRange": "Preferred Age Range",
+    "maxDistance": "Max Distance",
+    "publicProfile": "Public Profile",
+    "visibleToAll": "Visible to all nearby groups",
+    "instagramProfiles": "Instagram Profiles",
+    "instagramInfo": "Add Instagram usernames for yourself or your group members. These will appear as @links on your public profile.",
+    "addInstagram": "Add Instagram",
+    "shortDescription": "Short Description (Optional)",
+    "descriptionPlaceholder": "Tell others about your group, vibe, or plans...",
+    "termsText": "I agree to the <terms>Terms of Service</terms> and the <guidelines>Community Guidelines</guidelines>.",
+    "createProfile": "Create Profile",
+    "saving": "Saving...",
+    "error": "Something went wrong. Please try again.",
+    "minAge": "Minimum age must be at least 18.",
+    "maxAge": "Maximum age must be greater than minimum age."
   },
   "Messages": {
-  "emptyDesc": "Match with other groups in the carousel to start a conversation.",
-  "emptyTitle": "No messages yet",
-  "title": "Messages",
-  "searchPlaceholder": "Search"
+    "emptyDesc": "Match with other groups in the carousel to start a conversation.",
+    "emptyTitle": "No messages yet",
+    "title": "Messages",
+    "searchPlaceholder": "Search"
   },
   "Chat": {
     "backToMessages": "Back to Messages",
