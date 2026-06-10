@@ -24,6 +24,8 @@ export default function RegisterPage() {
 
   const [dob, setDob] = useState("");
 
+  const [isDobFocused, setIsDobFocused] = useState(false);
+
   const [username, setUsername] = useState("");
 
   const [isUsernameAvailable, setIsUsernameAvailable] = useState<boolean | null>(null);
@@ -206,8 +208,7 @@ export default function RegisterPage() {
               <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
             </svg>
 
-            {/* Custom Fake Placeholder */}
-            {!dob && (
+            {!dob && !isDobFocused && (
               <span className="absolute left-[3.25rem] text-gray-400 font-medium pointer-events-none">
                 {t('dobPlaceholder')}
               </span>
@@ -219,9 +220,11 @@ export default function RegisterPage() {
               required
               max={maxDate}
               value={dob}
+              onFocus={() => setIsDobFocused(true)}
+              onBlur={() => setIsDobFocused(false)}
               onChange={(e) => setDob(e.target.value)}
               className={`bg-transparent outline-none w-full ml-3 font-medium cursor-pointer relative z-10 
-                ${dob ? 'text-gray-800' : 'text-transparent'} 
+                ${(dob || isDobFocused) ? 'text-gray-800' : 'text-transparent'} 
                 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:cursor-pointer`}
             />
           </div>
