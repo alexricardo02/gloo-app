@@ -30,6 +30,14 @@ jobs:
           node-version: 24
       - run: npm install
 
+      - name: Create .env files
+        run: |
+          echo "DATABASE_URL=postgresql://gloo:gloo_password@localhost:5432/gloo_test" > .env
+          echo "NEXT_PUBLIC_SUPABASE_URL=https://dummy-project.supabase.co" >> .env
+          echo "NEXT_PUBLIC_SUPABASE_ANON_KEY=dummy-anon-key" >> .env
+          mkdir -p prisma
+          cp .env prisma/.env
+
       - name: Block Copyleft Licenses (GPL/AGPL)
         run: npx --yes license-checker --failOn "GPL;GPL-1.0;GPL-2.0;GPL-3.0;AGPL;AGPL-1.0;AGPL-3.0"
 
@@ -43,7 +51,7 @@ jobs:
       - run: rm prisma.config.ts || true
       - run: npx prisma validate
       - run: npx prisma generate
-      - name: Apply DB schema (integration tests)
-        run: npx prisma db push
+      - name: Prisma DB Push
+        run: DATABASE_URL="postgresql://gloo:gloo_password@localhost:5432/gloo_test" npx prisma db push --accept-data-loss
       - run: npm run test:ci
       - run: npm run build
