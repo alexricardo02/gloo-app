@@ -44,6 +44,6 @@ jobs:
       - run: npx prisma validate
       - run: npx prisma generate
       - name: Apply DB schema (integration tests)
-        run: npx prisma db push --skip-generate
+        run: npx prisma db push
       - run: npm run test:ci
       - run: npm run build
