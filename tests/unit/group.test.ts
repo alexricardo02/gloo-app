@@ -14,6 +14,17 @@ vi.mock('@/lib/prisma', () => ({
   },
 }));
 
+vi.mock("@/lib/supabase", () => ({
+  supabase: {
+    storage: {
+      from: () => ({
+        upload: vi.fn().mockResolvedValue({ data: { path: "groups/fake-id.png" }, error: null }),
+        getPublicUrl: vi.fn().mockReturnValue({ data: { publicUrl: "https://dummy-project.supabase.co/storage/v1/object/public/gloo-images/groups/fake-image.png" } })
+      })
+    }
+  }
+}));
+
 vi.mock('next/headers', () => ({
   cookies: vi.fn(),
 }));
@@ -177,7 +188,7 @@ describe('Group Server Actions (Unit Tests)', () => {
       );
     });
 
-    it('should process new uploaded files and convert them to Base64', async () => {
+    it('should process new uploaded files and upload them to Supabase Storage', async () => {
       vi.mocked(cookies).mockResolvedValue({ get: vi.fn().mockReturnValue({ value: 'user-123' }) } as any);
       
       const formData = new FormData();
@@ -189,13 +200,10 @@ describe('Group Server Actions (Unit Tests)', () => {
 
       await createGroupAction(formData, 'en');
 
-      // Generate the expected Base64 string from our fake content
-      const expectedBase64 = `data:image/png;base64,${Buffer.from(fileContent).toString('base64')}`;
-
       expect(prisma.group.upsert).toHaveBeenCalledWith(
         expect.objectContaining({
           update: expect.objectContaining({
-            photos: [expectedBase64]
+            photos: ["https://dummy-project.supabase.co/storage/v1/object/public/gloo-images/groups/fake-image.png"]
           })
         })
       );
