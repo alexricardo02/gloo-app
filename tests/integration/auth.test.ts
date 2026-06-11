@@ -1,7 +1,15 @@
-import { describe, it, expect, beforeEach, vi } from "vitest";
+import { describe, it, expect, beforeEach, afterEach , vi } from "vitest";
 import { prisma } from "@/lib/prisma";
 import { registerUser } from "@/app/actions/auth";
 import bcrypt from "bcryptjs";
+
+beforeEach(async () => {
+  await prisma.user.deleteMany({ where: { email: { contains: '@integration-test.com' } } });
+});
+
+afterEach(async () => {
+  await prisma.user.deleteMany({ where: { email: { contains: '@integration-test.com' } } });
+});
 
 // 1. MOCK NEXT.JS COOKIES (Because we are not in a browser environment)
 vi.mock("next/headers", () => ({
