@@ -57,8 +57,8 @@
     "tapForNext": "Toca para cambiar",
     "questions": [
       "le hice ghosting a alguien después de una primera cita.",
-      "envié un mensaje comprometedor a la persona equivocada.",
-      "robé un trago en una fiesta.",
+      "envié un mensaje arriesgado a la persona equivocada.",
+      "robé una bebida en una fiesta.",
       "usé un nombre falso en un bar.",
       "besé a alguien en esta habitación.",
       "mentí sobre mi edad para entrar a un club.",
@@ -75,7 +75,37 @@
       "hice el paseo de la vergüenza.",
       "bailé encima de una mesa o una barra.",
       "perdí el móvil en una noche de fiesta.",
-      "vomité en un taxi."
+      "vomité en un taxi.",
+      "cotilleé el perfil del ex de una cita y le di me gusta sin querer a una foto antigua.",
+      "fingí conocer a un desconocido para salir de una conversación incómoda.",
+      "fingí ser el DJ para impresionar a alguien.",
+      "fui pillado escapando de la casa de alguien.",
+      "me escondí en un baño para evitar a alguien en una fiesta.",
+      "mentí durante un juego de beber como Yo Nunca.",
+      "me desabroché los pantalones en la mesa por comer demasiado.",
+      "coqueteé con un camarero/a para conseguir bebidas gratis.",
+      "lloré en el baño de un club sin ningún motivo.",
+      "me besé con alguien cuyo nombre no sabía.",
+      "me tomé un selfie con el móvil de un desconocido estando de fiesta.",
+      "perdí un zapato de fiesta y no me di cuenta hasta más tarde.",
+      "me fui de una fiesta sin despedirme de nadie (la bomba de humo).",
+      "me caí de una pista de baile o un escenario.",
+      "mentí sobre mi trabajo o carrera para parecer más guay en un bar.",
+      "pedí comida a las 4am, me dormí antes de que llegara y la encontré en la puerta a la mañana siguiente.",
+      "rompí algo sin querer en una fiesta en casa y lo escondí.",
+      "hice swipe en Tinder solo para buscar un grupo con quien hacer la previa esta noche.",
+      "fingí que era mi cumpleaños en un restaurante solo para que me dieran postre gratis.",
+      "pedí ropa prestada a un amigo y nunca se la devolví.",
+      "colé comida o bebida en el cine o un festival escondida en mis calcetines o chaqueta.",
+      "le escribí a alguien 'ya voy en camino' cuando ni siquiera me había levantado de la cama.",
+      "compré algo completamente inútil por internet estando borracho.",
+      "espié a alguien en Instagram usando la cuenta falsa de un amigo.",
+      "me busqué a mí mismo en Google para ver qué salía.",
+      "me choqué contra una puerta de cristal en público.",
+      "dije 'tú también' después de que un camarero me dijera que disfrutara la comida.",
+      "intenté abrir el coche de otra persona pensando que era el mío.",
+      "olvidé dónde aparqué mi coche o bicicleta después de un festival.",
+      "fui pillado hablando solo frente al espejo."
     ]
   },
   "MostLikelyTo": {
@@ -94,7 +124,7 @@
       "casarse con alguien que conoció de fiesta?",
       "ser el último en pie en una fiesta?",
       "quedarse dormido en el autobús de vuelta?",
-      "hacerse viral por algo vergonzoso?",
+      "hacerse viral en redes sociales por algo vergonzoso?",
       "salir con alguien 10 años mayor?",
       "dejar su trabajo para viajar por el mundo?",
       "hacerse famoso?",
@@ -102,7 +132,37 @@
       "ganar un concurso de bebida?",
       "fundar una secta sin querer?",
       "enviarle un mensaje inapropiado a su jefe?",
-      "aparecer en un podcast de crimen verdadero como sospechoso?"
+      "aparecer en un podcast de crimen verdadero como sospechoso?",
+      "perder las llaves, el móvil y la cartera en la misma noche?",
+      "ser echado de un club por discutir con el portero?",
+      "robar el cable AUX en un taxi y poner música horrible?",
+      "pedir 50 nuggets de pollo a las 4am y comérselos todos solo?",
+      "hacerse mejor amigo del encargado del baño o de un desconocido en la zona de fumadores?",
+      "olvidar el cumpleaños de su amigo incluso con las notificaciones de Facebook?",
+      "pasar una hora intentando tomar la foto perfecta para Instagram de su bebida?",
+      "perderse caminando desde la barra hasta la mesa?",
+      "intentar saltar una valla para entrar a un evento y ser pillado?",
+      "confesarle su amor a su crush estando borracho y arrepentirse a las 9am?",
+      "quedarse dormido en el sofá en medio de la previa?",
+      "aparecer en un evento con un código de vestimenta completamente equivocado?",
+      "fingir un acento toda la noche frente a desconocidos con éxito?",
+      "hacerse un tatuaje a juego con un desconocido en vacaciones?",
+      "ser la madre/el padre del grupo y llevar agua e ibuprofeno a todas partes?",
+      "filtrar por accidente un chat secreto o captura en el mismo grupo del que se trataba?",
+      "gastarse todo el sueldo en entradas de festivales y saltarse la compra del súper?",
+      "tener una segunda cuenta secreta de Instagram para espiar?",
+      "ser baneado de Uber por hablar demasiado o ser muy dramático?",
+      "aceptar ir a un after a las 5am cuando todos los demás quieren dormir?",
+      "bloquear a alguien en WhatsApp y olvidar por qué lo hizo?",
+      "reírse en el peor momento posible y más inapropiado?",
+      "quemarse con el sol estando dentro de un club al aire libre o cervecería?",
+      "pasar 30 minutos buscando el móvil que tiene ahora mismo en la mano?",
+      "ganarle una discusión a una pared de ladrillos por ser tan terco?",
+      "casarse por dinero en lugar de por amor?",
+      "convertirse en un creador profesional de memes?",
+      "invitar a una ronda a todo el bar al recibir un pequeño bono de dinero?",
+      "invitar por accidente a su ex a una fiesta donde está su crush actual?",
+      "quedarse en la cama durante 48 horas seguidas viendo series tras una noche loca?"
     ]
   },
   "TruthOrDare": {
@@ -110,86 +170,56 @@
     "truth": "Verdad",
     "dare": "Reto",
     "prompts": [
-      {
-        "type": "truth",
-        "text": "¿Cuál es tu mayor arrepentimiento de una relación pasada?"
-      },
-      {
-        "type": "truth",
-        "text": "¿Quién de esta habitación te parece más atractivo/a?"
-      },
-      {
-        "type": "truth",
-        "text": "¿Qué es lo más vergonzoso que has hecho estando borracho/a?"
-      },
-      {
-        "type": "truth",
-        "text": "¿Alguna vez has mentido para cancelar una cita?"
-      },
-      {
-        "type": "truth",
-        "text": "¿Qué es lo más comprometedor que tienes en el móvil ahora mismo?"
-      },
-      {
-        "type": "truth",
-        "text": "¿Alguna vez has fingido estar enfermo para evitar a alguien?"
-      },
-      {
-        "type": "truth",
-        "text": "¿Qué es lo peor que has hecho en una fiesta?"
-      },
-      {
-        "type": "truth",
-        "text": "¿Alguna vez has tenido un crush con alguien de esta habitación?"
-      },
-      {
-        "type": "truth",
-        "text": "¿Cuál es un secreto que nunca le has contado a nadie aquí?"
-      },
-      {
-        "type": "truth",
-        "text": "¿Alguna vez has robado algo?"
-      },
-      {
-        "type": "dare",
-        "text": "Deja que el grupo mire la galería de tu móvil durante 1 minuto."
-      },
-      {
-        "type": "dare",
-        "text": "Envía un mensaje arriesgado a la quinta persona en tus contactos."
-      },
-      {
-        "type": "dare",
-        "text": "Haz tu mejor imitación de alguien de esta habitación."
-      },
-      {
-        "type": "dare",
-        "text": "Tómate un chupito o termínate la bebida ahora mismo."
-      },
-      {
-        "type": "dare",
-        "text": "Llama a alguien y cántale el cumpleaños feliz sin importar si es su cumpleaños."
-      },
-      {
-        "type": "dare",
-        "text": "Deja que el grupo publique lo que quiera en tu historia de Instagram."
-      },
-      {
-        "type": "dare",
-        "text": "Haz 20 flexiones ahora mismo."
-      },
-      {
-        "type": "dare",
-        "text": "Dale un cumplido de 60 segundos a cada persona de la sala."
-      },
-      {
-        "type": "dare",
-        "text": "Deja que alguien le envíe un DM a tu último match en Tinder."
-      },
-      {
-        "type": "dare",
-        "text": "Lleva algo ridículo puesto durante las próximas 3 rondas."
-      }
+      { "type": "truth", "text": "¿Cuál es tu mayor arrepentimiento de una relación pasada?" },
+      { "type": "truth", "text": "¿Quién de esta habitación te parece más atractivo/a?" },
+      { "type": "truth", "text": "¿Qué es lo más vergonzoso que has hecho estando borracho/a?" },
+      { "type": "truth", "text": "¿Alguna vez has mentido para cancelar una cita?" },
+      { "type": "truth", "text": "¿Qué es lo más comprometedor que tienes en el móvil ahora mismo?" },
+      { "type": "truth", "text": "¿Alguna vez has fingido estar enfermo para evitar a alguien?" },
+      { "type": "truth", "text": "¿Qué es lo peor que has hecho en una fiesta?" },
+      { "type": "truth", "text": "¿Alguna vez has tenido un crush con alguien de esta habitación?" },
+      { "type": "truth", "text": "¿Cuál es un secreto que nunca le has contado a nadie aquí?" },
+      { "type": "truth", "text": "¿Alguna vez has robado algo?" },
+      { "type": "truth", "text": "¿Cuál es la primera impresión más rara que has tenido de alguien en esta sala?" },
+      { "type": "truth", "text": "¿Cuánto es lo máximo que has pasado sin ducharte tras un festival largo o un fin de semana de fiesta?" },
+      { "type": "truth", "text": "¿Alguna vez has husmeado en los armarios del baño o en la habitación de un amigo cuando te dejaron solo?" },
+      { "type": "truth", "text": "¿Qué es lo más infantil que sigues haciendo regularmente?" },
+      { "type": "truth", "text": "Si tuvieras que hacerle ghosting a todos en esta sala excepto a una persona, ¿a quién elegirías?" },
+      { "type": "truth", "text": "¿Cuál es la peor frase para ligar que has usado o que han usado contigo?" },
+      { "type": "truth", "text": "¿Alguna vez has fingido mirar tu móvil en público solo para evitar hablar con alguien?" },
+      { "type": "truth", "text": "¿Quién es la última persona a la que espiaste en Instagram o TikTok?" },
+      { "type": "truth", "text": "¿Cuál es la cosa más cara que has roto por accidente estando borracho?" },
+      { "type": "truth", "text": "¿Alguna vez te han pillado hurgándote la nariz en público?" },
+      { "type": "truth", "text": "¿Qué opinión impopular tienes que haría que todos en esta sala discutieran contigo?" },
+      { "type": "truth", "text": "¿Cuál es la mentira más ridícula que has puesto en un perfil de una app de citas?" },
+      { "type": "truth", "text": "¿Alguna vez te has quedado en una relación o has ido a una cita solo por comida o bebida gratis?" },
+      { "type": "truth", "text": "¿Cuál es tu mayor placer culpable musical que cantas a solas en la ducha?" },
+      { "type": "truth", "text": "¿Cuál es el motivo más estúpido por el que has roto con alguien o te has enfadado con ellos?" },
+      { "type": "dare", "text": "Deja que el grupo mire la galería de tu móvil durante 1 minuto." },
+      { "type": "dare", "text": "Envía un mensaje arriesgado a la quinta persona en tus contactos." },
+      { "type": "dare", "text": "Haz tu mejor imitación de alguien de esta habitación." },
+      { "type": "dare", "text": "Tómate un chupito o termínate la bebida ahora mismo." },
+      { "type": "dare", "text": "Llama a alguien y cántale el cumpleaños feliz sin importar si es su cumpleaños." },
+      { "type": "dare", "text": "Deja que el grupo publique lo que quiera en tu historia de Instagram." },
+      { "type": "dare", "text": "Haz 20 flexiones ahora mismo." },
+      { "type": "dare", "text": "Dale un cumplido de 60 segundos a cada persona de la sala." },
+      { "type": "dare", "text": "Deja que alguien le envíe un DM a tu último match en Tinder." },
+      { "type": "dare", "text": "Lleva algo ridículo puesto durante las próximas 3 rondas." },
+      { "type": "dare", "text": "Pásale tu móvil a la persona de tu derecha y deja que lea tus últimos 3 chats de WhatsApp en voz alta." },
+      { "type": "dare", "text": "Habla con un acento británico o latino dramático durante las próximas 3 rondas del juego." },
+      { "type": "dare", "text": "Dale tu móvil a la persona de tu izquierda y deja que cambie tu biografía de Instagram por lo que quiera durante 24 horas." },
+      { "type": "dare", "text": "Deja que el grupo elija un contacto al azar de tu móvil y le envíe un mensaje que diga 'Sé lo que hiciste el último verano'." },
+      { "type": "dare", "text": "Intenta lamerte el codo mientras bailas al ritmo de la música que suene ahora mismo." },
+      { "type": "dare", "text": "Deja que alguien te dibuje un bigote gracioso en la cara con un rotulador lavable o bolígrafo." },
+      { "type": "dare", "text": "Abre Spotify o Apple Music y muestra al grupo tu lista de 'En Bucle' o las últimas canciones reproducidas sin ocultar nada." },
+      { "type": "dare", "text": "Pon las manos en las rodillas y haz twerking o un baile dramático durante 30 segundos." },
+      { "type": "dare", "text": "Deja que el grupo mezcle 3 líquidos al azar de la cocina o el bar y tómale un sorbo." },
+      { "type": "dare", "text": "Llama a una pizzería local o un bar e intenta pedir algo completamente falso como un 'McFlurry' con voz seria." },
+      { "type": "dare", "text": "Intercambia una prenda de ropa con la persona sentada directamente frente a ti durante las próximas 2 rondas." },
+      { "type": "dare", "text": "Deja que el grupo te ponga una venda en los ojos y adivina 3 cosas de la habitación oliéndolas o tocándolas." },
+      { "type": "dare", "text": "Saca todo el contenido de tus bolsillos o tu bolso ahora mismo y explica cada uno de los objetos al grupo." },
+      { "type": "dare", "text": "Deja que la persona a tu izquierda navegue por tus publicaciones con 'Me gusta' en TikTok o Instagram durante 30 segundos." },
+      { "type": "dare", "text": "Haz una pasarela dramática a cámara lenta por la sala fingiendo que estás en un desfile de alta costura." }
     ]
   },
   "BusDriver": {
@@ -321,10 +351,10 @@
     "groupDetails": "Detalles del Grupo",
     "members": "Miembros",
     "memberGender": "Género de los Miembros",
-    "ANY": "Cualquiera",
+    "MIXED": "Mixto",
     "MALE": "Hombres",
     "FEMALE": "Mujeres",
-    "OTHER": "Otro",
+    "DIVERSE": "Diverso",
     "ageRange": "Rango de Edad",
     "searchPreferences": "Preferencias de Búsqueda",
     "searchGender": "Buscar Género",
@@ -340,12 +370,15 @@
     "termsText": "Acepto los <terms>Términos de Servicio</terms> y las <guidelines>Normas de la Comunidad</guidelines>.",
     "createProfile": "Crear Perfil",
     "saving": "Guardando...",
-    "error": "Algo salió mal. Por favor intenta de nuevo."
+    "error": "Algo salió mal. Por favor intenta de nuevo.",
+    "minAge": "La edad mínima debe ser al menos 18.",
+    "maxAge": "La edad máxima debe ser mayor que la edad mínima."
   },
   "Messages": {
     "emptyDesc": "Haz match con otros grupos en el carrusel para empezar una conversación.",
     "emptyTitle": "Aún no hay mensajes",
-    "title": "Mensajes"
+    "title": "Mensajes",
+    "searchPlaceholder": "Buscar"
   },
   "Chat": {
     "backToMessages": "Volver a Mensajes",
