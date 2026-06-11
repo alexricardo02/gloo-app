@@ -4,8 +4,22 @@ on: [push, pull_request]
 jobs:
   test:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: gloo
+          POSTGRES_PASSWORD: gloo_password
+          POSTGRES_DB: gloo_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     env:
-      DATABASE_URL: "postgresql://dummy:dummy@localhost:5432/dummy" #Just to satisfy Prisma during tests
+      DATABASE_URL: "postgresql://gloo:gloo_password@localhost:5432/gloo_test" #Just to satisfy Prisma during tests
       NEXT_PUBLIC_SUPABASE_URL: "https://dummy-project.supabase.co"
       NEXT_PUBLIC_SUPABASE_ANON_KEY: "dummy-anon-key-for-testing-purposes"
     steps:
@@ -15,6 +29,15 @@ jobs:
         with:
           node-version: 24
       - run: npm install
+
+      - name: Create .env files
+        run: |
+          echo "DATABASE_URL=postgresql://gloo:gloo_password@localhost:5432/gloo_test" > .env
+          echo "NEXT_PUBLIC_SUPABASE_URL=https://dummy-project.supabase.co" >> .env
+          echo "NEXT_PUBLIC_SUPABASE_ANON_KEY=dummy-anon-key" >> .env
+          mkdir -p prisma
+          cp .env prisma/.env
+
       - name: Block Copyleft Licenses (GPL/AGPL)
         run: npx --yes license-checker --failOn "GPL;GPL-1.0;GPL-2.0;GPL-3.0;AGPL;AGPL-1.0;AGPL-3.0"
 
@@ -25,7 +48,10 @@ jobs:
 
       - name: Strict Dependency Security Audit
         run: npm audit --audit-level=high --omit=dev
+      - run: rm prisma.config.ts || true
       - run: npx prisma validate
       - run: npx prisma generate
+      - name: Prisma DB Push
+        run: DATABASE_URL="postgresql://gloo:gloo_password@localhost:5432/gloo_test" npx prisma db push --accept-data-loss
       - run: npm run test:ci
       - run: npm run build
