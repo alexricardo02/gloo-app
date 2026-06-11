@@ -4,6 +4,20 @@ on: [push, pull_request]
 jobs:
   test:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: dummy
+          POSTGRES_PASSWORD: dummy
+          POSTGRES_DB: dummy
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     env:
       DATABASE_URL: "postgresql://dummy:dummy@localhost:5432/dummy" #Just to satisfy Prisma during tests
       NEXT_PUBLIC_SUPABASE_URL: "https://dummy-project.supabase.co"
@@ -27,5 +41,6 @@ jobs:
         run: npm audit --audit-level=high --omit=dev
       - run: npx prisma validate
       - run: npx prisma generate
+      - run: npx prisma db push
       - run: npm run test:ci
       - run: npm run build
