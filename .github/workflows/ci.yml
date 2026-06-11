@@ -29,6 +29,12 @@ jobs:
         with:
           node-version: 24
       - run: npm install
+
+      - name: Create .env file for Prisma and Tests
+        run: |
+          echo "DATABASE_URL=postgresql://dummy:dummy@localhost:5432/dummy" > .env
+          echo "NEXT_PUBLIC_SUPABASE_URL=https://dummy-project.supabase.co" >> .env
+          echo "NEXT_PUBLIC_SUPABASE_ANON_KEY=dummy-anon-key" >> .env
       - name: Block Copyleft Licenses (GPL/AGPL)
         run: npx --yes license-checker --failOn "GPL;GPL-1.0;GPL-2.0;GPL-3.0;AGPL;AGPL-1.0;AGPL-3.0"
 
