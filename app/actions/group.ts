@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import { Gender } from "@prisma/client";
 import { cookies } from "next/headers";
+import { supabase } from "@/lib/supabase";
 
 export async function getGroupByUser() {
   const cookieStore = await cookies();
@@ -58,22 +59,39 @@ export async function createGroupAction(formData: FormData, locale: string) {
 
 
   const keptPhotos = formData.getAll("existingPhotos") as string[];
-
-
   const newPhotos: string[] = [];
   const uploadedFiles = formData.getAll("photos") as File[];
 
-  for (const file of uploadedFiles) {
+  const uploadPromises = uploadedFiles.map(async (file) => {
     if (file && typeof file === "object" && file.size > 0) {
-      const bytes = await file.arrayBuffer();
-      const buffer = Buffer.from(bytes);
-      
-      const base64Image = `data:${file.type};base64,${buffer.toString("base64")}`;
-      newPhotos.push(base64Image);
-    }
-  }
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${userId}-group-${crypto.randomUUID()}.${fileExt}`;
+      const filePath = `groups/${fileName}`;
 
-  const finalPhotos = [...keptPhotos, ...newPhotos];
+      const { error: uploadError } = await supabase.storage
+        .from('gloo-images')
+        .upload(filePath, file, {
+          cacheControl: '3600',
+          upsert: false,
+        });
+
+      if (uploadError) {
+        console.error("Group photo upload error:", uploadError);
+        return null; 
+      }
+
+      const { data } = supabase.storage
+        .from('gloo-images')
+        .getPublicUrl(filePath);
+
+      return data.publicUrl;
+    }
+    return null;
+  });
+
+  const uploadedUrls = (await Promise.all(uploadPromises)).filter(Boolean) as string[];
+
+  const finalPhotos = [...keptPhotos, ...uploadedUrls];
 
   await prisma.group.upsert({
     where: { userId: userId },

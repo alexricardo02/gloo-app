@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { supabase } from "@/lib/supabase";
 
 
 export async function registerUser(formData: FormData, locale: string) {
@@ -189,17 +190,35 @@ export async function updateProfileImage(formData: FormData) {
 
   try {
     // Convert file to Base64 string for database storage
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-    const base64Image = `data:${file.type};base64,${buffer.toString("base64")}`;
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${userId}-${Date.now()}.${fileExt}`;
+    const filePath = `profiles/${fileName}`;
+
+    const { data: uploadData, error: uploadError } = await supabase.storage
+      .from('gloo-images') 
+      .upload(filePath, file, {
+        cacheControl: '3600',
+        upsert: true,
+      });
+
+    if (uploadError) {
+      console.error("Supabase upload error:", uploadError);
+      return { error: "Failed to upload image to storage" };
+    }
+
+    const { data: publicUrlData } = supabase.storage
+      .from('gloo-images')
+      .getPublicUrl(filePath);
+
+    const publicUrl = publicUrlData.publicUrl;
 
     // Update user record in the database
     await prisma.user.update({
       where: { id: userId },
-      data: { image: base64Image },
+      data: { image: publicUrl },
     });
 
-    return { success: true, image: base64Image };
+    return { success: true, image: publicUrl };
   } catch (error) {
     console.error("Error updating profile image:", error);
     return { error: "Internal server error" };
