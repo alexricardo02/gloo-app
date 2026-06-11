@@ -45,6 +45,7 @@ jobs:
 
       - name: Strict Dependency Security Audit
         run: npm audit --audit-level=high --omit=dev
+      - run: rm prisma.config.ts || true
       - run: npx prisma validate
       - run: npx prisma generate
       - run: npx prisma db push
