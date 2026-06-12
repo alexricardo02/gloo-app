@@ -112,6 +112,8 @@ describe('Group Server Actions (Unit Tests)', () => {
       
       // Simulate empty form submission
       const formData = new FormData();
+
+      formData.append('existingPhotos', 'https://dummy-project.supabase.co/foto.jpg');
       
       await createGroupAction(formData, 'en');
 
@@ -133,7 +135,7 @@ describe('Group Server Actions (Unit Tests)', () => {
             latitude: null,
             longitude: null,
             instagram: [],
-            photos: []
+            photos: ["https://dummy-project.supabase.co/foto.jpg"]
           }),
         })
       );
@@ -213,6 +215,8 @@ describe('Group Server Actions (Unit Tests)', () => {
       vi.mocked(cookies).mockResolvedValue({ get: vi.fn().mockReturnValue({ value: 'user-123' }) } as any);
       
       const formData = new FormData();
+
+      formData.append('existingPhotos', 'https://dummy-project.supabase.co/foto.jpg');
       
       // Mock an empty file (e.g., when the user didn't select anything but the browser sends an empty file object)
       const emptyFile = new File([''], 'empty.png', { type: 'image/png' });
@@ -223,9 +227,19 @@ describe('Group Server Actions (Unit Tests)', () => {
       expect(prisma.group.upsert).toHaveBeenCalledWith(
         expect.objectContaining({
           update: expect.objectContaining({
-            photos: [] // Empty file should be ignored
+            photos: ["https://dummy-project.supabase.co/foto.jpg"]
           })
         })
+      );
+    });
+
+    it('should throw an error if no photos are provided', async () => {
+      vi.mocked(cookies).mockResolvedValue({ get: vi.fn().mockReturnValue({ value: 'user-123' }) } as any);
+      
+      const formData = new FormData(); 
+
+      await expect(createGroupAction(formData, 'en')).rejects.toThrow(
+        "At least one photo is required."
       );
     });
   });
