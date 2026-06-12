@@ -51,7 +51,13 @@ export async function getDiscoveryGroups({
     where: {
       userId: { not: userId }, // Exclude own group
       isPartyMode: isPartyMode,
+      publicProfile: true,
       gender: userGroup.searchGender === 'MIXED' ? undefined : userGroup.searchGender,
+
+      OR: [
+          { searchGender: 'MIXED' },
+          { searchGender: userGroup.gender }
+        ],
       // Basic coordinates filter (approximate range)
       latitude: {
         gte: userGroup.latitude - (distance / 111),
@@ -81,17 +87,27 @@ export async function getDiscoveryGroups({
         group.longitude ?? 0,
       ),
     }))
-    .filter((group) =>
-      group.distance <= distance &&
-      (userGroup.searchAgeMin == null || userGroup.searchAgeMax == null
-        ? true
-        : group.ageMax >= userGroup.searchAgeMin && group.ageMin <= userGroup.searchAgeMax)
-    );
+    .filter((group) => {
+      if (group.distance > distance) return false;
+
+      const matchesYourAgePref =
+        userGroup.searchAgeMin == null || userGroup.searchAgeMax == null
+          ? true
+          : group.ageMax >= userGroup.searchAgeMin && group.ageMin <= userGroup.searchAgeMax;
+
+      const matchesTheirAgePref =
+        group.searchAgeMin == null || group.searchAgeMax == null
+          ? true
+          : userGroup.ageMax >= group.searchAgeMin && userGroup.ageMin <= group.searchAgeMax;
+
+      return matchesYourAgePref && matchesTheirAgePref;
+    });
 
     const likedGroupRecords = await prisma.groupLike.findMany({
     where: { fromGroupId: userGroup.id },
     select: { toGroupId: true },
   });
+  
   const likedGroupIds = new Set(likedGroupRecords.map((like) => like.toGroupId));
 
   const mutualLikeRecords = await prisma.groupLike.findMany({
