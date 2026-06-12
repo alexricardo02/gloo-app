@@ -62,6 +62,15 @@ export async function createGroupAction(formData: FormData, locale: string) {
   const newPhotos: string[] = [];
   const uploadedFiles = formData.getAll("photos") as File[];
 
+
+  const hasValidNewPhotos = uploadedFiles.some(
+    (file) => file && typeof file === "object" && file.size > 0
+  );
+
+  if (keptPhotos.length === 0 && !hasValidNewPhotos) {
+    throw new Error("At least one photo is required."); // TODO: t("photoRequired")
+  }
+
   const uploadPromises = uploadedFiles.map(async (file) => {
     if (file && typeof file === "object" && file.size > 0) {
       const fileExt = file.name.split('.').pop();

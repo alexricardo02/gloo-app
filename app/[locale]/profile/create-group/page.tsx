@@ -31,6 +31,8 @@ export default function CreateGroupPage() {
   const [existingPhotos, setExistingPhotos] = useState<string[]>([]);
   const [isEditing, setIsEditing] = useState(false);
 
+  const [showPhotoAlert, setShowPhotoAlert] = useState(false);
+
   const handleBack = () => {
     // Check if the user arrived here immediately after registration
     const fromRegister = searchParams.get("from") === "register";
@@ -116,6 +118,12 @@ export default function CreateGroupPage() {
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (loading) return;
+
+    if (photos.length === 0 && existingPhotos.length === 0) {
+      setShowPhotoAlert(true);
+      return;
+    }
+
     setLoading(true);
 
     const form = event.currentTarget;
@@ -651,6 +659,38 @@ export default function CreateGroupPage() {
           </button>
         </div>
       </form>
+
+      {showPhotoAlert && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-[#121212] border border-white/10 rounded-[2rem] p-6 w-full max-w-sm shadow-[0_0_40px_rgba(255,114,94,0.15)] flex flex-col items-center text-center space-y-4">
+            
+            {/* Alert Icon */}
+            <div className="w-16 h-16 bg-[#FF725E]/10 rounded-full flex items-center justify-center text-[#FF725E] mb-2">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-8 h-8">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+            </div>
+            
+            <h2 className="text-lg font-black uppercase tracking-wider text-white">
+              Photo Required!
+            </h2>
+            
+            <p className="text-sm text-gray-400">
+              You must upload at least one photo of your crew to continue. Show your vibe to the community!
+            </p>
+            
+            {/* Close Button */}
+            <button
+              type="button"
+              onClick={() => setShowPhotoAlert(false)}
+              className="w-full mt-4 bg-[#333] hover:bg-[#444] text-white font-bold py-4 rounded-[1.5rem] uppercase tracking-[0.2em] text-xs transition-colors"
+            >
+              Got it
+            </button>
+            
+          </div>
+        </div>
+      )}
     </div>
   );
 }
