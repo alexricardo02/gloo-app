@@ -206,12 +206,12 @@ export default function PrePartyPage() {
             <p className="text-gray-400 text-sm leading-relaxed max-w-[280px]">
               {t("emptyDesc")}
             </p>
-            <button 
-              onClick={() => setIsDistanceModalOpen(true)}
-              className="mt-8 px-8 py-3 rounded-full bg-white/10 text-xs font-bold uppercase tracking-widest hover:bg-white/20 transition-colors"
+            <Link 
+              href={`/${locale}/profile/create-group`}
+              className="mt-8 px-8 py-3 rounded-full bg-white/10 text-xs font-bold uppercase tracking-widest hover:bg-white/20 transition-colors inline-block text-center"
             >
               {t("preferences")}
-            </button>
+            </Link>
           </div>
         )}
       </main>

@@ -80,11 +80,11 @@ export default function GroupCard({ group }: GroupCardProps) {
         style={{ transform: `translateX(-${currentIndex * 100}%)` }}
       >
         {photos.map((photo: string, index: number) => (
-          <div key={index} className="relative min-w-full h-full flex-shrink-0">
+          <div key={index} className="relative min-w-full h-full flex-shrink-0 bg-black">
             <img
               src={photo}
               alt={`Foto ${index + 1}`}
-              className="w-full h-full object-cover select-none"
+              className="w-full h-full object-contain select-none"
               draggable="false"
             />
           </div>
