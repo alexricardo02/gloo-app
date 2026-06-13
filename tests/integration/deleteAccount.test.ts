@@ -20,6 +20,19 @@ describe("Account Deletion - ST0-122", () => {
   let testUserEmail: string = `testdelete-${Date.now()}@test.com`;
 
   beforeAll(async () => {
+    // Robustheits-Fix für CI/GitHub Actions: Warte, bis Docker-Datenbank bereit ist
+    let retries = 5;
+    while (retries > 0) {
+      try {
+        await prisma.$connect();
+        break;
+      } catch (err) {
+        retries--;
+        console.log(`Datenbank noch nicht bereit, warte... (${retries} Versuche übrig)`);
+        await new Promise((resolve) => setTimeout(resolve, 1500));
+      }
+    }
+
     // 1. Test-User direkt über Prisma erstellen (umgeht die fehlerhafte registerUser Action)
     const user = await prisma.user.create({
       data: {
@@ -163,12 +176,14 @@ describe("Account Deletion - ST0-122", () => {
   });
 
   it("Should cascade delete group likes when group is deleted", async () => {
+    // Ermittelt alle verbleibenden Likes und prüft, ob verwaiste Fragmente existieren
     const remainingLikes = await prisma.groupLike.findMany();
     
     for (const like of remainingLikes) {
       const groupExists = await prisma.group.findUnique({
         where: { id: like.fromGroupId }
       });
+      // Verhindert TypeScript-Fehler bezüglich Pflicht-Relationen
       expect(groupExists).not.toBeNull();
     }
   });
