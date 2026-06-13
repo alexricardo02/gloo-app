@@ -3,6 +3,11 @@ import { toggleLike } from '@/app/actions/discoverGroups';
 import { prisma } from '@/lib/prisma';
 import { cookies } from 'next/headers';
 
+vi.mock('next/cache', () => ({
+  revalidatePath: vi.fn(),
+  revalidateTag: vi.fn(),
+}));
+
 vi.mock('@/lib/prisma', () => ({
   prisma: {
     group: { findUnique: vi.fn() },
