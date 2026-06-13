@@ -3,6 +3,10 @@ import { deleteAccountAction } from "@/app/actions/auth";
 import { cookies } from "next/headers";
 import type { PrismaClient } from "@prisma/client";
 
+describe.skip("Account Deletion - ST0-122", () => {
+  // alles bleibt wie es ist
+});
+
 // Next.js Header/Cookies mocken
 vi.mock("next/headers", () => {
   const mockCookieStore = {
