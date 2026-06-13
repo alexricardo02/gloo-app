@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
-import { Compass, Map, MessageSquare, User, LogIn, Gamepad2 } from "lucide-react";
+import { Search, Map, MessageSquare, User, LogIn, Gamepad2 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
 interface NavigationProps {
@@ -47,7 +47,7 @@ export default function Navigation({ isGuest, onSecureClick }: NavigationProps) 
       id: "discover",
       label: t("navGroups"), 
       href: `/${locale}/search-groups`,
-      icon: Compass,
+      icon: Search,
     },
     {
       id: "games",
@@ -122,15 +122,6 @@ export default function Navigation({ isGuest, onSecureClick }: NavigationProps) 
                   </div>
                 )}
               </div>
-
-              {/* Text label */}
-              <span
-                className={`text-[10px] font-bold tracking-wide uppercase mt-0.5 truncate max-w-full block transition-colors duration-200 ${
-                  isActive ? "text-[#FF725E]" : "text-gray-500"
-                }`}
-              >
-                {item.label}
-              </span>
 
               {/* Subtle top indicator bar for active states */}
               {isActive && (
