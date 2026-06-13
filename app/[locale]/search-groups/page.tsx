@@ -49,14 +49,14 @@ export default function PrePartyPage() {
           setHasNoGroup(true);
         } else {
           setHasNoGroup(false);
-        }
-
-        if (savedDistance) {
-          setDistance(Number(savedDistance));
-          setTempDistance(Number(savedDistance));
-        } else if (userGroup?.maxDistance) {
-          setDistance(userGroup.maxDistance);
-          setTempDistance(userGroup.maxDistance);
+          if (savedDistance) {
+            setDistance(Number(savedDistance));
+            setTempDistance(Number(savedDistance));
+          } else {
+            const defaultDistance = userGroup.maxDistance || 10;
+            setDistance(defaultDistance);
+            setTempDistance(defaultDistance);
+          }
         }
       } else {
         if (savedDistance) {
