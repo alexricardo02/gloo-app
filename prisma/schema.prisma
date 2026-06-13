@@ -1,8 +1,5 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
   binaryTargets = ["native", "debian-openssl-3.0.x"]
 }
 
@@ -10,11 +7,180 @@ datasource db {
   provider = "postgresql"
 }
 
+model User {
+  id                  String        @id @default(cuid())
+  name                String
+  username            String?       @unique
+  email               String        @unique
+  password            String
+  birthDate           DateTime
+  role                Role          @default(USER)
+  isGuest             Boolean       @default(false)
+  image               String?
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+  isVerified          Boolean       @default(false)
+  verificationToken   String?       @unique
+  resetPasswordExpiry DateTime?
+  resetPasswordToken  String?       @unique
+  chatsInitiated      Chat[]        @relation("HostA")
+  chatsReceived       Chat[]        @relation("HostB")
+  events              Event[]
+  gameScores          GameScore[]
+  group               Group?        @relation("HostGroup")
+  blockedGroups       GroupBlock[]
+  filedReports        GroupReport[]
+  messages            Message[]
+}
 
-// --- Enums ---
+model Group {
+  id               String            @id @default(cuid())
+  description      String?
+  membersCount     Int               @default(1)
+  ageMin           Int               @default(18)
+  ageMax           Int               @default(30)
+  searchAgeMax     Int               @default(35)
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  instagram        String[]
+  maxDistance      Int               @default(10)
+  photos           String[]
+  userId           String            @unique
+  isPartyMode      Boolean           @default(false)
+  latitude         Float?
+  longitude        Float?
+  gender           Gender            @default(MIXED)
+  searchGender     Gender            @default(MIXED)
+  publicProfile    Boolean           @default(true)
+  searchAgeMin     Int               @default(18)
+  eventAttendances EventAttendance[]
+  user             User              @relation("HostGroup", fields: [userId], references: [id], onDelete: Cascade)
+  blocksReceived   GroupBlock[]
+  likesSent        GroupLike[]       @relation("LikesSent")
+  likesReceived    GroupLike[]       @relation("LikesReceived")
+  reportsReceived  GroupReport[]
+  venueAttendances VenueAttendance[]
+}
+
+model GroupLike {
+  id          String   @id @default(cuid())
+  fromGroupId String
+  toGroupId   String
+  createdAt   DateTime @default(now())
+  fromGroup   Group    @relation("LikesSent", fields: [fromGroupId], references: [id], onDelete: Cascade)
+  toGroup     Group    @relation("LikesReceived", fields: [toGroupId], references: [id], onDelete: Cascade)
+
+  @@unique([fromGroupId, toGroupId])
+}
+
+model Event {
+  id           String            @id @default(cuid())
+  title        String
+  description  String?
+  locationName String
+  latitude     Float
+  longitude    Float
+  startTime    DateTime
+  endTime      DateTime?
+  ownerId      String
+  createdAt    DateTime          @default(now())
+  owner        User              @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  attendees    EventAttendance[]
+}
+
+model Chat {
+  id        String    @id @default(cuid())
+  hostAId   String
+  hostBId   String
+  createdAt DateTime  @default(now())
+  hostA     User      @relation("HostA", fields: [hostAId], references: [id], onDelete: Cascade)
+  hostB     User      @relation("HostB", fields: [hostBId], references: [id], onDelete: Cascade)
+  messages  Message[]
+
+  @@unique([hostAId, hostBId])
+}
+
+model Message {
+  id        String   @id @default(cuid())
+  text      String
+  chatId    String
+  senderId  String
+  createdAt DateTime @default(now())
+  chat      Chat     @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  sender    User     @relation(fields: [senderId], references: [id], onDelete: Cascade)
+}
+
+model GameScore {
+  id        String   @id @default(cuid())
+  gameName  String
+  score     Int
+  userId    String?
+  guestId   String?
+  createdAt DateTime @default(now())
+  user      User?    @relation(fields: [userId], references: [id])
+
+  @@index([gameName, score(sort: Desc)])
+}
+
+model EventAttendance {
+  id        String   @id @default(cuid())
+  groupId   String
+  eventId   String
+  createdAt DateTime @default(now())
+  status    String   @default("Pending")
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  group     Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@unique([groupId, eventId])
+}
+
+model Venue {
+  id        String            @id @default(cuid())
+  name      String
+  type      String
+  latitude  Float
+  longitude Float
+  createdAt DateTime          @default(now())
+  attendees VenueAttendance[]
+}
+
+model VenueAttendance {
+  id        String   @id @default(cuid())
+  groupId   String
+  venueId   String
+  createdAt DateTime @default(now())
+  group     Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  venue     Venue    @relation(fields: [venueId], references: [id], onDelete: Cascade)
+
+  @@unique([groupId, venueId])
+}
+
+model GroupBlock {
+  id             String   @id @default(cuid())
+  blockerId      String
+  blockedGroupId String
+  createdAt      DateTime @default(now())
+  blockedGroup   Group    @relation(fields: [blockedGroupId], references: [id], onDelete: Cascade)
+  blocker        User     @relation(fields: [blockerId], references: [id], onDelete: Cascade)
+
+  @@unique([blockerId, blockedGroupId])
+}
+
+model GroupReport {
+  id              String   @id @default(cuid())
+  reporterId      String
+  reportedGroupId String
+  reason          String?
+  createdAt       DateTime @default(now())
+  reportedGroup   Group    @relation(fields: [reportedGroupId], references: [id], onDelete: Cascade)
+  reporter        User     @relation(fields: [reporterId], references: [id], onDelete: Cascade)
+
+  @@unique([reporterId, reportedGroupId])
+}
+
 enum Role {
-  USER       // Thomas, Sophie (Group Hosts)
-  BAR_OWNER  // Venue/Bar owner
+  USER
+  BAR_OWNER
 }
 
 enum Gender {
@@ -28,203 +194,4 @@ enum GroupType {
   FRIENDS
   DATES
   NETWORKING
-}
-
-model User {
-  id              String      @id @default(cuid())
-  name            String
-  username        String?     @unique
-  email           String      @unique
-  password        String
-  birthDate       DateTime
-  role            Role        @default(USER)
-  isGuest         Boolean     @default(false)
-  image           String?     
-
-  isVerified      Boolean     @default(false)
-  verificationToken String?   @unique
-  
-  resetPasswordToken String?  @unique
-  resetPasswordExpiry DateTime?
-  
-  group           Group?      @relation("HostGroup")
-  events          Event[]
-  chatsInitiated  Chat[]      @relation("HostA")
-  chatsReceived   Chat[]      @relation("HostB")
-  messages        Message[]
-  gameScores      GameScore[]
-  blockedGroups   GroupBlock[]
-  filedReports    GroupReport[]
-
-  createdAt       DateTime    @default(now())
-  updatedAt       DateTime    @updatedAt
-}
-
-model Group {
-  id               String      @id @default(cuid())
-  userId           String      @unique
-  user             User        @relation("HostGroup",fields: [userId], references: [id], onDelete: Cascade)
-  
-  // Group Info
-  description      String?
-  membersCount     Int         @default(1)
-  gender           Gender      @default(MIXED)
-  ageMin           Int         @default(18)
-  ageMax           Int         @default(30)
-  
-  // Search Preferences
-  searchGender     Gender      @default(MIXED)
-  searchAgeMin     Int         @default(18)
-  searchAgeMax     Int         @default(35)
-  maxDistance      Int         @default(10)
-  isPartyMode      Boolean     @default(false)
-  publicProfile    Boolean     @default(true)
-  
-  // Media & Social
-  photos           String[]    // Array of URLs
-  instagram        String[]
-  
-  // Location (Needed for "Nearby" logic)
-  latitude         Float?
-  longitude        Float?
-
-  // Relations
-  likesSent        GroupLike[] @relation("LikesSent")
-  likesReceived    GroupLike[] @relation("LikesReceived")
-
-  eventAttendances EventAttendance[]
-  venueAttendances VenueAttendance[]
-  blocksReceived   GroupBlock[]
-  reportsReceived  GroupReport[]
-
-  createdAt        DateTime    @default(now())
-  updatedAt        DateTime    @updatedAt
-}
-
-model GroupLike {
-  id            String   @id @default(cuid())
-  fromGroupId   String
-  fromGroup     Group    @relation("LikesSent", fields: [fromGroupId], references: [id], onDelete: Cascade)
-  toGroupId     String
-  toGroup       Group    @relation("LikesReceived", fields: [toGroupId], references: [id], onDelete: Cascade)
-  
-  createdAt     DateTime @default(now())
-
-  @@unique([fromGroupId, toGroupId]) // One like per pair of groups
-}
-
-// Erweiterung des bestehenden Event-Modells (Privatpartys / Vorglühen)
-model Event {
-  id            String            @id @default(cuid())
-  title         String    
-  description   String?
-  locationName  String    
-  latitude      Float
-  longitude     Float
-  startTime     DateTime
-  endTime       DateTime?
-  ownerId       String
-  owner         User              @relation(fields: [ownerId], references: [id], onDelete: Cascade)
-  createdAt     DateTime          @default(now())
-
-  // NEU: Verknüpfung zu den angemeldeten Gruppen
-  attendees     EventAttendance[]
-}
-
-model Chat {
-  id        String    @id @default(cuid())
-  hostAId   String
-  hostA     User      @relation("HostA", fields: [hostAId], references: [id], onDelete: Cascade)
-  hostBId   String
-  hostB     User      @relation("HostB", fields: [hostBId], references: [id], onDelete: Cascade)
-  messages  Message[]
-  createdAt DateTime  @default(now())
-
-  @@unique([hostAId, hostBId])
-}
-
-model Message {
-  id        String   @id @default(cuid())
-  text      String
-  chatId    String
-  chat      Chat     @relation(fields: [chatId], references: [id], onDelete: Cascade)
-  senderId  String
-  sender    User     @relation(fields: [senderId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
-}
-
-model GameScore {
-  id        String   @id @default(cuid())
-  gameName  String   
-  score     Int      
-  userId    String?
-  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
-  guestId   String?  
-  createdAt DateTime @default(now())
-
-  @@index([gameName, score(sort: Desc)])
-}
-
-
-model EventAttendance {
-  id        String   @id @default(cuid())
-  groupId   String
-  group     Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  eventId   String
-  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  status    String   @default("Pending")
-  createdAt DateTime @default(now())
-
-  // Eine Gruppe kann sich nur einmal pro Event anmelden
-  @@unique([groupId, eventId])
-}
-
-// Neues Modell: Feste Locations (Bars/Clubs), die ihr per Seed ladet
-model Venue {
-  id           String            @id @default(cuid())
-  name         String
-  type         String            // "BAR" oder "CLUB"
-  latitude     Float
-  longitude    Float
-  createdAt    DateTime          @default(now())
-
-  // Verknüpfung zu den angemeldeten Gruppen an diesem Ort
-  attendees    VenueAttendance[]
-}
-
-// Neues Modell: Anmeldung von Gruppen an öffentlichen Locations (Bars/Clubs)
-model VenueAttendance {
-  id        String   @id @default(cuid())
-  groupId   String
-  group     Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  venueId   String
-  venue     Venue    @relation(fields: [venueId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
-
-  // Eine Gruppe kann sich nur einmal pro Bar/Club anmelden
-  @@unique([groupId, venueId])
-}
-
-// ST0-88: Block/Report – users can block or report groups for safety
-model GroupBlock {
-  id             String   @id @default(cuid())
-  blockerId      String
-  blocker        User     @relation(fields: [blockerId], references: [id], onDelete: Cascade)
-  blockedGroupId String
-  blockedGroup   Group    @relation(fields: [blockedGroupId], references: [id], onDelete: Cascade)
-  createdAt      DateTime @default(now())
-
-  @@unique([blockerId, blockedGroupId])
-}
-
-model GroupReport {
-  id               String   @id @default(cuid())
-  reporterId       String
-  reporter         User     @relation(fields: [reporterId], references: [id], onDelete: Cascade)
-  reportedGroupId  String
-  reportedGroup    Group    @relation(fields: [reportedGroupId], references: [id], onDelete: Cascade)
-  reason           String?
-  createdAt        DateTime @default(now())
-
-  @@unique([reporterId, reportedGroupId])
 }
