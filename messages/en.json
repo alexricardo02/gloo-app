@@ -509,12 +509,26 @@
     "listView": "List",
     "mapView": "Map",
     "noLikesTitle": "No likes yet",
-    "noLikesDesc": "When other groups like your profile, they will appear here. You can then message them directly."
+    "noLikesDesc": "When other groups like your profile, they will appear here. You can then message them directly.",
+    "blockedGroups": "Blocked Groups",
+    "unblock": "Unblock",
+    "noBlockedGroups": "No blocked groups",
+    "noBlockedGroupsDesc": "Groups you block will appear here. You can unblock them anytime.",
+    "groupUnblocked": "Group unblocked"
   },
   "Chat": {
     "backToMessages": "Back to Messages",
     "emptyChat": "No messages yet. Say hello!",
-    "typeMessage": "Type a message..."
+    "typeMessage": "Type a message...",
+    "blockGroup": "Block Group",
+    "reportGroup": "Report",
+    "confirmBlockTitle": "Block Group?",
+    "confirmBlockDesc": "Are you sure? This will hide the chat and prevent further contact.",
+    "blockConfirm": "Block",
+    "cancel": "Cancel",
+    "groupBlocked": "Group blocked",
+    "groupReported": "Report sent",
+    "blockedChatError": "This conversation is no longer available."
   },
   "SearchGroups": {
     "modalButton": "Set Radius",

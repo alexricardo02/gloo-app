@@ -3,8 +3,9 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
-import { ArrowLeft, Send, CheckCheck, Loader2, AlertCircle } from "lucide-react";
+import { ArrowLeft, Send, CheckCheck, Loader2, AlertCircle, MoreVertical, Shield, Flag, X } from "lucide-react";
 import { getChatMessages, sendMessage } from "@/app/actions/chat";
+import { blockGroupAction, reportGroupAction } from "@/app/actions/moderation";
 import { supabase } from "@/lib/supabase";
 
 type MessageWithSender = {
@@ -34,9 +35,17 @@ export default function ChatDetailPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSending, setIsSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [toastType, setToastType] = useState<"error" | "success">("error");
+
+  // ST0-88: Dropdown menu state
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [showBlockConfirm, setShowBlockConfirm] = useState(false);
+  const [isBlocking, setIsBlocking] = useState(false);
+  const [isReporting, setIsReporting] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   // Scroll to bottom helper
   const scrollToBottom = useCallback(() => {
@@ -91,6 +100,35 @@ export default function ChatDetailPage() {
     };
   }, [chatId, scrollToBottom]);
 
+  // ST0-101: Real-time listener for blocks – redirect if the chat gets blocked
+  useEffect(() => {
+    const blockChannel = supabase
+      .channel(`block_${chatId}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "GroupBlock",
+        },
+        async () => {
+          // Re-check if this conversation is now blocked
+          const result = await getChatMessages(chatId);
+          if (result.error) {
+            setError(result.error);
+            setTimeout(() => {
+              router.push(`/${locale}/messages`);
+            }, 2000);
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(blockChannel);
+    };
+  }, [chatId, locale, router]);
+
   // ── Polling fallback: refetch messages every 3s so recipient sees them
   //     even if Supabase Realtime isn't delivering postgres_changes events
   useEffect(() => {
@@ -105,6 +143,8 @@ export default function ChatDetailPage() {
           if (newMsgs.length === 0) return prev;
           return [...prev, ...newMsgs];
         });
+      } else if (result.error) {
+        setError(result.error);
       }
     }, 3000);
 
@@ -122,6 +162,19 @@ export default function ChatDetailPage() {
   useEffect(() => {
     scrollToBottom();
   }, [messages, scrollToBottom]);
+
+  // ── Close dropdown on outside click ──
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setMenuOpen(false);
+      }
+    };
+    if (menuOpen) {
+      document.addEventListener("mousedown", handleClick);
+    }
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [menuOpen]);
 
   // ── Send message handler (ST0-71) ──
   const handleSend = async () => {
@@ -153,6 +206,34 @@ export default function ChatDetailPage() {
       e.preventDefault();
       handleSend();
     }
+  };
+
+  // ST0-88: Block group handler
+  const handleBlock = async () => {
+    setIsBlocking(true);
+    setShowBlockConfirm(false);
+    const result = await blockGroupAction(chatId);
+    if (result.error) {
+      setError(result.error);
+    } else {
+      router.push(`/${locale}/messages`);
+    }
+    setIsBlocking(false);
+  };
+
+  // ST0-88: Report group handler
+  const handleReport = async () => {
+    setIsReporting(true);
+    setMenuOpen(false);
+    const result = await reportGroupAction(chatId);
+    if (result.error) {
+      setError(result.error);
+      setToastType("error");
+    } else {
+      setError(t("groupReported") || "Report sent");
+      setToastType("success");
+    }
+    setIsReporting(false);
   };
 
   const formatTime = (dateStr: string | Date) => {
@@ -208,11 +289,93 @@ export default function ChatDetailPage() {
                   className="w-full h-full object-cover"
                 />
               </div>
-              <h2 className="text-base font-bold truncate">{partner.name}</h2>
+              <h2 className="text-base font-bold truncate flex-1">{partner.name}</h2>
             </>
+          )}
+
+          {/* ST0-88: Dropdown menu — Block / Report */}
+          {partner && (
+            <div className="relative shrink-0" ref={menuRef}>
+              <button
+                onClick={() => setMenuOpen(!menuOpen)}
+                className="p-1.5 rounded-full hover:bg-white/10 transition-colors"
+                aria-label="More options"
+              >
+                <MoreVertical size={20} />
+              </button>
+
+              {menuOpen && (
+                <div className="absolute right-0 top-full mt-2 w-48 bg-[#1A1A1A] border border-white/10 rounded-xl shadow-xl overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+                  <button
+                    onClick={() => {
+                      setMenuOpen(false);
+                      setShowBlockConfirm(true);
+                    }}
+                    className="w-full flex items-center gap-3 px-4 py-3 text-sm text-red-400 hover:bg-white/5 transition-colors"
+                  >
+                    <Shield size={16} />
+                    {t("blockGroup") || "Block Group"}
+                  </button>
+                  <button
+                    onClick={handleReport}
+                    disabled={isReporting}
+                    className="w-full flex items-center gap-3 px-4 py-3 text-sm text-yellow-400 hover:bg-white/5 transition-colors disabled:opacity-50"
+                  >
+                    {isReporting ? (
+                      <Loader2 size={16} className="animate-spin" />
+                    ) : (
+                      <Flag size={16} />
+                    )}
+                    {t("reportGroup") || "Report"}
+                  </button>
+                </div>
+              )}
+            </div>
           )}
         </div>
       </div>
+
+      {/* ST0-88: Block confirm dialog */}
+      {showBlockConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-[#1A1A1A] border border-white/10 rounded-2xl p-6 mx-4 max-w-sm w-full shadow-2xl animate-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-bold">
+                {t("confirmBlockTitle") || "Block Group?"}
+              </h3>
+              <button
+                onClick={() => setShowBlockConfirm(false)}
+                className="p-1 rounded-full hover:bg-white/10 transition-colors"
+              >
+                <X size={18} />
+              </button>
+            </div>
+            <p className="text-sm text-gray-400 mb-6">
+              {t("confirmBlockDesc") || "Are you sure? This will hide the chat and prevent further contact."}
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowBlockConfirm(false)}
+                className="flex-1 py-2.5 rounded-full border border-white/10 text-sm font-bold hover:bg-white/5 transition-colors"
+              >
+                {t("cancel") || "Cancel"}
+              </button>
+              <button
+                onClick={handleBlock}
+                disabled={isBlocking}
+                className="flex-1 py-2.5 rounded-full bg-red-500 text-white text-sm font-bold hover:bg-red-600 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+              >
+                {isBlocking ? (
+                  <Loader2 size={14} className="animate-spin" />
+                ) : (
+                  <Shield size={14} />
+                )}
+                {t("blockConfirm") || "Block"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ── Messages list ── */}
       <div className="flex-1 pt-24 pb-24 px-4 overflow-y-auto">
@@ -266,7 +429,11 @@ export default function ChatDetailPage() {
       {/* ── Error toast (ST0-73) ── */}
       {error && (
         <div className="fixed bottom-24 left-4 right-4 z-40 flex justify-center pointer-events-none">
-          <div className="bg-red-500/90 text-white px-4 py-2 rounded-full text-sm font-medium flex items-center gap-2 animate-in slide-in-from-bottom-2 shadow-lg">
+          <div className={`px-4 py-2 rounded-full text-sm font-medium flex items-center gap-2 animate-in slide-in-from-bottom-2 shadow-lg ${
+            toastType === "success"
+              ? "bg-yellow-500/90 text-black"
+              : "bg-red-500/90 text-white"
+          }`}>
             <AlertCircle size={14} />
             {error}
           </div>

@@ -4,8 +4,33 @@ import { prisma } from "@/lib/prisma";
 import { cookies } from "next/headers";
 
 /**
+ * Helper: checks if either participant in a chat has blocked the other.
+ * Returns true if a block exists (conversation should be hidden).
+ */
+async function isChatBlocked(userId: string, otherUserId: string) {
+  const [myGroup, otherGroup] = await Promise.all([
+    prisma.group.findUnique({ where: { userId }, select: { id: true } }),
+    prisma.group.findUnique({ where: { userId: otherUserId }, select: { id: true } }),
+  ]);
+
+  if (!myGroup || !otherGroup) return false;
+
+  const block = await prisma.groupBlock.findFirst({
+    where: {
+      OR: [
+        { blockerId: userId, blockedGroupId: otherGroup.id },
+        { blockerId: otherUserId, blockedGroupId: myGroup.id },
+      ],
+    },
+  });
+
+  return block !== null;
+}
+
+/**
  * Sends a message to an existing chat. Validates that the sender
- * is a participant, the text is non-empty, and persists to the DB.
+ * is a participant, the text is non-empty, the chat is not blocked,
+ * and persists to the DB.
  * Returns the created message so the client can optimistically render.
  */
 export async function sendMessage(chatId: string, text: string) {
@@ -28,6 +53,12 @@ export async function sendMessage(chatId: string, text: string) {
     if (chat.hostAId !== userId && chat.hostBId !== userId) {
       return { error: "Forbidden" };
     }
+
+    const otherUserId = chat.hostAId === userId ? chat.hostBId : chat.hostAId;
+
+    // ST0-88: Prevent messages if either user has blocked the other
+    const blocked = await isChatBlocked(userId, otherUserId);
+    if (blocked) return { error: "This conversation is no longer available." };
 
     const message = await prisma.message.create({
       data: {
@@ -71,6 +102,12 @@ export async function getChatMessages(chatId: string) {
     if (chat.hostAId !== userId && chat.hostBId !== userId) {
       return { error: "Forbidden" };
     }
+
+    const otherUserId = chat.hostAId === userId ? chat.hostBId : chat.hostAId;
+
+    // ST0-88: Check if either user has blocked the other
+    const blocked = await isChatBlocked(userId, otherUserId);
+    if (blocked) return { error: "This conversation is no longer available." };
 
     const messages = await prisma.message.findMany({
       where: { chatId },
@@ -146,13 +183,58 @@ export async function getActiveChats() {
   if (!userId) return { error: "Unauthorized" };
 
   try {
+    // ST0-88: Get IDs of groups the current user has blocked or been blocked by
+    const myGroup = await prisma.group.findUnique({
+      where: { userId },
+      select: { id: true },
+    });
+
+    let blockedGroupIds: string[] = [];
+    let blockedByUserIds: string[] = [];
+
+    if (myGroup) {
+      // Groups I have blocked
+      const blocksByMe = await prisma.groupBlock.findMany({
+        where: { blockerId: userId },
+        select: { blockedGroupId: true },
+      });
+      blockedGroupIds = blocksByMe.map((b) => b.blockedGroupId);
+
+      // Users who have blocked my group
+      const blocksOnMe = await prisma.groupBlock.findMany({
+        where: { blockedGroupId: myGroup.id },
+        select: { blockerId: true },
+      });
+      blockedByUserIds = blocksOnMe.map((b) => b.blockerId);
+    }
+
+    // Get userIds for groups I've blocked (to exclude their chats)
+    let blockedUserIds: string[] = [];
+    if (blockedGroupIds.length > 0) {
+      const blockedGroups = await prisma.group.findMany({
+        where: { id: { in: blockedGroupIds } },
+        select: { userId: true },
+      });
+      blockedUserIds = blockedGroups.map((g) => g.userId);
+    }
+
+    // Combine: users I've blocked + users who blocked me
+    const allBlockedUserIds = [...new Set([...blockedUserIds, ...blockedByUserIds])];
+
     // 1. Fetch all chats where the current user is either Host A or Host B
     const chats = await prisma.chat.findMany({
       where: {
         OR: [
           { hostAId: userId },
           { hostBId: userId }
-        ]
+        ],
+        // ST0-88: Exclude chats with blocked users
+        ...(allBlockedUserIds.length > 0 ? {
+          NOT: [
+            { hostAId: { in: allBlockedUserIds }, hostBId: userId },
+            { hostAId: userId, hostBId: { in: allBlockedUserIds } },
+          ],
+        } : {}),
       },
       include: {
         // Include both hosts and their respective groups to retrieve names and photos
