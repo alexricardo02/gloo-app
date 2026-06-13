@@ -224,3 +224,192 @@ export async function updateProfileImage(formData: FormData) {
     return { error: "Internal server error" };
   }
 }
+
+export async function deleteAccountAction(locale: string) {
+  const cookieStore = await cookies();
+  const userId = cookieStore.get("gloo_user_id")?.value;
+
+  if (!userId) {
+    return { error: "Unauthorized" };
+  }
+
+  try {
+    // Fetch user and group data to delete media from Supabase
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      include: {
+        group: {
+          select: { photos: true }
+        }
+      }
+    });
+
+    if (!user) {
+      return { error: "User not found" };
+    }
+
+    // Delete user account first (Cascade deletion handles Group, Chats, Messages, GameScores, etc.)
+    await prisma.user.delete({
+      where: { id: userId }
+    });
+
+    // Delete auth cookies
+    cookieStore.delete("gloo_user_id");
+
+    // Set guest cookies
+    const guestId = crypto.randomUUID();
+    cookieStore.set("gloo_is_guest", "true", {
+      path: "/",
+      maxAge: 60 * 60 * 24,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+    });
+
+    cookieStore.set("gloo_guest_id", guestId, {
+      path: "/",
+      maxAge: 60 * 60 * 24,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+    });
+
+    // Delete Supabase files in the background (non-blocking)
+    // We don't await this so deletion completes faster for the user
+    (async () => {
+      try {
+        const filesToDelete: string[] = [];
+
+        // Collect profile image
+        if (user.image && user.image.includes('supabase')) {
+          const imageFileName = user.image.split('/').pop();
+          if (imageFileName) {
+            filesToDelete.push(`profiles/${imageFileName}`);
+          }
+        }
+
+        // Collect group photos
+        if (user.group?.photos && user.group.photos.length > 0) {
+          user.group.photos.forEach(url => {
+            if (url.includes('supabase')) {
+              const photoFileName = url.split('/').pop();
+              if (photoFileName) {
+                filesToDelete.push(`groups/${photoFileName}`);
+              }
+            }
+          });
+        }
+
+        // Delete all files in parallel
+        if (filesToDelete.length > 0) {
+          await supabase.storage
+            .from('gloo-images')
+            .remove(filesToDelete);
+        }
+      } catch (error) {
+        console.error("Error deleting Supabase files in background:", error);
+        // Silent fail - user deletion already completed successfully
+      }
+    })();
+
+    return { success: true };
+  } catch (error) {
+    console.error("Error deleting account:", error);
+    return { error: "Failed to delete account" };
+  }
+}
+
+/**
+ * Initiates password reset process.
+ * Generates a secure token and stores it with expiration time.
+ * Returns same message regardless of email existence (prevents user enumeration).
+ */
+export async function requestPasswordReset(email: string, locale: string) {
+  const passwordRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Simple email validation
+  if (!passwordRegex.test(email)) {
+    return { success: true }; // Always return success to prevent enumeration
+  }
+
+  try {
+    const user = await prisma.user.findUnique({
+      where: { email },
+      select: { id: true }
+    });
+
+    // Always return success even if user doesn't exist (privacy)
+    if (!user) {
+      return { success: true };
+    }
+
+    // Generate a secure random token (64 characters)
+    const resetToken = crypto.randomUUID() + "-" + crypto.randomUUID();
+    
+    // Token expires in 1 hour
+    const expiryTime = new Date(Date.now() + 60 * 60 * 1000);
+
+    // Store token in database
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        resetPasswordToken: resetToken,
+        resetPasswordExpiry: expiryTime
+      }
+    });
+
+    // In production, send email via Resend/SendGrid
+    // For now, log to console
+    console.log(
+      `[EMAIL SIMULATION] Password reset link sent to ${email}: http://localhost:3000/${locale}/resetPassword?token=${resetToken}`
+    );
+
+    return { success: true };
+  } catch (error) {
+    console.error("Error requesting password reset:", error);
+    return { success: true }; // Still return success to prevent enumeration
+  }
+}
+
+/**
+ * Resets the user password using a valid reset token.
+ * Validates token expiration and password strength.
+ */
+export async function resetPassword(token: string, newPassword: string) {
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&.])[A-Za-z\d@$!%*?&.]{8,}$/;
+  if (!passwordRegex.test(newPassword)) {
+    return { error: "passwordWeakError" };
+  }
+
+  try {
+    // Find user with valid token
+    const user = await prisma.user.findFirst({
+      where: {
+        resetPasswordToken: token,
+        resetPasswordExpiry: {
+          gt: new Date() // Token must not be expired
+        }
+      }
+    });
+
+    if (!user) {
+      return { error: "tokenInvalidOrExpired" };
+    }
+
+    // Hash new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // Update password and clear reset token
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        password: hashedPassword,
+        resetPasswordToken: null,
+        resetPasswordExpiry: null
+      }
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error("Error resetting password:", error);
+    return { error: "Failed to reset password" };
+  }
+}
