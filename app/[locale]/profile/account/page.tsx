@@ -22,12 +22,9 @@ export default function AccountSettingsPage() {
     try {
       const result = await deleteAccountAction(locale);
       
-      if (result.error) {
+      if (result?.error) {
         setDeleteError(result.error);
         setIsDeleting(false);
-      } else if (result.success) {
-        // Redirect happens server-side through redirect() call
-        // This code won't execute as the user will be redirected
       }
     } catch (error) {
       console.error("Error deleting account:", error);

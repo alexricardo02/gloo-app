@@ -312,11 +312,12 @@ export async function deleteAccountAction(locale: string) {
       }
     })();
 
-    return { success: true };
   } catch (error) {
     console.error("Error deleting account:", error);
     return { error: "Failed to delete account" };
   }
+
+  redirect(`/${locale}/search-groups`);
 }
 
 /**
