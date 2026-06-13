@@ -75,16 +75,17 @@ export default function GroupCard({ group }: GroupCardProps) {
       {/* ── 1. CAROUSEL: use transform instead of overflow-x-auto ────────────────
            Moving photos with translateX completely avoids the conflict between
            the carousel's horizontal scroll and the parent's vertical snap.    */}
-      <div
-        className="absolute inset-0 flex transition-transform duration-300 ease-out will-change-transform"
-        style={{ transform: `translateX(-${currentIndex * 100}%)` }}
-      >
+      <div className="absolute inset-0 overflow-hidden bg-black">
         {photos.map((photo: string, index: number) => (
-          <div key={index} className="relative min-w-full h-full flex-shrink-0">
+          <div
+            key={index}
+            className="absolute inset-0 w-full h-full transition-transform duration-300 ease-out will-change-transform"
+            style={{ transform: `translateX(${(index - currentIndex) * 100}%)` }}
+          >
             <img
               src={photo}
               alt={`Foto ${index + 1}`}
-              className="w-full h-full object-cover select-none"
+              className="w-full h-full object-contain select-none"
               draggable="false"
             />
           </div>
