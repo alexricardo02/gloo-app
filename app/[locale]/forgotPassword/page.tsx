@@ -28,7 +28,7 @@ export default function ForgotPasswordPage() {
         setSubmitted(true);
         setEmail("");
       } else {
-        setError(result.error || "An error occurred");
+        setError((result as any).error || "An error occurred");
       }
     } catch (err) {
       console.error("Error:", err);
