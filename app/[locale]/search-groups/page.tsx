@@ -8,7 +8,14 @@ import GroupCard from "@/app/components/GroupCard";
 import { getDiscoveryGroups } from "@/app/actions/discoverGroups";
 import { getGroupByUser } from "@/app/actions/group";
 import { checkIsGuest } from "@/app/actions/guest";
-import { MapPin, SlidersHorizontal, ChevronRight, X, Users, Lock } from "lucide-react";
+import {
+  MapPin,
+  SlidersHorizontal,
+  ChevronRight,
+  X,
+  Users,
+  Lock,
+} from "lucide-react";
 import GuestPaywall from "@/app/components/GuestPaywall";
 
 export default function PrePartyPage() {
@@ -23,12 +30,12 @@ export default function PrePartyPage() {
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(0);
-  
+
   const [isDistanceModalOpen, setIsDistanceModalOpen] = useState(false);
   const [tempDistance, setTempDistance] = useState(distance);
 
   const [hasNoGroup, setHasNoGroup] = useState(false);
-  const [isBlockModalOpen, setIsBlockModalOpen] = useState(false)
+  const [isBlockModalOpen, setIsBlockModalOpen] = useState(false);
 
   const [isGuest, setIsGuest] = useState(false);
   const [showPaywall, setShowPaywall] = useState(false);
@@ -40,11 +47,11 @@ export default function PrePartyPage() {
       const guestStatus = await checkIsGuest();
       setIsGuest(guestStatus);
 
-      const savedDistance = localStorage.getItem('gloo_search_radius');
+      const savedDistance = localStorage.getItem("gloo_search_radius");
 
       if (!guestStatus) {
         const userGroup = await getGroupByUser();
-        
+
         if (!userGroup) {
           setHasNoGroup(true);
         } else {
@@ -106,8 +113,13 @@ export default function PrePartyPage() {
     if (loading || (!hasMore && !reset)) return;
     setLoading(true);
 
+    const currentPage = reset ? 0 : page;
+
     try {
-      const response = await getDiscoveryGroups({ page: page, distance: tempDistance });
+      const response = await getDiscoveryGroups({
+        page: currentPage,
+        distance: tempDistance,
+      });
 
       if (response.error === "Unauthorized") {
         setGroups([]);
@@ -115,12 +127,21 @@ export default function PrePartyPage() {
         return;
       }
 
-      if (response.groups && response.groups.length === 0) {
-        setGroups(response.groups as DiscoveryGroup[]);
-        setHasMore(false);
-      } else if (response.groups) {
-        setGroups(response.groups as DiscoveryGroup[]);
-        setHasMore(response.groups.length === 10); 
+      if (response.groups) {
+        if (response.groups.length === 0) {
+          if (reset) setGroups([]);
+          setHasMore(false);
+        } else {
+          setGroups((prevGroups) =>
+            reset
+              ? (response.groups as DiscoveryGroup[])
+              : [...prevGroups, ...(response.groups as DiscoveryGroup[])],
+          );
+
+          setHasMore(response.groups.length === 10);
+
+          setPage(currentPage + 1);
+        }
       } else {
         console.error(response.error);
       }
@@ -138,16 +159,15 @@ export default function PrePartyPage() {
 
   const applyDistance = () => {
     setDistance(tempDistance);
-    localStorage.setItem('gloo_search_radius', tempDistance.toString());
-    
+    localStorage.setItem("gloo_search_radius", tempDistance.toString());
+
     setIsDistanceModalOpen(false);
-    setPage(0); 
+    setPage(0);
     setHasMore(true);
   };
 
   return (
     <div className="flex flex-col h-screen bg-black overflow-hidden relative bg-black min-h-screen text-white font-sans selection:bg-[#FF725E] selection:text-black">
-      
       {/* Top Header */}
       <div className="relative z-50 bg-black px-6 pt-6 pb-3 flex justify-between items-center">
         <div>
@@ -172,10 +192,9 @@ export default function PrePartyPage() {
 
       {/* Main Carousel Feed */}
       <main className="h-screen w-full overflow-y-auto snap-y snap-mandatory scroll-smooth pb-24 relative">
-        
         {/* Invisible Overlay to block interactions if restricted */}
         {(hasNoGroup || isGuest) && (
-          <div 
+          <div
             className="absolute inset-0 z-30 cursor-pointer"
             onClick={handleInteractionAttempt}
           />
@@ -184,8 +203,8 @@ export default function PrePartyPage() {
         {groups.map((group, index) => {
           const isLastElement = index === groups.length - 1;
           return (
-            <div 
-              key={group.id} 
+            <div
+              key={group.id}
               ref={isLastElement ? lastGroupElementRef : null}
               className={`h-full w-full snap-center snap-always relative ${isGuest ? "blur-xl select-none" : ""}`}
             >
@@ -206,7 +225,7 @@ export default function PrePartyPage() {
             <p className="text-gray-400 text-sm leading-relaxed max-w-[280px]">
               {t("emptyDesc")}
             </p>
-            <Link 
+            <Link
               href={`/${locale}/profile/create-group`}
               className="mt-8 px-8 py-3 rounded-full bg-white/10 text-xs font-bold uppercase tracking-widest hover:bg-white/20 transition-colors inline-block text-center"
             >
@@ -216,9 +235,9 @@ export default function PrePartyPage() {
         )}
       </main>
 
-      <Navigation 
-        isGuest={isGuest} 
-        onSecureClick={() => setShowPaywall(true)} 
+      <Navigation
+        isGuest={isGuest}
+        onSecureClick={() => setShowPaywall(true)}
       />
 
       {/* MODALS*/}
@@ -228,15 +247,17 @@ export default function PrePartyPage() {
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[100] flex items-end justify-center animate-in fade-in duration-200">
           <div className="bg-[#121212] w-full max-w-md rounded-t-[2.5rem] p-8 border-t border-white/10 animate-in slide-in-from-bottom-8 duration-300 pb-12">
             <div className="flex justify-between items-center mb-8">
-              <h3 className="text-xl font-black uppercase tracking-tight">Search Radius</h3>
-              <button 
+              <h3 className="text-xl font-black uppercase tracking-tight">
+                Search Radius
+              </h3>
+              <button
                 onClick={() => setIsDistanceModalOpen(false)}
                 className="p-2 bg-white/5 rounded-full text-gray-400 hover:text-white transition-colors"
               >
                 <X size={20} />
               </button>
             </div>
-            
+
             <div className="mb-10">
               <div className="flex justify-between text-xs font-bold uppercase tracking-widest text-[#FF725E] mb-4">
                 <span>1 KM</span>
@@ -252,7 +273,7 @@ export default function PrePartyPage() {
                 className="w-full h-2 bg-white/10 rounded-lg appearance-none cursor-pointer accent-[#FF725E]"
               />
             </div>
-            
+
             <button
               onClick={applyDistance}
               className="w-full bg-[#FF725E] text-black font-black py-4 rounded-full uppercase tracking-widest text-sm hover:scale-[1.02] active:scale-[0.98] transition-transform"
@@ -267,13 +288,13 @@ export default function PrePartyPage() {
       {isBlockModalOpen && !isGuest && (
         <div className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-md flex items-center justify-center p-4">
           <div className="relative bg-[#121212] border border-white/10 w-full max-w-sm rounded-[2.5rem] p-8 shadow-2xl flex flex-col items-center text-center animate-in zoom-in-95 duration-300">
-            <button 
+            <button
               onClick={() => setIsBlockModalOpen(false)}
               className="absolute top-6 right-6 text-gray-500 hover:text-white transition-colors"
             >
               <X size={24} />
             </button>
-            
+
             <div className="w-16 h-16 bg-[#FF725E]/10 rounded-2xl flex items-center justify-center text-[#FF725E] mb-6 border border-[#FF725E]/20">
               <Users size={28} />
             </div>
@@ -281,9 +302,10 @@ export default function PrePartyPage() {
             <h3 className="text-2xl font-black italic uppercase tracking-tight mb-3">
               {t("groupRequiredTitle") || "Group Required"}
             </h3>
-            
+
             <p className="text-sm text-gray-400 mb-8 leading-relaxed">
-              {t("groupRequiredDesc") || "To match, like, send messages, or unlock more groups near you, you must create a profile for your own group first."}
+              {t("groupRequiredDesc") ||
+                "To match, like, send messages, or unlock more groups near you, you must create a profile for your own group first."}
             </p>
 
             <Link
@@ -300,7 +322,6 @@ export default function PrePartyPage() {
       {showPaywall && isGuest && (
         <GuestPaywall onClose={() => setShowPaywall(false)} />
       )}
-      
     </div>
   );
 }
