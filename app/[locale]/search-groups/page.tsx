@@ -44,12 +44,19 @@ export default function PrePartyPage() {
 
       if (!guestStatus) {
         const userGroup = await getGroupByUser();
-        if (savedDistance) {
-          setDistance(Number(savedDistance));
-          setTempDistance(Number(savedDistance));
-        } else if (userGroup?.maxDistance) {
-          setDistance(userGroup.maxDistance);
-          setTempDistance(userGroup.maxDistance);
+        
+        if (!userGroup) {
+          setHasNoGroup(true);
+        } else {
+          setHasNoGroup(false);
+          if (savedDistance) {
+            setDistance(Number(savedDistance));
+            setTempDistance(Number(savedDistance));
+          } else {
+            const defaultDistance = userGroup.maxDistance || 10;
+            setDistance(defaultDistance);
+            setTempDistance(defaultDistance);
+          }
         }
       } else {
         if (savedDistance) {
@@ -109,11 +116,9 @@ export default function PrePartyPage() {
       }
 
       if (response.groups && response.groups.length === 0) {
-        setHasNoGroup(true);
         setGroups(response.groups as DiscoveryGroup[]);
         setHasMore(false);
       } else if (response.groups) {
-        setHasNoGroup(false);
         setGroups(response.groups as DiscoveryGroup[]);
         setHasMore(response.groups.length === 10); 
       } else {
