@@ -17,27 +17,41 @@ vi.mock("next/headers", () => {
 
 describe("Account Deletion - ST0-122", () => {
   let testUserId: string;
-  let testUserEmail: string = `testdelete-${Date.now()}@test.com`;
+  let testUserEmail: string;
 
   beforeAll(async () => {
-    // Robustheits-Fix für CI/GitHub Actions: Warte, bis Docker-Datenbank bereit ist
+    // Falls Date.now() im CI zu schnell hintereinander feuert, nutzen wir Random-Suffixe
+    testUserEmail = `testdelete-${Math.random().toString(36).substring(2, 11)}@test.com`;
+
+    // RADIKALER FIX FÜR CI-UMGEBUNGEN (GitHub Actions):
+    // Falls die DATABASE_URL im GitHub-Runner über localhost läuft oder via Docker-Network,
+    // stellen wir sicher, dass Prisma die Variablen liest, bevor es connected.
+    if (process.env.GITHUB_ACTIONS && !process.env.DATABASE_URL) {
+      // Setze einen Standard-Fallback für typische GitHub Action Postgres-Services, 
+      // falls deine `.env.test` nicht eingelesen wurde.
+      process.env.DATABASE_URL = "postgresql://postgres:postgres@localhost:5432/test_db?schema=public";
+    }
+
+    // Aggressiver Verbindungsaufbau-Retry (5 Versuche à 2 Sekunden)
     let retries = 5;
     while (retries > 0) {
       try {
         await prisma.$connect();
+        console.log("✅ Erfolgreich mit Test-Datenbank verbunden.");
         break;
-      } catch (err) {
+      } catch (err: any) {
         retries--;
-        console.log(`Datenbank noch nicht bereit, warte... (${retries} Versuche übrig)`);
-        await new Promise((resolve) => setTimeout(resolve, 1500));
+        console.warn(`⚠️ DB-Verbindungsfehler (${err.code || err.message}). Nächster Versuch in 2s...`);
+        if (retries === 0) throw new Error(`CI-Datenbank nicht erreichbar: ${err.message}`);
+        await new Promise((resolve) => setTimeout(resolve, 2000));
       }
     }
 
-    // 1. Test-User direkt über Prisma erstellen (umgeht die fehlerhafte registerUser Action)
+    // 1. Test-User direkt erstellen
     const user = await prisma.user.create({
       data: {
         email: testUserEmail,
-        password: "$2a$12$R9h/cIPz0gi.URNNX3kh2OPSTV/7NcyWLFFO7Z8JtP6B0r1rX1Wq2", // Mock-Hash für "TestPass123!"
+        password: "$2a$12$R9h/cIPz0gi.URNNX3kh2OPSTV/7NcyWLFFO7Z8JtP6B0r1rX1Wq2",
         name: "Test User Delete",
         birthDate: new Date("1990-01-01"),
         isVerified: true,
@@ -65,7 +79,7 @@ describe("Account Deletion - ST0-122", () => {
     // 3. Zweiten User für Chat-Verbindung erstellen
     const testUser2 = await prisma.user.create({
       data: {
-        email: `testchat-${Date.now()}@test.com`,
+        email: `testchat-${Math.random().toString(36).substring(2, 11)}@test.com`,
         password: "TestPass123!",
         name: "Test Chat User",
         birthDate: new Date("1995-01-01"),
@@ -101,7 +115,7 @@ describe("Account Deletion - ST0-122", () => {
     // 6. Dritten User + Gruppe für ein Gruppen-Like erstellen
     const testUser3 = await prisma.user.create({
       data: {
-        email: `testgroup-${Date.now()}@test.com`,
+        email: `testgroup-${Math.random().toString(36).substring(2, 11)}@test.com`,
         password: "TestPass123!",
         name: "Test Group User",
         birthDate: new Date("1992-01-01"),
@@ -127,25 +141,21 @@ describe("Account Deletion - ST0-122", () => {
   });
 
   it("Should delete user account and all related data", async () => {
-    // Verifizieren, dass der User vor dem Löschen existiert
     const userBefore = await prisma.user.findUnique({
       where: { id: testUserId },
     });
     expect(userBefore).toBeDefined();
     expect(userBefore?.email).toBe(testUserEmail);
 
-    // Die User-ID in den gemockten Cookies hinterlegen
     const cookieStore = await cookies();
     cookieStore.set("gloo_user_id", testUserId);
 
-    // Lösch-Action triggern (Redirects abfangen)
     try {
       await deleteAccountAction("en");
     } catch (error) {
-      // Next.js redirects werfen in Tests Fehler, das fangen wir hier ab
+      // Redirect-Fehler abfangen
     }
 
-    // Prüfen, ob der User wirklich gelöscht wurde
     const userAfter = await prisma.user.findUnique({
       where: { id: testUserId },
     });
@@ -176,14 +186,11 @@ describe("Account Deletion - ST0-122", () => {
   });
 
   it("Should cascade delete group likes when group is deleted", async () => {
-    // Ermittelt alle verbleibenden Likes und prüft, ob verwaiste Fragmente existieren
     const remainingLikes = await prisma.groupLike.findMany();
-    
     for (const like of remainingLikes) {
       const groupExists = await prisma.group.findUnique({
         where: { id: like.fromGroupId }
       });
-      // Verhindert TypeScript-Fehler bezüglich Pflicht-Relationen
       expect(groupExists).not.toBeNull();
     }
   });
@@ -196,15 +203,13 @@ describe("Account Deletion - ST0-122", () => {
   });
 
   afterAll(async () => {
-    // Sauberes Aufräumen der Datenbank nach dem Testlauf
     try {
       await prisma.user.deleteMany({
         where: {
-          email: {
-            contains: "test",
-          },
+          email: { contains: "testdelete-" },
         },
       });
+      await prisma.$disconnect();
     } catch (error) {
       // Ignoriere Fehler beim Cleanup
     }
