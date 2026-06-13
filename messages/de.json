@@ -353,7 +353,13 @@
     "emptyDesc": "Matche mit anderen Gruppen im Karussell, um einen Chat zu starten.",
     "emptyTitle": "Noch keine Nachrichten",
     "title": "Nachrichten",
-    "searchPlaceholder": "Suchen"
+    "searchPlaceholder": "Suchen",
+    "tabChats": "Chats",
+    "tabLikes": "Likes",
+    "listView": "Liste",
+    "mapView": "Karte",
+    "noLikesTitle": "Noch keine Likes",
+    "noLikesDesc": "Wenn andere Gruppen dein Profil liken, erscheinen sie hier. Du kannst sie dann direkt anschreiben."
   },
   "Chat": {
     "backToMessages": "Zurück zu Nachrichten",

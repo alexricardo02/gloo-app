@@ -4,9 +4,11 @@ import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import Navigation from "@/app/components/Navigation";
-import { Search, MoreVertical, CheckCheck, Loader2 } from "lucide-react";
+import LikedMeCard from "@/app/components/LikedMeCard";
+import { Search, MoreVertical, CheckCheck, Loader2, Heart, Map, List } from "lucide-react";
 import Image from "next/image";
 import { getActiveChats } from "@/app/actions/chat";
+import { getGroupsThatLikedMe } from "@/app/actions/discoverGroups";
 import { supabase } from "@/lib/supabase";
 
 type ChatPreview = {
@@ -19,69 +21,106 @@ type ChatPreview = {
   isMatch?: boolean;
 };
 
+type LikedGroup = {
+  id: string;
+  userId: string;
+  user: {
+    id: string;
+    name: string;
+    image: string | null;
+    username: string | null;
+  };
+  photos: string[];
+  description: string | null;
+  membersCount: number;
+  gender: string;
+  ageMin: number;
+  ageMax: number;
+  latitude: number | null;
+  longitude: number | null;
+  createdAt: string;
+  likedByCurrentUser: boolean;
+  isMutualLike: boolean;
+};
+
 export default function MessagesPage() {
   const router = useRouter();
   const locale = useLocale();
-  const t = useTranslations("Messages"); 
+  const t = useTranslations("Messages");
   const [searchQuery, setSearchQuery] = useState("");
+  const [activeTab, setActiveTab] = useState<"chats" | "likes">("chats");
 
-  // States to handle real data fetching
+  // Chat states
   const [chats, setChats] = useState<ChatPreview[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingChats, setIsLoadingChats] = useState(true);
 
-  // Hook to load chats when entering the page
+  // Likes states
+  const [likedGroups, setLikedGroups] = useState<LikedGroup[]>([]);
+  const [isLoadingLikes, setIsLoadingLikes] = useState(false);
+  const [viewMode, setViewMode] = useState<"list" | "map">("list");
+
+  // Map component dynamic import
+  const [MapComponent, setMapComponent] = useState<any>(null);
+
+  // Load chats
   const loadChats = useCallback(async () => {
     const response = await getActiveChats();
     if (response.success && response.chats) {
       setChats(response.chats as ChatPreview[]);
     }
-    setIsLoading(false);
+    setIsLoadingChats(false);
   }, []);
 
-  useEffect(() => {
-    // 1. Initial load from the database (Prisma)
-    loadChats();
+  // Load groups that liked me
+  const loadLikedGroups = useCallback(async () => {
+    setIsLoadingLikes(true);
+    const result = await getGroupsThatLikedMe();
+    if (result.groups) {
+      setLikedGroups(result.groups as LikedGroup[]);
+    }
+    setIsLoadingLikes(false);
+  }, []);
 
-    // 2. Polling fallback: refetch every 5s so new chats appear
-    //    even if Supabase Realtime isn't delivering postgres_changes
+  // Dynamic map import for code splitting
+  useEffect(() => {
+    if (viewMode === "map" && !MapComponent) {
+      import("@/app/components/LikedGroupsMap")
+        .then((mod) => {
+          setMapComponent(() => mod.default);
+        })
+        .catch((err) => {
+          console.error("Failed to load map component:", err);
+        });
+    }
+  }, [viewMode, MapComponent]);
+
+  useEffect(() => {
+    loadChats();
     const pollInterval = setInterval(() => {
       loadChats();
     }, 5000);
 
-    // 3. Subscription to Supabase WebSockets (Realtime)
     const channel = supabase
       .channel("realtime_messages")
       .on(
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "Message" },
         (payload) => {
-          // When a new message arrives in the database:
           const newMessage = payload.new;
-
           setChats((currentChats) => {
-            // Check if the message belongs to a chat already in our list
             const chatIndex = currentChats.findIndex((c) => c.id === newMessage.chatId);
-
             if (chatIndex > -1) {
-              // Copy the existing chat and update its data
               const updatedChat = {
                 ...currentChats[chatIndex],
-                lastMessage: newMessage.text, // New message text
-                time: newMessage.createdAt,   // New message time
-                unread: currentChats[chatIndex].unread + 1, // Increment unread counter
+                lastMessage: newMessage.text,
+                time: newMessage.createdAt,
+                unread: currentChats[chatIndex].unread + 1,
               };
-
-              // Remove the chat from its old position
               const newChatsList = [...currentChats];
               newChatsList.splice(chatIndex, 1);
-              
-              // Move it to the top of the list (Dynamic reordering)
               newChatsList.unshift(updatedChat);
-              
               return newChatsList;
             } else {
-              // If the message is from a NEW chat not in the list, 
-              // fetch from the server again to get all data (photo, name, etc.)
               loadChats();
               return currentChats;
             }
@@ -90,33 +129,74 @@ export default function MessagesPage() {
       )
       .subscribe();
 
-    // 4. Cleanup: Disconnect WebSocket + clear polling when leaving the screen
     return () => {
       clearInterval(pollInterval);
       supabase.removeChannel(channel);
     };
   }, [loadChats]);
-  
+
+  // ── Supabase Realtime + Polling for Likes ──
+  useEffect(() => {
+    // Polling fallback every 5s (same pattern as chats)
+    const likesPollInterval = setInterval(() => {
+      loadLikedGroups();
+    }, 5000);
+
+    // Supabase Realtime: listen for GroupLike INSERT and DELETE
+    const likesChannel = supabase
+      .channel("realtime_group_likes")
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "GroupLike" },
+        () => {
+          loadLikedGroups();
+        }
+      )
+      .on(
+        "postgres_changes",
+        { event: "DELETE", schema: "public", table: "GroupLike" },
+        () => {
+          loadLikedGroups();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      clearInterval(likesPollInterval);
+      supabase.removeChannel(likesChannel);
+    };
+  }, [loadLikedGroups]);
+
+  // Load liked groups when tab switches to likes
+  useEffect(() => {
+    if (activeTab === "likes") {
+      loadLikedGroups();
+    }
+  }, [activeTab, loadLikedGroups]);
 
   const formatMessageTime = (dateString: string | Date) => {
     const date = new Date(dateString);
     const today = new Date();
     const isToday = date.getDate() === today.getDate() && date.getMonth() === today.getMonth();
-    
     if (isToday) {
-      return date.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' });
+      return date.toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit" });
     }
-    return date.toLocaleDateString(locale, { weekday: 'short' });
+    return date.toLocaleDateString(locale, { weekday: "short" });
   };
 
-  // Real-time search filtering
-  const filteredChats = chats.filter(chat => 
+  const filteredChats = chats.filter((chat) =>
     chat.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const filteredLikedGroups = likedGroups.filter((group) => {
+    const name = group.user?.username || group.user?.name || "";
+    return name.toLowerCase().includes(searchQuery.toLowerCase());
+  });
+
+  const likesCount = likedGroups.length;
+
   return (
     <div className="min-h-screen bg-black text-white font-sans pb-32">
-      
       {/* Fixed Header */}
       <div className="fixed top-0 left-0 right-0 bg-black/90 backdrop-blur-md z-30 pt-12 pb-4 px-6 border-b border-white/5">
         <div className="flex justify-between items-center mb-6">
@@ -125,6 +205,68 @@ export default function MessagesPage() {
             <MoreVertical size={20} />
           </button>
         </div>
+
+        {/* Tab Bar */}
+        <div className="flex gap-2 mb-4">
+          <button
+            onClick={() => setActiveTab("chats")}
+            className={`flex-1 py-2.5 rounded-full text-sm font-black uppercase tracking-wider transition-all ${
+              activeTab === "chats"
+                ? "bg-[#FF725E] text-black"
+                : "bg-white/5 text-gray-400 hover:text-white"
+            }`}
+          >
+            {t("tabChats") || "Chats"}
+          </button>
+          <button
+            onClick={() => setActiveTab("likes")}
+            className={`flex-1 py-2.5 rounded-full text-sm font-black uppercase tracking-wider transition-all relative ${
+              activeTab === "likes"
+                ? "bg-[#FF725E] text-black"
+                : "bg-white/5 text-gray-400 hover:text-white"
+            }`}
+          >
+            <span className="flex items-center justify-center gap-1.5">
+              <Heart size={14} />
+              {t("tabLikes") || "Likes"}
+            </span>
+            {likesCount > 0 && activeTab !== "likes" && (
+              <span className="absolute -top-1.5 -right-1.5 bg-[#FF725E] text-black text-[9px] font-black min-w-[18px] h-[18px] rounded-full flex items-center justify-center px-1">
+                {likesCount}
+              </span>
+            )}
+          </button>
+        </div>
+
+        {/* View Toggle (only for Likes tab with groups) */}
+        {activeTab === "likes" && filteredLikedGroups.length > 0 && (
+          <div className="flex justify-end mb-2">
+            <div className="flex bg-white/5 rounded-full p-0.5">
+              <button
+                onClick={() => setViewMode("list")}
+                className={`px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-1 ${
+                  viewMode === "list"
+                    ? "bg-[#FF725E] text-black"
+                    : "text-gray-400 hover:text-white"
+                }`}
+              >
+                <List size={12} />
+                {t("listView") || "List"}
+              </button>
+              <button
+                onClick={() => setViewMode("map")}
+                className={`px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-1 ${
+                  viewMode === "map"
+                    ? "bg-[#FF725E] text-black"
+                    : "text-gray-400 hover:text-white"
+                }`}
+              >
+                <Map size={12} />
+                {t("mapView") || "Map"}
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Search Bar */}
         <div className="relative">
@@ -141,83 +283,139 @@ export default function MessagesPage() {
         </div>
       </div>
 
-      {/* Chat List (Scrollable) */}
-      <div className="pt-40 px-4">
-        
-        {isLoading && (
-          <div className="flex justify-center items-center py-20">
-            <Loader2 className="animate-spin text-[#FF725E]" size={30} />
-          </div>
+      {/* Content Area */}
+      <div className="pt-72 px-4">
+        {/* Chats Tab */}
+        {activeTab === "chats" && (
+          <>
+            {isLoadingChats && (
+              <div className="flex justify-center items-center py-20">
+                <Loader2 className="animate-spin text-[#FF725E]" size={30} />
+              </div>
+            )}
+
+            <div className="flex flex-col gap-2">
+              {!isLoadingChats &&
+                filteredChats.map((chat) => (
+                  <button
+                    key={chat.id}
+                    onClick={() => router.push(`/${locale}/messages/${chat.id}`)}
+                    className="w-full flex items-center gap-4 p-3 rounded-2xl hover:bg-white/5 transition-colors text-left group"
+                  >
+                    <div className="relative shrink-0">
+                      <div className="w-14 h-14 rounded-full overflow-hidden border border-white/10 relative bg-zinc-900">
+                        <Image
+                          src={chat.image}
+                          alt={chat.name}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                      {chat.unread > 0 && (
+                        <div className="absolute -top-1 -right-1 w-4 h-4 bg-[#FF725E] rounded-full border-2 border-black" />
+                      )}
+                    </div>
+
+                    <div className="flex-1 min-w-0 border-b border-white/5 pb-3 group-last:border-0">
+                      <div className="flex justify-between items-center mb-1 pr-2">
+                        <div className="flex items-center gap-2">
+                          <h3
+                            className={`text-base truncate ${
+                              chat.unread > 0 ? "font-black text-white" : "font-bold text-gray-200"
+                            }`}
+                          >
+                            {chat.name}
+                          </h3>
+                          {chat.isMatch && (
+                            <span className="text-[10px] uppercase tracking-[0.18em] bg-[#FF725E]/15 text-[#FF725E] px-2 py-0.5 rounded-full font-black">
+                              Match
+                            </span>
+                          )}
+                        </div>
+                        <span
+                          className={`text-[10px] shrink-0 ml-2 ${
+                            chat.unread > 0 ? "text-[#FF725E] font-bold" : "text-gray-500 font-medium"
+                          }`}
+                        >
+                          {formatMessageTime(chat.time)}
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <p
+                          className={`text-sm line-clamp-1 flex-1 pr-4 ${
+                            chat.unread > 0 ? "text-white font-semibold" : "text-gray-400"
+                          }`}
+                        >
+                          {chat.lastMessage}
+                        </p>
+                        {chat.unread > 0 ? (
+                          <div className="bg-[#FF725E] text-black text-[10px] font-black min-w-[20px] h-5 px-1.5 rounded-full flex items-center justify-center">
+                            {chat.unread}
+                          </div>
+                        ) : (
+                          <CheckCheck size={14} className="text-blue-500 shrink-0" />
+                        )}
+                      </div>
+                    </div>
+                  </button>
+                ))}
+            </div>
+
+            {!isLoadingChats && chats.length === 0 && (
+              <div className="flex flex-col items-center justify-center pt-20 px-10 text-center animate-in fade-in">
+                <div className="w-20 h-20 bg-[#111111] rounded-full flex items-center justify-center mb-4 border border-white/5">
+                  <Search size={30} className="text-[#FF725E]/50" />
+                </div>
+                <h2 className="text-xl font-bold mb-2 uppercase italic tracking-tight">
+                  {t("emptyTitle")}
+                </h2>
+                <p className="text-sm text-gray-400 leading-relaxed">{t("emptyDesc")}</p>
+              </div>
+            )}
+          </>
         )}
 
-        <div className="flex flex-col gap-2">
-          {!isLoading && filteredChats.map((chat) => (
-            <button 
-              key={chat.id}
-              onClick={() => router.push(`/${locale}/messages/${chat.id}`)}
-              className="w-full flex items-center gap-4 p-3 rounded-2xl hover:bg-white/5 transition-colors text-left group"
-            >
-              <div className="relative shrink-0">
-                <div className="w-14 h-14 rounded-full overflow-hidden border border-white/10 relative bg-zinc-900">
-                  <Image
-                    src={chat.image}
-                    alt={chat.name}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-                {chat.unread > 0 && (
-                  <div className="absolute -top-1 -right-1 w-4 h-4 bg-[#FF725E] rounded-full border-2 border-black" />
-                )}
+        {/* Likes Tab */}
+        {activeTab === "likes" && (
+          <>
+            {isLoadingLikes && (
+              <div className="flex justify-center items-center py-20">
+                <Loader2 className="animate-spin text-[#FF725E]" size={30} />
               </div>
+            )}
 
-              <div className="flex-1 min-w-0 border-b border-white/5 pb-3 group-last:border-0">
-                <div className="flex justify-between items-center mb-1 pr-2">
-                  {/* CONDITIONAL BOLD TEXT: If there are unread messages, highlight the name */}
-                  <div className="flex items-center gap-2">
-                    <h3 className={`text-base truncate ${chat.unread > 0 ? "font-black text-white" : "font-bold text-gray-200"}`}>
-                      {chat.name}
-                    </h3>
-                    {chat.isMatch && (
-                      <span className="text-[10px] uppercase tracking-[0.18em] bg-[#FF725E]/15 text-[#FF725E] px-2 py-0.5 rounded-full font-black">
-                        Match
-                      </span>
-                    )}
-                  </div>
-                  <span className={`text-[10px] shrink-0 ml-2 ${chat.unread > 0 ? "text-[#FF725E] font-bold" : "text-gray-500 font-medium"}`}>
-                    {formatMessageTime(chat.time)}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <p className={`text-sm line-clamp-1 flex-1 pr-4 ${chat.unread > 0 ? "text-white font-semibold" : "text-gray-400"}`}>
-                    {chat.lastMessage}
-                  </p>
-                  
-                  {chat.unread > 0 ? (
-                    <div className="bg-[#FF725E] text-black text-[10px] font-black min-w-[20px] h-5 px-1.5 rounded-full flex items-center justify-center">
-                      {chat.unread}
-                    </div>
-                  ) : (
-                    <CheckCheck size={14} className="text-blue-500 shrink-0" />
-                  )}
-                </div>
+            {/* Map View */}
+            {!isLoadingLikes && viewMode === "map" && MapComponent && (
+              <div className="rounded-2xl overflow-hidden h-[60vh] border border-white/10">
+                <MapComponent groups={filteredLikedGroups} />
               </div>
-            </button>
-          ))}
-        </div>
+            )}
+
+            {/* List View */}
+            {!isLoadingLikes && viewMode === "list" && (
+              <div className="flex flex-col gap-3">
+                {filteredLikedGroups.map((group) => (
+                  <LikedMeCard key={group.id} group={group} />
+                ))}
+              </div>
+            )}
+
+            {!isLoadingLikes && likedGroups.length === 0 && (
+              <div className="flex flex-col items-center justify-center pt-20 px-10 text-center animate-in fade-in">
+                <div className="w-20 h-20 bg-[#111111] rounded-full flex items-center justify-center mb-4 border border-white/5">
+                  <Heart size={30} className="text-[#FF725E]/50" />
+                </div>
+                <h2 className="text-xl font-bold mb-2 uppercase italic tracking-tight">
+                  {t("noLikesTitle") || "No likes yet"}
+                </h2>
+                <p className="text-sm text-gray-400 leading-relaxed">
+                  {t("noLikesDesc") || "When other groups like your profile, they will appear here."}
+                </p>
+              </div>
+            )}
+          </>
+        )}
       </div>
-
-      {!isLoading && chats.length === 0 && (
-        <div className="flex flex-col items-center justify-center pt-20 px-10 text-center animate-in fade-in">
-          <div className="w-20 h-20 bg-[#111111] rounded-full flex items-center justify-center mb-4 border border-white/5">
-            <Search size={30} className="text-[#FF725E]/50" />
-          </div>
-          <h2 className="text-xl font-bold mb-2 uppercase italic tracking-tight">{t("emptyTitle")}</h2>
-          <p className="text-sm text-gray-400 leading-relaxed">
-            {t("emptyDesc")}
-          </p>
-        </div>
-      )}
 
       <Navigation />
     </div>
