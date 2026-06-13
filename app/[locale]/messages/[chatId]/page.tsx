@@ -215,7 +215,7 @@ export default function ChatDetailPage() {
       </div>
 
       {/* ── Messages list ── */}
-      <div className="flex-1 pt-20 pb-24 px-4 overflow-y-auto">
+      <div className="flex-1 pt-24 pb-24 px-4 overflow-y-auto">
         {messages.length === 0 && (
           <div className="flex items-center justify-center h-full">
             <p className="text-gray-500 text-sm">

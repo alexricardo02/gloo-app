@@ -503,7 +503,13 @@
     "emptyDesc": "Match with other groups in the carousel to start a conversation.",
     "emptyTitle": "No messages yet",
     "title": "Messages",
-    "searchPlaceholder": "Search"
+    "searchPlaceholder": "Search",
+    "tabChats": "Chats",
+    "tabLikes": "Likes",
+    "listView": "List",
+    "mapView": "Map",
+    "noLikesTitle": "No likes yet",
+    "noLikesDesc": "When other groups like your profile, they will appear here. You can then message them directly."
   },
   "Chat": {
     "backToMessages": "Back to Messages",

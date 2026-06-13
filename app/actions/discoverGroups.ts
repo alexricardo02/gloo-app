@@ -232,3 +232,76 @@ export async function toggleLike(toGroupId: string) {
 
   return { liked: true, matched };
 }
+
+/**
+ * Retrieves all groups that have liked the current user's group.
+ * Returns group details including user info, photos, and mutual like status.
+ * Used by the "Gruppen, die dich suchen" / "Groups that like you" feature (ST0-87).
+ */
+export async function getGroupsThatLikedMe() {
+  const cookieStore = await cookies();
+  const userId = cookieStore.get("gloo_user_id")?.value;
+
+  if (!userId) return { error: "Unauthorized" };
+
+  try {
+    const myGroup = await prisma.group.findUnique({
+      where: { userId },
+      select: { id: true },
+    });
+
+    if (!myGroup) return { groups: [] };
+
+    // Find all likes where the current group is the target
+    const incomingLikes = await prisma.groupLike.findMany({
+      where: { toGroupId: myGroup.id },
+      include: {
+        fromGroup: {
+          include: {
+            user: {
+              select: { id: true, name: true, image: true, username: true },
+            },
+          },
+        },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+
+    if (incomingLikes.length === 0) return { groups: [] };
+
+    const fromGroupIds = incomingLikes.map((like) => like.fromGroup.id);
+
+    // Check which of these groups the current user has liked back
+    const outgoingLikes = await prisma.groupLike.findMany({
+      where: {
+        fromGroupId: myGroup.id,
+        toGroupId: { in: fromGroupIds },
+      },
+      select: { toGroupId: true },
+    });
+
+    const likedBackIds = new Set(outgoingLikes.map((l) => l.toGroupId));
+
+    const groups = incomingLikes.map((like) => ({
+      id: like.fromGroup.id,
+      userId: like.fromGroup.userId,
+      user: like.fromGroup.user,
+      photos: like.fromGroup.photos,
+      description: like.fromGroup.description,
+      membersCount: like.fromGroup.membersCount,
+      gender: like.fromGroup.gender,
+      ageMin: like.fromGroup.ageMin,
+      ageMax: like.fromGroup.ageMax,
+      latitude: like.fromGroup.latitude,
+      longitude: like.fromGroup.longitude,
+      createdAt: like.fromGroup.createdAt.toISOString(),
+      likedByCurrentUser: likedBackIds.has(like.fromGroup.id),
+      isMutualLike: likedBackIds.has(like.fromGroup.id),
+    }));
+
+    return { groups };
+  } catch (error) {
+    console.error("Error fetching groups that liked me:", error);
+    return { error: "Failed to fetch groups" };
+  }
+}
