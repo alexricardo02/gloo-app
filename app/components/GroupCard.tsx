@@ -3,9 +3,10 @@
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useLocale } from "next-intl";
-import { Heart, MessageCircle, Loader2 } from "lucide-react";
+import { Heart, MessageCircle, Loader2, Flag, Check } from "lucide-react";
 import { toggleLike } from "@/app/actions/discoverGroups";
 import { getOrCreateChat } from "@/app/actions/chat";
+import { reportGroupByGroupIdAction } from "@/app/actions/moderation";
  
 interface GroupCardProps {
   group: any;
@@ -19,6 +20,8 @@ export default function GroupCard({ group }: GroupCardProps) {
   const [liked, setLiked] = useState(Boolean(group.likedByCurrentUser));
   const [isAnimating, setIsAnimating] = useState(false);
   const [isOpeningChat, setIsOpeningChat] = useState(false);
+  const [isReporting, setIsReporting] = useState(false);
+  const [reportSent, setReportSent] = useState(false);
   const touchStartX = useRef(0);
   const touchStartY = useRef(0);
  
@@ -145,6 +148,37 @@ export default function GroupCard({ group }: GroupCardProps) {
 
       {/* 5b. Action buttons*/}
       <div className="absolute bottom-0 right-0 p-4 pb-8 flex flex-col gap-4 items-end z-40 pointer-events-auto">
+        {/* (Report) */}
+        <button
+          type="button"
+          onClick={async () => {
+            if (isReporting || reportSent) return;
+            setIsReporting(true);
+            try {
+              await reportGroupByGroupIdAction(group.id);
+              setReportSent(true);
+              setTimeout(() => setReportSent(false), 3000);
+            } catch (err) {
+              console.error("Failed to report group:", err);
+            } finally {
+              setIsReporting(false);
+            }
+          }}
+          className={`p-3 rounded-full border border-white/20 shadow-[0_0_15px_rgba(0,0,0,0.5)] transition-all duration-200 ${
+            reportSent
+              ? "bg-green-500/20 border-green-500/30"
+              : "bg-white/5 hover:bg-white/20"
+          }`}
+          aria-label="Report group"
+        >
+          {isReporting ? (
+            <Loader2 size={18} className="animate-spin text-yellow-400" />
+          ) : reportSent ? (
+            <Check size={18} className="text-green-400" />
+          ) : (
+            <Flag size={18} className="text-yellow-400" />
+          )}
+        </button>
         {/* (Like) */}
         <button
           type="button"

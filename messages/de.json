@@ -359,12 +359,26 @@
     "listView": "Liste",
     "mapView": "Karte",
     "noLikesTitle": "Noch keine Likes",
-    "noLikesDesc": "Wenn andere Gruppen dein Profil liken, erscheinen sie hier. Du kannst sie dann direkt anschreiben."
+    "noLikesDesc": "Wenn andere Gruppen dein Profil liken, erscheinen sie hier. Du kannst sie dann direkt anschreiben.",
+    "blockedGroups": "Blockierte Gruppen",
+    "unblock": "Entblocken",
+    "noBlockedGroups": "Keine blockierten Gruppen",
+    "noBlockedGroupsDesc": "Gruppen, die du blockierst, erscheinen hier. Du kannst sie jederzeit entblocken.",
+    "groupUnblocked": "Gruppe entblockt"
   },
   "Chat": {
     "backToMessages": "Zurück zu Nachrichten",
     "emptyChat": "Noch keine Nachrichten. Sag Hallo!",
-    "typeMessage": "Nachricht schreiben..."
+    "typeMessage": "Nachricht schreiben...",
+    "blockGroup": "Gruppe blockieren",
+    "reportGroup": "Melden",
+    "confirmBlockTitle": "Gruppe blockieren?",
+    "confirmBlockDesc": "Bist du sicher? Der Chat wird ausgeblendet und weiterer Kontakt verhindert.",
+    "blockConfirm": "Blockieren",
+    "cancel": "Abbrechen",
+    "groupBlocked": "Gruppe blockiert",
+    "groupReported": "Meldung gesendet",
+    "blockedChatError": "Diese Unterhaltung ist nicht mehr verfügbar."
   },
   "SearchGroups": {
     "modalButton": "Radius einstellen",

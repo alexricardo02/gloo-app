@@ -9,6 +9,35 @@ const MAX_LIKES_PER_WINDOW = 10;
 const likeRateLimit = (globalThis as any).__GLOO_LIKE_RATE_LIMITER ||= new Map<string, { count: number; windowStart: number }>();
 
 /**
+ * ST0-88: Returns a Set of group IDs that the current user has blocked
+ * or has been blocked by (both directions).
+ */
+async function getBlockedGroupIds(userId: string, myGroupId: string): Promise<Set<string>> {
+  const blocksByMe = await prisma.groupBlock.findMany({
+    where: { blockerId: userId },
+    select: { blockedGroupId: true },
+  });
+  const blockedByMeIds = new Set(blocksByMe.map((b) => b.blockedGroupId));
+
+  const blocksOnMe = await prisma.groupBlock.findMany({
+    where: { blockedGroupId: myGroupId },
+    select: { blockerId: true },
+  });
+  const blockedMeUserIds = new Set(blocksOnMe.map((b) => b.blockerId));
+
+  let blockedMeGroupIds = new Set<string>();
+  if (blockedMeUserIds.size > 0) {
+    const blockedMeGroups = await prisma.group.findMany({
+      where: { userId: { in: [...blockedMeUserIds] } },
+      select: { id: true },
+    });
+    blockedMeGroupIds = new Set(blockedMeGroups.map((g) => g.id));
+  }
+
+  return new Set([...blockedByMeIds, ...blockedMeGroupIds]);
+}
+
+/**
  * Fetches groups in packs of 10 for the discovery carousel.
  * Filters by distance, gender preferences, and party mode.
  */
@@ -110,6 +139,9 @@ export async function getDiscoveryGroups({
   
   const likedGroupIds = new Set(likedGroupRecords.map((like) => like.toGroupId));
 
+  // ST0-88: Get blocked group IDs (both directions)
+  const allBlockedGroupIds = await getBlockedGroupIds(userId, userGroup.id);
+
   const mutualLikeRecords = await prisma.groupLike.findMany({
     where: {
       fromGroupId: { in: filteredGroups.map((group) => group.id) },
@@ -123,6 +155,7 @@ export async function getDiscoveryGroups({
     const skip = page * limit;
 
     const groups = filteredGroups
+      .filter((group) => !allBlockedGroupIds.has(group.id))
       .slice(skip, skip + limit)
       .map((group) => ({
         ...group,
@@ -252,6 +285,9 @@ export async function getGroupsThatLikedMe() {
 
     if (!myGroup) return { groups: [] };
 
+    // ST0-88: Get blocked group IDs (both directions)
+    const allBlockedGroupIds = await getBlockedGroupIds(userId, myGroup.id);
+
     // Find all likes where the current group is the target
     const incomingLikes = await prisma.groupLike.findMany({
       where: { toGroupId: myGroup.id },
@@ -282,7 +318,9 @@ export async function getGroupsThatLikedMe() {
 
     const likedBackIds = new Set(outgoingLikes.map((l) => l.toGroupId));
 
-    const groups = incomingLikes.map((like) => ({
+    const groups = incomingLikes
+      .filter((like) => !allBlockedGroupIds.has(like.fromGroup.id))
+      .map((like) => ({
       id: like.fromGroup.id,
       userId: like.fromGroup.userId,
       user: like.fromGroup.user,

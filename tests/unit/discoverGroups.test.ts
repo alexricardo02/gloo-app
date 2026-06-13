@@ -130,12 +130,13 @@ describe('DiscoverGroups Server Actions', () => {
 
   it('should reject likes after rate limit is exceeded', async () => {
     vi.mocked(cookies).mockResolvedValue({ get: vi.fn().mockReturnValue({ value: 'user-1' }) } as any);
-    vi.mocked(prisma.group.findUnique).mockImplementation(async (query: any) => {
-      if (query.where.userId === 'user-1') {
-        return { id: 'from-group', userId: 'user-1' } as any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (prisma.group.findUnique as any).mockImplementation(async (args: any) => {
+      if (args?.where?.userId === 'user-1') {
+        return { id: 'from-group', userId: 'user-1' };
       }
-      if (typeof query.where.id === 'string') {
-        return { id: query.where.id, userId: 'user-2' } as any;
+      if (typeof args?.where?.id === 'string') {
+        return { id: args.where.id, userId: 'user-2' };
       }
       return null;
     });

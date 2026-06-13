@@ -9,6 +9,13 @@ vi.mock('@/lib/prisma', () => ({
     chat: {
       findMany: vi.fn(),
     },
+    group: {
+      findUnique: vi.fn(),
+      findMany: vi.fn(),
+    },
+    groupBlock: {
+      findMany: vi.fn(),
+    },
   },
 }));
 
@@ -67,6 +74,11 @@ describe('Chat Server Actions (Unit Tests)', () => {
 
       vi.mocked(prisma.chat.findMany).mockResolvedValueOnce(mockChats as any);
 
+      // ST0-88: Mock block-related calls – no blocks so results are unchanged
+      vi.mocked(prisma.group.findUnique).mockResolvedValueOnce({ id: 'group-1' } as any);
+      vi.mocked(prisma.groupBlock.findMany).mockResolvedValue([]);
+      vi.mocked(prisma.groupBlock.findMany).mockResolvedValue([]);
+
       const result = await getActiveChats();
 
       expect(result.success).toBe(true);
@@ -95,6 +107,9 @@ describe('Chat Server Actions (Unit Tests)', () => {
 
     it('should catch errors and return Failed to fetch chats', async () => {
       vi.mocked(cookies).mockResolvedValue({ get: vi.fn().mockReturnValue({ value: 'user-1' }) } as any);
+      vi.mocked(prisma.group.findUnique).mockResolvedValueOnce({ id: 'group-1' } as any);
+      vi.mocked(prisma.groupBlock.findMany).mockResolvedValue([]);
+      vi.mocked(prisma.groupBlock.findMany).mockResolvedValue([]);
       vi.mocked(prisma.chat.findMany).mockRejectedValueOnce(new Error('Database Timeout'));
 
       const result = await getActiveChats();

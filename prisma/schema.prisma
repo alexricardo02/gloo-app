@@ -50,6 +50,8 @@ model User {
   chatsReceived   Chat[]      @relation("HostB")
   messages        Message[]
   gameScores      GameScore[]
+  blockedGroups   GroupBlock[]
+  filedReports    GroupReport[]
 
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
@@ -89,6 +91,8 @@ model Group {
 
   eventAttendances EventAttendance[]
   venueAttendances VenueAttendance[]
+  blocksReceived   GroupBlock[]
+  reportsReceived  GroupReport[]
 
   createdAt        DateTime    @default(now())
   updatedAt        DateTime    @updatedAt
@@ -196,4 +200,28 @@ model VenueAttendance {
 
   // Eine Gruppe kann sich nur einmal pro Bar/Club anmelden
   @@unique([groupId, venueId])
+}
+
+// ST0-88: Block/Report – users can block or report groups for safety
+model GroupBlock {
+  id             String   @id @default(cuid())
+  blockerId      String
+  blocker        User     @relation(fields: [blockerId], references: [id], onDelete: Cascade)
+  blockedGroupId String
+  blockedGroup   Group    @relation(fields: [blockedGroupId], references: [id], onDelete: Cascade)
+  createdAt      DateTime @default(now())
+
+  @@unique([blockerId, blockedGroupId])
+}
+
+model GroupReport {
+  id               String   @id @default(cuid())
+  reporterId       String
+  reporter         User     @relation(fields: [reporterId], references: [id], onDelete: Cascade)
+  reportedGroupId  String
+  reportedGroup    Group    @relation(fields: [reportedGroupId], references: [id], onDelete: Cascade)
+  reason           String?
+  createdAt        DateTime @default(now())
+
+  @@unique([reporterId, reportedGroupId])
 }
