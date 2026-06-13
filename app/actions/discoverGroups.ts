@@ -2,6 +2,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { cookies } from "next/headers";
+import { revalidatePath } from "next/cache";
 
 const RATE_LIMIT_WINDOW_MS = 60_000; // 1 minute
 const MAX_LIKES_PER_WINDOW = 10;
@@ -207,6 +208,7 @@ export async function toggleLike(toGroupId: string) {
 
   if (existingLike) {
     await prisma.groupLike.delete({ where: { id: existingLike.id } });
+    revalidatePath("/");
     return { liked: false };
   }
 
@@ -263,6 +265,7 @@ export async function toggleLike(toGroupId: string) {
     }
   }
 
+  revalidatePath("/");
   return { liked: true, matched };
 }
 

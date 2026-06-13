@@ -3,17 +3,39 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, AlertCircle, CheckCircle, Mail, Loader2 } from "lucide-react";
+import { useState } from "react";
+import { requestPasswordReset } from "@/app/actions/auth";
 
 export default function ForgotPasswordPage() {
   const router = useRouter();
   const locale = useLocale();
   const t = useTranslations("ForgotPassword");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [email, setEmail] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement backend logic for sending the reset email
-    console.log("Password reset requested");
+    setError("");
+    setIsLoading(true);
+
+    try {
+      const result = await requestPasswordReset(email, locale);
+      if (result.success) {
+        setSubmitted(true);
+        setEmail("");
+      } else {
+        setError((result as any).error || "An error occurred");
+      }
+    } catch (err) {
+      console.error("Error:", err);
+      setError("An unexpected error occurred");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -30,46 +52,88 @@ export default function ForgotPasswordPage() {
             <ArrowLeft size={24} />
           </button>
         </div>
-        
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-black uppercase tracking-tight text-gray-900 mb-3">
-            {t('title')}
-          </h1>
-          <p className="text-sm text-gray-500 font-medium leading-relaxed">
-            {t('description')}
-          </p>
-        </div>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-          
-          <div className="space-y-1.5">
-            <input
-              name="email" 
-              type="email" 
-              placeholder={t('emailPlaceholder')}
-              required
-              className="w-full bg-gray-50 border border-gray-200 rounded-2xl p-4 text-sm font-medium text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#FF725E] transition-all"
-            />
-          </div>
+        {!submitted ? (
+          <>
+            {/* Header */}
+            <div className="mb-8">
+              <h1 className="text-3xl font-black uppercase tracking-tight text-gray-900 mb-3">
+                {t('title')}
+              </h1>
+              <p className="text-sm text-gray-500 font-medium leading-relaxed">
+                {t('description')}
+              </p>
+            </div>
 
-          <div className="pt-2">
-            <button
-              type="submit"
-              className="w-full bg-[#FF725E] text-black font-black py-4 rounded-full text-sm uppercase tracking-widest hover:scale-[1.01] active:scale-[0.99] transition-all shadow-xl shadow-[#FF725E]/10"
-            >
-              {t('submitButton')}
-            </button>
-          </div>
-        </form>
+            {error && (
+              <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-2xl flex items-start gap-3">
+                <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+                <span className="text-sm text-red-700 font-medium">{error}</span>
+              </div>
+            )}
 
-        <div className="mt-8 text-center">
-          <Link href={`/${locale}/login`} className="text-xs font-bold text-gray-400 hover:text-gray-900 uppercase tracking-wider transition-colors">
-            {t('backToLogin')}
-          </Link>
-        </div>
+            {/* Form */}
+            <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+              
+              <div className="space-y-1.5">
+                <input
+                  name="email" 
+                  type="email" 
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder={t('emailPlaceholder')}
+                  required
+                  className="w-full bg-gray-50 border border-gray-200 rounded-2xl p-4 text-sm font-medium text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#FF725E] transition-all"
+                />
+              </div>
 
+              <div className="pt-2">
+                <button
+                  type="submit"
+                  disabled={isLoading || !email}
+                  className="w-full bg-[#FF725E] text-black font-black py-4 rounded-full text-sm uppercase tracking-widest hover:scale-[1.01] active:scale-[0.99] transition-all shadow-xl shadow-[#FF725E]/10 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-2"
+                >
+                  {isLoading && <Loader2 className="w-4 h-4 animate-spin" />}
+                  {isLoading ? t('sending') : t('submitButton')}
+                </button>
+              </div>
+            </form>
+
+            <div className="mt-8 text-center">
+              <Link href={`/${locale}/login`} className="text-xs font-bold text-gray-400 hover:text-gray-900 uppercase tracking-wider transition-colors">
+                {t('backToLogin')}
+              </Link>
+            </div>
+          </>
+        ) : (
+          <>
+            {/* Success State */}
+            <div className="flex flex-col items-center text-center py-8">
+              <div className="mb-6 p-4 bg-green-100 rounded-full">
+                <CheckCircle className="w-12 h-12 text-green-600" />
+              </div>
+
+              <h2 className="text-2xl font-black uppercase tracking-tight text-gray-900 mb-4">
+                {t('successTitle')}
+              </h2>
+
+              <p className="text-sm text-gray-600 mb-4">
+                {t('successMessage')}
+              </p>
+
+              <p className="text-xs text-gray-500 bg-gray-50 rounded-2xl p-4 mb-8">
+                {t('checkSpam')}
+              </p>
+
+              <button
+                onClick={() => router.push(`/${locale}/login`)}
+                className="w-full bg-[#FF725E] text-black font-black py-4 rounded-full text-sm uppercase tracking-widest hover:scale-[1.01] active:scale-[0.99] transition-all shadow-xl shadow-[#FF725E]/10"
+              >
+                {t('backToLogin')}
+              </button>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
