@@ -141,3 +141,49 @@ export async function createGroupAction(formData: FormData, locale: string) {
 
   redirect(`/${locale}/search-groups`);
 }
+
+/**
+ * Deletes ONLY the user's group and associated files, reverting them to a host-less user.
+ * Keeps the user account and authentication intact.
+ */
+export async function deleteGroupAction() {
+  const cookieStore = await cookies();
+  const userId = cookieStore.get("gloo_user_id")?.value;
+
+  if (!userId) return { error: "Unauthorized" };
+
+  try {
+    const group = await prisma.group.findUnique({
+      where: { userId },
+      select: { id: true, photos: true }
+    });
+
+    if (!group) return { error: "No group found to delete" };
+
+    // 1. Delete associated photos from Supabase Storage securely
+    if (group.photos && group.photos.length > 0) {
+      const filesToDelete = group.photos
+        .map(photoUrl => {
+          const urlParts = photoUrl.split('/');
+          const fileName = urlParts.pop();
+          return fileName ? `groups/${userId}/${fileName}` : null;
+        })
+        .filter((file): file is string => file !== null);
+
+      if (filesToDelete.length > 0) {
+        await supabase.storage.from('gloo-images').remove(filesToDelete);
+      }
+    }
+
+    // 2. Delete the group from the database 
+    // (Prisma will Cascade delete group likes, blocks, and attendances)
+    await prisma.group.delete({
+      where: { userId }
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error("Error deleting group:", error);
+    return { error: "Failed to delete group" };
+  }
+}

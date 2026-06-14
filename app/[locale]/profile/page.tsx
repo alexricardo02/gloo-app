@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { checkIsGuest } from "@/app/actions/guest";
-import { getGroupByUser } from "@/app/actions/group";
+import { getGroupByUser, deleteGroupAction } from "@/app/actions/group";
 import { getCurrentUser, logOutAction, updateProfileImage } from "@/app/actions/auth";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
@@ -11,8 +11,7 @@ import GroupCard from "@/app/components/GroupCard";
 import Image from "next/image";
 import Link from "next/link";
 
-import { Settings, Users, LogOut, ChevronRight, BarChart3, Plus, User, X, Camera, Upload } from "lucide-react";
-
+import { Settings, Users, LogOut, ChevronRight, BarChart3, Plus, User, X, Camera, Upload, MoreVertical, Trash2 } from "lucide-react";
 
 export default function ProfilePage() {
   const [isGuest, setIsGuest] = useState(false);
@@ -24,9 +23,20 @@ export default function ProfilePage() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
 
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+
   const router = useRouter();
   const locale = useLocale();
   const t = useTranslations("Profile");
+
+  useEffect(() => {
+    if (!isMenuOpen) return;
+    const closeMenu = () => setIsMenuOpen(false);
+    window.addEventListener("click", closeMenu);
+    return () => window.removeEventListener("click", closeMenu);
+  }, [isMenuOpen]);
 
   // Load guest status + group
   useEffect(() => {
@@ -54,6 +64,20 @@ export default function ProfilePage() {
     if (file) {
       setSelectedFile(file);
       setPreviewUrl(URL.createObjectURL(file));
+    }
+  };
+
+  const handleDeleteGroup = async () => {
+    setIsDeleting(true);
+    const result = await deleteGroupAction();
+    setIsDeleting(false);
+    
+    if (result.success) {
+      setGroup(null); // Revert UI back to host-less / spectator view
+      setShowDeleteConfirm(false);
+      setIsMenuOpen(false);
+    } else {
+      alert(result.error || "Failed to delete group");
     }
   };
 
@@ -146,43 +170,78 @@ export default function ProfilePage() {
               </div>
             </Link>
           ) : (
-            // --- REDESIGNED GROUP CARD (Clickable to edit) ---
-            <Link href={`/${locale}/profile/create-group`} className="block">
-              <div className="border border-white/10 bg-[#141414] rounded-3xl p-5 flex items-center gap-4 hover:border-[#FF725E]/50 hover:bg-[#1A1A1A] transition-all relative">
+            // --- REDESIGNED GROUP CARD WITH DELETE MENU ---
+            <div className="relative block">
+              
+              {/* THREE DOTS ACTIONS DROP-DOWN */}
+              <div className="absolute top-1/2 -translate-y-1/2 right-4 z-20">
+                <button 
+                  onClick={(e) => {
+                    e.preventDefault(); // Prevents the <Link> from triggering
+                    e.stopPropagation();
+                    setIsMenuOpen(!isMenuOpen);
+                  }}
+                  className="p-2 bg-black/60 backdrop-blur-md hover:bg-black/80 text-white rounded-full transition-all border border-white/10 active:scale-95"
+                >
+                  <MoreVertical size={18} />
+                </button>
                 
-                {/* Photo Preview Square */}
-                <div className="relative w-20 h-20 rounded-2xl overflow-hidden border border-white/10 flex-shrink-0 bg-[#1A1A1A]">
-                  <img
-                    src={group.photos?.[0] || "/images/vorgluehen.jpg"}
-                    alt="Group"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                
-                {/* Minimalist Details */}
-                <div className="flex-1 space-y-1.5">
-                  <div className="flex items-center gap-2">
-                    <h4 className="font-extrabold text-xl text-white">
-                      {t("yourGroup")}
-                    </h4>
-                    <span className="text-[10px] text-[#FF725E] bg-[#FF725E]/10 px-2 py-0.5 rounded uppercase font-bold">
-                      {t(group.gender)}
-                    </span>
+                {isMenuOpen && (
+                  <div className="absolute right-0 mt-2 w-48 bg-[#141414] border border-[#262626] rounded-2xl shadow-2xl py-1 z-30 animate-in fade-in slide-in-from-top-2 duration-100">
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setShowDeleteConfirm(true);
+                        setIsMenuOpen(false);
+                      }}
+                      className="w-full flex items-center gap-2 px-4 py-3 text-sm text-[#FF725E] hover:bg-[#1f1f1f] transition-colors font-black uppercase tracking-wider text-left"
+                    >
+                      <Trash2 size={16} />
+                      Delete Group
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {/* Clickable Card to Edit */}
+              <Link href={`/${locale}/profile/create-group`} className="block">
+                <div className="border border-white/10 bg-[#141414] rounded-3xl p-5 pr-14 flex items-center gap-4 hover:border-[#FF725E]/50 hover:bg-[#1A1A1A] transition-all relative">
+                  
+                  {/* Photo Preview Square */}
+                  <div className="relative w-20 h-20 rounded-2xl overflow-hidden border border-white/10 flex-shrink-0 bg-[#1A1A1A]">
+                    <img
+                      src={group.photos?.[0] || "/images/vorgluehen.jpg"}
+                      alt="Group"
+                      className="w-full h-full object-cover"
+                    />
                   </div>
                   
-                  <div className="flex items-center gap-4 text-sm text-gray-400 mt-1">
-                    <span className="flex items-center gap-1.5 font-bold">
-                      <Users size={16} className="text-[#FF725E]" />
-                      {group.membersCount}
-                    </span>
-                    <span className="font-bold flex items-center gap-1.5">
-                      <Settings size={14} className="text-[#FF725E]" />
-                      {group.ageMin}–{group.ageMax}
-                    </span>
+                  {/* Minimalist Details */}
+                  <div className="flex-1 space-y-1.5">
+                    <div className="flex items-center gap-2">
+                      <h4 className="font-extrabold text-xl text-white">
+                        {t("yourGroup")}
+                      </h4>
+                      <span className="text-[10px] text-[#FF725E] bg-[#FF725E]/10 px-2 py-0.5 rounded uppercase font-bold">
+                        {t(group.gender)}
+                      </span>
+                    </div>
+                    
+                    <div className="flex items-center gap-4 text-sm text-gray-400 mt-1">
+                      <span className="flex items-center gap-1.5 font-bold">
+                        <Users size={16} className="text-[#FF725E]" />
+                        {group.membersCount}
+                      </span>
+                      <span className="font-bold flex items-center gap-1.5">
+                        <Settings size={14} className="text-[#FF725E]" />
+                        {group.ageMin}–{group.ageMax}
+                      </span>
+                    </div>
                   </div>
                 </div>
-                              </div>
-            </Link>
+              </Link>
+            </div>
           )}
         </div>
 
@@ -293,6 +352,36 @@ export default function ProfilePage() {
       )}
 
       <Navigation/>
+
+      {/* --- DELETE GROUP CONFIRMATION MODAL --- */}
+      {showDeleteConfirm && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-in fade-in duration-200">
+          <div className="bg-[#111111] border border-[#222222] rounded-3xl p-6 w-full max-w-sm text-center shadow-2xl">
+            <h3 className="text-xl font-black text-white uppercase tracking-wide mb-2">Delete Group?</h3>
+            <p className="text-gray-400 text-sm mb-6 leading-relaxed">
+              Are you sure you want to delete your group? This action is permanent. Your members, active chats, and group photo history will be completely removed.
+            </p>
+            
+            <div className="flex flex-col gap-3">
+              <button
+                onClick={handleDeleteGroup}
+                disabled={isDeleting}
+                className="w-full bg-[#FF725E] text-black font-black py-4 rounded-full uppercase tracking-widest text-xs transition-transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isDeleting ? "Deleting..." : "Yes, Delete Group"}
+              </button>
+              
+              <button
+                onClick={() => setShowDeleteConfirm(false)}
+                disabled={isDeleting}
+                className="w-full bg-[#1A1A1A] border border-[#333333] text-white font-black py-4 rounded-full uppercase tracking-widest text-xs transition-colors hover:bg-[#252525] disabled:opacity-50"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       
     </div>
   );
