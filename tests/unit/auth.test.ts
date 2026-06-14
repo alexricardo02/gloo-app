@@ -11,6 +11,7 @@ import bcrypt from 'bcryptjs';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import crypto from 'crypto';
+import { resetPassword } from "@/app/actions/auth";
 
 vi.mock("@/lib/supabase", () => ({
   supabase: {
@@ -36,6 +37,7 @@ vi.mock('@/lib/prisma', () => ({
       findUnique: vi.fn(),
       findFirst: vi.fn(),
       create: vi.fn(),
+      update: vi.fn(),
     },
   },
 }));
@@ -295,5 +297,25 @@ describe('Auth Server Actions (Unit Tests)', () => {
       expect(result).toEqual({ available: false });
     });
   });
+
+  describe("Security Boundaries: Password Reset", () => {
+  it("should reject a password reset if the token has expired", async () => {
+    vi.mocked(prisma.user.findFirst).mockResolvedValue(null);
+
+    const result = await resetPassword("expired-token", "NewSecurePass123!");
+    
+    // Based on standard security requirements, this MUST fail
+    expect(result.error).toBe("tokenInvalidOrExpired");
+    expect(prisma.user.update).not.toHaveBeenCalled();
+  });
+
+  it("should reject a password reset if no valid token is provided", async () => {
+    vi.mocked(prisma.user.findFirst).mockResolvedValue(null);
+
+    const result = await resetPassword("fake-token", "NewSecurePass123!");
+    
+    expect(result.error).toBe("tokenInvalidOrExpired");
+  });
+});
 
 });

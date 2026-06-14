@@ -4,8 +4,23 @@ on: [push, pull_request]
 jobs:
   test:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_USER: dummy
+          POSTGRES_PASSWORD: dummy
+          POSTGRES_DB: dummy
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     env:
-      DATABASE_URL: "postgresql://dummy:dummy@localhost:5432/dummy" #Just to satisfy Prisma during tests
+      DATABASE_URL: "postgresql://dummy:dummy@localhost:5432/dummy"
+      DIRECT_URL: "postgresql://dummy:dummy@localhost:5432/dummy"
       NEXT_PUBLIC_SUPABASE_URL: "https://dummy-project.supabase.co"
       NEXT_PUBLIC_SUPABASE_ANON_KEY: "dummy-anon-key-for-testing-purposes"
     steps:
@@ -15,6 +30,13 @@ jobs:
         with:
           node-version: 24
       - run: npm install
+
+      - name: Create .env file for Prisma and Tests
+        run: |
+          echo "DATABASE_URL=postgresql://dummy:dummy@localhost:5432/dummy" > .env
+          echo "DIRECT_URL=postgresql://dummy:dummy@localhost:5432/dummy" >> .env
+          echo "NEXT_PUBLIC_SUPABASE_URL=https://dummy-project.supabase.co" >> .env
+          echo "NEXT_PUBLIC_SUPABASE_ANON_KEY=dummy-anon-key" >> .env
       - name: Block Copyleft Licenses (GPL/AGPL)
         run: npx --yes license-checker --failOn "GPL;GPL-1.0;GPL-2.0;GPL-3.0;AGPL;AGPL-1.0;AGPL-3.0"
 
@@ -27,5 +49,6 @@ jobs:
         run: npm audit --audit-level=high --omit=dev
       - run: npx prisma validate
       - run: npx prisma generate
+      - run: npx prisma db push
       - run: npm run test:ci
       - run: npm run build
