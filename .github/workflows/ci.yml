@@ -19,8 +19,8 @@ jobs:
           --health-timeout 5s
           --health-retries 5
     env:
-      DATABASE_URL: "postgresql://dummy:dummy@postgres:5432/dummy" #Just to satisfy Prisma during tests
-      DIRECT_URL: "postgresql://dummy:dummy@postgres:5432/dummy"
+      DATABASE_URL: "postgresql://dummy:dummy@localhost:5432/dummy"
+      DIRECT_URL: "postgresql://dummy:dummy@localhost:5432/dummy"
       NEXT_PUBLIC_SUPABASE_URL: "https://dummy-project.supabase.co"
       NEXT_PUBLIC_SUPABASE_ANON_KEY: "dummy-anon-key-for-testing-purposes"
     steps:
@@ -30,12 +30,13 @@ jobs:
         with:
           node-version: 24
       - run: npm install
-      - name: Wait for Postgres to be ready
+
+      - name: Create .env file for Prisma and Tests
         run: |
-          until pg_isready -h postgres -p 5432 -U dummy; do
-            echo "Waiting for postgres..."
-            sleep 2
-          done
+          echo "DATABASE_URL=postgresql://dummy:dummy@localhost:5432/dummy" > .env
+          echo "DIRECT_URL=postgresql://dummy:dummy@localhost:5432/dummy" >> .env
+          echo "NEXT_PUBLIC_SUPABASE_URL=https://dummy-project.supabase.co" >> .env
+          echo "NEXT_PUBLIC_SUPABASE_ANON_KEY=dummy-anon-key" >> .env
       - name: Block Copyleft Licenses (GPL/AGPL)
         run: npx --yes license-checker --failOn "GPL;GPL-1.0;GPL-2.0;GPL-3.0;AGPL;AGPL-1.0;AGPL-3.0"
 

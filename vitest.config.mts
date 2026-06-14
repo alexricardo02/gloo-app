@@ -8,10 +8,5 @@ export default defineConfig({
   test: {
     environment: 'node',
     globals: true,
-    env: {
-      DATABASE_URL: "postgresql://party_admin:party_password123@localhost:5433/gloo_db",
-      NEXT_PUBLIC_SUPABASE_URL: "https://dummy.supabase.co",
-      NEXT_PUBLIC_SUPABASE_ANON_KEY: "dummy-key"
-    }
   },
 })
