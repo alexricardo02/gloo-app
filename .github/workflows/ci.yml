@@ -30,6 +30,12 @@ jobs:
         with:
           node-version: 24
       - run: npm install
+      - name: Wait for Postgres to be ready
+        run: |
+          until pg_isready -h postgres -p 5432 -U dummy; do
+            echo "Waiting for postgres..."
+            sleep 2
+          done
       - name: Block Copyleft Licenses (GPL/AGPL)
         run: npx --yes license-checker --failOn "GPL;GPL-1.0;GPL-2.0;GPL-3.0;AGPL;AGPL-1.0;AGPL-3.0"
 
