@@ -20,6 +20,7 @@ jobs:
           --health-retries 5
     env:
       DATABASE_URL: "postgresql://dummy:dummy@localhost:5432/dummy" #Just to satisfy Prisma during tests
+      DIRECT_URL: "postgresql://dummy:dummy@localhost:5432/dummy"
       NEXT_PUBLIC_SUPABASE_URL: "https://dummy-project.supabase.co"
       NEXT_PUBLIC_SUPABASE_ANON_KEY: "dummy-anon-key-for-testing-purposes"
     steps:
