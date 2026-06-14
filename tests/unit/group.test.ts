@@ -243,4 +243,21 @@ describe('Group Server Actions (Unit Tests)', () => {
       );
     });
   });
+
+  it('should reject group creation if the user is a Guest', async () => {
+      // Mock the cookie to simulate a GUEST session
+      vi.mocked(cookies).mockResolvedValue({ 
+        get: vi.fn().mockImplementation((name) => {
+          if (name === "gloo_is_guest") return { value: "true" };
+          return undefined; // No real user ID provided
+        })
+      } as any);
+      
+      const formData = new FormData();
+      formData.append('existingPhotos', 'https://dummy.co/foto.jpg');
+
+      // Security Requirement: Action must throw an error before calling Prisma
+      await expect(createGroupAction(formData, 'en')).rejects.toThrow("User not found or unauthorized");
+      expect(prisma.group.upsert).not.toHaveBeenCalled();
+    });
 });
