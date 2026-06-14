@@ -316,6 +316,29 @@ describe('Auth Server Actions (Unit Tests)', () => {
     
     expect(result.error).toBe("tokenInvalidOrExpired");
   });
+
+  it('should reject registration if the email already exists in the database (TC5)', async () => {
+      // Simulate that Prisma finds a user when checking if email exists
+      vi.mocked(prisma.user.findUnique).mockResolvedValue({
+        id: "existing-id",
+        email: "alreadyused@example.com",
+        username: "someone_else"
+      } as any);
+
+      const formData = new FormData();
+      formData.append('email', 'alreadyused@example.com');
+      formData.append('password', 'SecurePass123!');
+      formData.append('username', 'new_user');
+      formData.append('name', 'New Name');
+      formData.append('birthDate', '2000-01-01');
+
+      const result = await registerUser(formData, 'en');
+
+      // Verifies exact security rule implementation
+      expect(result.error).toBe("emailExistsError");
+      // Ensures no creation attempt was made to the DB
+      expect(prisma.user.create).not.toHaveBeenCalled();
+    });
 });
 
 });
